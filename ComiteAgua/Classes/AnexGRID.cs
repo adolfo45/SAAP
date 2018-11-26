@@ -13,7 +13,8 @@ namespace ComiteAgua.Classes
         public int pagina { get; set; }
 
         public IList<AnexGRIDFiltro> filtros { get; set; }
-        public IList<AnexGRIDParametro> parametros { get; set; }        
+        public IList<AnexGRIDParametro> parametros { get; set; }   
+        //TODO
 
         private AnexGRIDResponde aresponde = new AnexGRIDResponde();
 
