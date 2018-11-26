@@ -1,0 +1,84 @@
+﻿
+@{
+    ViewBag.Title = "Consultar Corte";
+}
+
+<br />
+
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Gastos Comité</a></li>
+    </ol>
+</nav>
+
+
+
+<div class="col-md-6 mr-auto ml-auto">
+    <div class="card text-center">
+        <div class="card-body">
+            @*Fecha Inicio*@
+            <div class="form-group row">
+                @Html.Label("Fecha", new { @for = "Fecha", @class = "col-md-3 col-form-label ml-auto" })
+                <div class="col-sm-6 mr-auto">
+                    <input id="Fecha" type="date" class="form-control" />
+                </div>
+            </div>           
+        </div>
+        <div class="card-footer">
+            <div class="row justify-content-center">
+                <div class="col-4">
+                    <button id="BuscarButton" type="button" class="btn btn-success">Buscar</button>
+                </div>
+                <div class="col-4">
+                    <button id="LimpiarButton" type="button" class="btn btn-primary">Limpiar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div id="Corte"></div>
+
+@section scripts
+{
+
+    <script>
+        $(document).ready(function () {
+
+            $("#BuscarButton").click(function () {
+                var fecha = $("#Fecha").val();
+
+                if (fecha == "") {
+                    return;
+                }
+
+                $.ajax({
+                    type: 'get',
+                    cache: false,
+                    url: '@Url.Action("_ResultadoCorte", "Tomas")',
+                    data: { fecha: fecha },
+                    success: function (data) {
+                        $("#Corte").html(data)
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert('Error - ' + errorThrown);
+                    }
+                });
+            });
+
+            $("#LimpiarButton").click(function () {
+                $("#Fecha").val("")
+                $("#Corte").html("")
+            });          
+
+        });
+    </script>
+
+}
+
+
+

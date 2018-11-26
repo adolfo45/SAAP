@@ -1,0 +1,66 @@
+﻿@model ComiteAgua.ViewModels.Tomas.TomasViewModel
+
+@{
+
+}
+
+@using (Html.BeginForm("GuardarToma", "Tomas", FormMethod.Post, new { role = "form" }))
+{
+
+    @Html.HiddenFor(m => m.TomaId)
+    @Html.HiddenFor(m => m.PropietarioId)
+    @Html.HiddenFor(m => m.DireccionId)
+    @Html.HiddenFor(m => m.Activa)
+
+    // Folio
+    <div class="form-group row">
+        @Html.LabelFor(x => x.Folio, new { @for = "Folio", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.Folio, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Folio, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Categoria
+    <div class="form-group row">
+        @Html.LabelFor(x => x.CategoriaId, new { @for = "CategoriaId", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.DropDownListFor(m => m.CategoriaId, new SelectList(Model.Categorias, "CategoriaId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.CategoriaId, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>   
+
+    // Liquidacion
+    @*<div class="form-group row">
+        @Html.LabelFor(x => x.LiquidacionId, new { @for = "LiquidacionId", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.DropDownListFor(m => m.LiquidacionId, new SelectList(Model.LiquidacionesToma, "LiquidacionTomaId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.LiquidacionId, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>*@
+
+    // Observaciones
+    <div class="form-group row">
+        @Html.LabelFor(x => x.Observaciones, new { @for = "Observaciones", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextAreaFor(d => d.Observaciones, new { @class = "form-control mayusculas", @style = "text-transform:uppercase" })
+            @Html.ValidationMessageFor(m => m.Observaciones, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Pasiva
+    <div class="form-group row">
+        @Html.LabelFor(x => x.Pasiva, new { @for = "Pasiva", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.CheckBoxFor(d => d.Pasiva)        
+        </div>
+    </div>
+
+    // Button
+    <div class="row">
+        <div class="mr-auto ml-auto">
+            <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+    </div>
+
+}

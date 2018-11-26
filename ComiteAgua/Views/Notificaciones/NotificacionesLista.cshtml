@@ -1,0 +1,97 @@
+﻿@using ComiteAgua.ViewModels.Notificaciones
+@model NotificacionesViewModel
+
+@{
+    ViewBag.Title = "Consultar Notificaciones";
+}
+
+<br />
+
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Notificaciones Entregadas</a></li>
+    </ol>
+</nav>
+
+<div class="text-center">
+    <h3>Notificaciones Entregadas</h3>
+</div>
+
+<div class="col-md-6 mr-auto ml-auto">
+    <div class="card">
+        <div class="card-body">
+            @*Fecha Inicio*@
+            <div class="form-group row">
+                @Html.LabelFor(n => n.FechaInicioFiltro, new { @for = "Fecha", @class = "col-md-4 col-form-label ml-auto" })
+                <div class="col-sm-6 mr-auto">                   
+                    @Html.TextBoxFor(m => m.FechaInicioFiltro, new { @class = "form-control input-sm", @type = "date" })
+                </div>
+            </div>
+            @*Fecha Fin*@
+            <div class="form-group row">
+                @Html.LabelFor(n => n.FechaFinFiltro, new { @for = "FechaFin", @class = "col-md-4 col-form-label ml-auto" })
+                <div class="col-sm-6 mr-auto">                    
+                    @Html.TextBoxFor(m => m.FechaFinFiltro, new { @class = "form-control input-sm", @type = "date" })
+                </div>
+            </div>
+            @*Notificadores*@
+            <div class="form-group row">
+                @Html.LabelFor(n => n.NotificacionId, new { @for = "NotificacionId", @class = "col-md-4 col-form-label ml-auto" })
+                <div class="col-sm-6 mr-auto">                    
+                    @Html.DropDownListFor(m => m.NotificacionId, new SelectList(Model.Notificadores, "UsuarioId", "Nombre"), "Seleccione una opción", new { @class = "form-control input-sm" })
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <div class="row justify-content-center">
+                <div class="col-4">
+                    <button id="BuscarButton" type="button" class="btn btn-success">Buscar</button>
+                </div>
+                <div class="col-4">
+                    <button id="LimpiarButton" type="button" class="btn btn-primary">Limpiar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div id="Notificaciones"></div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+
+            $("#BuscarButton").click(function () {
+                var fechaInicio = $("#FechaInicioFiltro").val();
+                var fechaFin = $("#FechaFinFiltro").val();
+                var notificadorId = $("#NotificacionId").val();              
+
+                $.ajax({
+                    type: 'get',
+                    cache: false,
+                    url: '@Url.Action("_NotificacionesLista", "Notificaciones")',
+                    data: { fechaInicio: fechaInicio, fechaFin: fechaFin, notificadorId: notificadorId },
+                    success: function (data) {
+                        $("#Notificaciones").html(data)
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert('Error - ' + errorThrown);
+                    }
+                });
+            });
+
+            $("#LimpiarButton").click(function () {
+                $("#FechaInicioFiltro").val("");
+                $("#FechaFinFiltro").val("");
+                $("#Notificaciones").html("")
+                $('#NotificacionId').get(0).selectedIndex = 0;   
+            });
+
+        });
+    </script>
+}

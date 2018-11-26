@@ -1,0 +1,27 @@
+﻿input {
+    text-transform: uppercase;
+}
+
+.mayusculas {
+    text-transform: uppercase;
+}
+
+.minusculas{
+    text-transform:lowercase;
+}
+
+.rojo{
+    color:red
+}
+
+.verde{
+    color:green;
+}
+
+.naranja{
+    color:orange;
+}
+
+.azul{
+    color:blue;
+}

@@ -1,0 +1,103 @@
+﻿@model ComiteAgua.ViewModels.Tomas.ConveniosViewModel
+
+@{
+
+}
+
+@using (Html.BeginForm("GuardarConvenio", "Tomas", FormMethod.Post, new { role = "form" }))
+{
+
+    @Html.HiddenFor(m => m.TomaId)
+    @Html.HiddenFor(m => m.ConvenioId)
+    @Html.HiddenFor(m => m.PropietarioId)
+
+    @*Periodo Inicio*@
+    <div class="form-group row">
+        @Html.LabelFor(x => x.PeriodoInicio, new { @for = "PeriodoInicio", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.PeriodoInicio, new { @class = "form-control", @type = "month" })
+            @Html.ValidationMessageFor(m => m.PeriodoInicio, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+                @*Periodo Fin*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.PeriodoFin, new { @for = "PeriodoFin", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.PeriodoFin, new { @class = "form-control validaPeriodoFin", @type = "month" })
+                        @Html.ValidationMessageFor(m => m.PeriodoFin, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+    // Fecha Inicio
+    <div class="form-group row">
+        @Html.LabelFor(x => x.FechaInicio, new { @for = "FechaInicio", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.FechaInicio, new { @class = "form-control", @type = "date" })
+            @Html.ValidationMessageFor(m => m.FechaInicio, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Fecha Fin
+    <div class="form-group row">
+        @Html.LabelFor(x => x.FechaFin, new { @for = "FechaFin", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.FechaFin, new { @class = "form-control validaFechaFin", @type = "date" })
+            @Html.ValidationMessageFor(m => m.FechaFin, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Periodo Convenio
+    <div class="form-group row">
+        @Html.LabelFor(x => x.PeriodoPagoConvenioId, new { @for = "PeriodoPagoConvenioId", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.DropDownListFor(m => m.PeriodoPagoConvenioId, new SelectList(Model.PeriodosPagoConvenio, "PeriodoPagoConvenioId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.PeriodoPagoConvenioId, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Sub Total
+    <div class="form-group row">
+        @Html.LabelFor(x => x.SubTotal, new { @for = "SubTotal", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.SubTotal, new { @class = "form-control moneda" })
+            @Html.ValidationMessageFor(m => m.SubTotal, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Descuento
+    <div class="form-group row">
+        @Html.LabelFor(x => x.Descuento, new { @for = "Descuento", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.Descuento, new { @class = "form-control validaDescuento moneda" })
+            @Html.ValidationMessageFor(m => m.Descuento, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Total
+    <div class="form-group row">
+        @Html.LabelFor(x => x.Total, new { @for = "Total", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.Total, new { @class = "form-control moneda" })
+            @Html.ValidationMessageFor(m => m.Total, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Observaciones
+    <div class="form-group row">
+        @Html.LabelFor(x => x.Observaciones, new { @for = "Observaciones", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextAreaFor(d => d.Observaciones, new { @class = "form-control mayusculas", @style = "text-transform:uppercase" })
+            @Html.ValidationMessageFor(m => m.Observaciones, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Button
+    <div class="row">
+        <div class="mr-auto ml-auto">
+            <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+    </div>
+
+}
+

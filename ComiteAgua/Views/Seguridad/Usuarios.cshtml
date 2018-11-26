@@ -1,0 +1,65 @@
+﻿@model ComiteAgua.ViewModels.Seguridad.UsuarioViewModel
+@{
+    ViewBag.Title = "Usuarios";
+}
+<br />
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Recibos</a></li>
+    </ol>
+</nav>
+
+
+    <table id="usuarios" class="table table-hover table-bordered table-sm" style="width:100%">
+        <thead class="thead-dark text-center">
+            <tr>
+                <th>Nombre</th>
+                <th>Usuario</th>
+                <th>Roles</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model.Usuarios)
+            {
+                <tr class="text-center">
+                    <td scope="row">@(item.Persona.Nombre + " " + item.Persona.ApellidoPaterno + " " + item.Persona.ApellidoMaterno)</td>
+                    <td>@item.UserName</td>
+                    <td>@string.Join(", ", item.UsuarioRol.Select(r => r.Rol.Nombre))</td>
+                    <th>
+                        <a href="@Url.Action("AdministrarUsuarios", "Seguridad" , new { usuarioId = item.UsuarioId, urlRetorno = (string)ViewContext.RouteData.Values["action"]})" title="Editar"><i class="fas fa-pencil-alt fa-1x"></i></a>
+                    </th>
+                    <th>
+                        <a href="@Url.Action("UsuarioBoquearDesbloquear", "Seguridad" , new { usuarioId = item.UsuarioId, bloquear = !item.Activo})" title="@(item.Activo ? "Bloquear" : "Desbloquear")"><i class="@(item.Activo ? "fas fa-unlock fa-1x verde" : "fas fa-lock fa-1x rojo")"></i></a>
+                    </th>
+                </tr>
+            }
+
+        </tbody>
+        <tfoot class="text-center">
+            <tr>
+                <th>Nombre</th>
+                <th>Usuario</th>
+                <th>Roles</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $('#usuarios').DataTable();
+        });
+    </script>
+}
+
+
+
+

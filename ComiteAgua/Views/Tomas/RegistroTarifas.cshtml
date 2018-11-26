@@ -1,0 +1,52 @@
+﻿
+@{
+    ViewBag.Title = "RegistroTarifas";
+}
+
+<br />
+
+@using (Html.BeginForm("GuardarTarifa", "Tomas", FormMethod.Post, new { role = "form" }))
+{
+    <div class="col-md-9 mr-auto ml-auto">
+        <div class="card">
+            <div class="card-header text-center">
+                Pagos Suministro Agua
+            </div>
+            <div class="card-body">
+
+                @*Categoria*@
+                <div class="form-group row">
+                    <label>Categoria</label>
+                    <div class="col-sm-6 mr-auto">
+                        <input id="Categoria" type="text" name="Categoria" />
+                    </div>
+                </div>
+
+                @*Año*@
+                <div class="form-group row">
+                    <label>Año</label>
+                    <div class="col-sm-6 mr-auto">
+                        <input id="Ano" type="text" name="Ano" />
+                    </div>
+                </div>
+
+                @*Costo*@
+                <div class="form-group row">
+                    <label>Costo</label>
+                    <div class="col-sm-6 mr-auto">
+                        <input id="Costo" type="text" name="Costo" />
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-footer">
+                @*Button*@
+                <div class="row">
+                    <div class="mr-auto ml-auto">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

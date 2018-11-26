@@ -1,0 +1,54 @@
+﻿@model ComiteAgua.ViewModels.Catalogos.DescuentosViewModel
+@{
+    ViewBag.Title = @Model.Titulo;
+}
+
+<br />
+
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Model.UrlRetorno">Regresar</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Descuentos</a></li>
+    </ol>
+</nav>
+
+@using (Html.BeginForm("GuardarDescuento", "Catalogos", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.DescuentoId)
+    @Html.HiddenFor(m => m.UrlRetorno) 
+    @Html.HiddenFor(m => m.Accion) 
+    <div class="col-md-9 mr-auto ml-auto">
+        <div class="card">
+            <div class="card-header text-center">
+                Descuentos
+            </div>
+            <div class="card-body">
+                @*Mes Año*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.MesAno, new { @for = "MesAno", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.MesAno, new { @class = "form-control", @type = "month" })
+                        @Html.ValidationMessageFor(m => m.MesAno, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Descunto*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.MontoPoncentaje, new { @for = "MontoPoncentaje", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.MontoPoncentaje, new { @class = "form-control porcentaje" })
+                        @Html.ValidationMessageFor(m => m.MontoPoncentaje, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                @*Button*@
+                <div class="row">
+                    <div class="mr-auto ml-auto">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

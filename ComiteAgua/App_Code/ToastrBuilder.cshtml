@@ -1,0 +1,32 @@
+﻿@using ComiteAgua.Models
+@helper ShowToastMessages(Toastr toastr)
+{
+    if (toastr != null)
+    {
+        <script>
+            $(document)
+                .ready(function () {
+                    toastr.options.closeButton = '@toastr.ShowCloseButton';
+                    toastr.options.newestOnTop = '@toastr.ShowNewestOnTop';
+                    toastr.options.progressBar = '@toastr.ProgressBar';
+
+                    @foreach (ToastMessage message in toastr.ToastMessages)
+                    {
+                        var toastTypeValue = message.MessageType.ToString("F").ToLower();
+
+                        @:var optionsOverride = { closeButton: true, progressBar: true, positionClass: 'toast-bottom-full-width' };
+
+                        if (message.IsSticky)
+                        {
+                            @:optionsOverride.timeOut = 0;
+                            @:optionsOverride.extendedTimeout = 0;
+
+                        }
+
+                        @:toastr['@toastTypeValue']('@message.Message', '@message.Title', optionsOverride);
+
+                    }
+                });
+        </script>
+    }
+}

@@ -1,0 +1,35 @@
+﻿@model List<ComiteAgua.ViewModels.Tomas.PagosViewModel>
+
+@if (Model.Count > 0)
+{
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Fecha</th>
+                <th scope="col">Abono</th>
+                <th scope="col">Saldo</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.FechaAbono</td>
+                    <td>@item.AbonoConvenio</td>
+                    <td>@item.Saldo</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+        <strong>Alerta!</strong> No se encontraron registros.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}

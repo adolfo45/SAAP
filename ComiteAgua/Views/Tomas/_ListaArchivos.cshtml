@@ -1,0 +1,36 @@
+﻿@model List<Archivo>
+
+<ul class="list-group">
+    @foreach (var item in Model)
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            @item.Nombre
+            @*<button id="EliminarArchivoButton" type="button" class="close">
+                <span aria-hidden="true">&times;</span>
+            </button>*@     
+            <button onclick="CapacityChart('@item.Nombre');" type="button" class="btn btn-danger btn-sm" title="Quitar Archivo"><i class="ion-close-round" aria-hidden="true"></i></button>
+        </li>
+    }    
+</ul>
+
+<script>
+
+    function CapacityChart(nombre)
+    {
+        $.ajax({
+            type: 'get',
+            type: 'post',
+            cache: false,
+            url: '@Url.Action("QuitarArchivo", "Tomas")',
+            data: { nombre: nombre },
+            success: function (data) {
+                $("#Archivos").html(data)
+                $("#UrlArchivo").val("")
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error - ' + errorThrown);
+            }
+        });
+    }
+
+</script>

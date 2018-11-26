@@ -1,0 +1,92 @@
+﻿@model ComiteAgua.ViewModels.Tomas.PropietariosPersonaFisicaViewModel
+
+@{
+
+}
+
+@using (Html.BeginForm("GuardarPropietario", "Tomas", FormMethod.Post, new { role = "form" }))
+{
+
+    @Html.HiddenFor(m => m.PersonaId)
+    @Html.HiddenFor(m => m.PropietarioId)
+
+    // Nombre
+    <div class="form-group row">       
+        @Html.LabelFor(x => x.Nombre, new { @for = "Nombre", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.Nombre, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Nombre, null, new { @class= "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Apellido Paterno
+    <div class="form-group row">        
+        @Html.LabelFor(x => x.ApellidoPaterno, new { @for = "ApellidoPaterno", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.ApellidoPaterno, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.ApellidoPaterno, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Apellido Materno
+    <div class="form-group row">        
+        @Html.LabelFor(x => x.ApellidoMaterno, new { @for = "ApellidoMaterno", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.ApellidoMaterno, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.ApellidoMaterno, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Fecha Nacimiento
+    <div class="form-group row">        
+        @Html.LabelFor(x => x.FechaNacimiento, new { @for = "FechaNacimiento", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.FechaNacimiento, new { @class = "form-control validaFechaNacimiento", @type = "date" })
+            @Html.ValidationMessageFor(m => m.FechaNacimiento, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Estado Civil
+    <div class="form-group row">       
+        @Html.LabelFor(x => x.EstadoCivilId, new { @for = "EstadoCivilId", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.DropDownListFor(m => m.EstadoCivilId, new SelectList(Model.EstadosCiviles, "EstadoCivilId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.EstadoCivilId, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Teléfono
+    <div class="form-group row">        
+        @Html.LabelFor(x => x.Telefono, new { @for = "Telefono", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.Telefono, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Telefono, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Correo Electrónico
+    <div class="form-group row">        
+        @Html.LabelFor(x => x.CorreoElectronico, new { @for = "CorreoElectronico", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.CorreoElectronico, new { @class = "form-control minusculas" })
+            @Html.ValidationMessageFor(m => m.CorreoElectronico, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // RFC
+    <div class="form-group row">
+        @Html.LabelFor(x => x.Rfc, new { @for = "Rfc", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.Rfc, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Rfc, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    @*Button*@
+    <div class="row">
+        <div class="mr-auto ml-auto">
+            <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+    </div>
+}
+

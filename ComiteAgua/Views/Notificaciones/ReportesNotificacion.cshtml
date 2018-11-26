@@ -1,0 +1,217 @@
+﻿@model ComiteAgua.ViewModels.Notificaciones.ReportesViewModel
+@using ComiteAgua.Domain
+
+@{
+    ViewBag.Title = "Reportes Notificación";
+}
+
+<style type="text/css">
+    .rojo {
+        color: red
+    }
+
+    .naranja {
+        color: orange
+    }
+
+    .verde {
+        color: green
+    }
+
+    .azul {
+        color: blue
+    }
+</style>
+
+
+
+<br />
+
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Reportes</a></li>
+    </ol>
+</nav>
+
+@*Tabs*@
+<div class="col-md-12 mr-auto ml-auto">
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link @Model.TabAutorizacionActivo" id="autorizar-tab" data-toggle="tab" href="#autorizar" role="tab" aria-controls="autorizar" aria-selected="true">Autorizar</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @Model.TabPendienteActivo" id="pendiente-tab" data-toggle="tab" href="#pendiente" role="tab" aria-controls="pendiente" aria-selected="false">Pendiente</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @Model.TabConcluidoActivo" id="concluido-tab" data-toggle="tab" href="#concluido" role="tab" aria-controls="concluido" aria-selected="false">Concluido</a>
+                </li>               
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content" id="myTabContent">
+
+                <div class="tab-pane fade show @Model.TabAutorizacionActivo" id="autorizar" role="tabpanel" aria-labelledby="autorizar-tab">
+                    @if (Model.Autorizar.Count > 0)
+                    {
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Folio</th>
+                                <th scope="col">Dirección</th>
+                                <th scope="col">Reporto</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Observaciones</th>
+                                <th scope="col">Imagen</th>    
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.Autorizar)
+                            {
+                                <tr>
+                                    <td>@item.Toma.Folio</td>
+                                    <td>@(item.Toma.Direccion.Calle + (!string.IsNullOrEmpty(item.Toma.Direccion.NumExt) ? " EXT." + item.Toma.Direccion.NumExt : string.Empty) +
+                                            (!string.IsNullOrEmpty(item.Toma.Direccion.NumInt) ? " INT." + item.Toma.Direccion.NumInt : string.Empty) +
+                                            " " + item.Toma.Direccion.Colonia)</td>                                    
+                                    <td>@(item.UsuarioAlta.Persona.Nombre + " " + item.UsuarioAlta.Persona.ApellidoPaterno + " " + item.UsuarioAlta.Persona.ApellidoMaterno)</td>
+                                    <td>@item.FechaAlta.ToString("dd-MM-yyyy")</td>
+                                    <td>@item.Observaciones</td>
+                                    <td>
+                                        <a href="/NotificacionWebApi/Uploads/@item.UrlImagen" target="_blank">@item.UrlImagen</a>
+                                    </td> 
+                                    <td style="font-size:x-large">
+                                        <a href='@Url.Action("AutorizarReporte", "Notificaciones", new { reporteId = item.ReporteId, usuarioId = Model.UsuarioCambioId })'><span title="Autorizar" class="ion-checkmark verde"></span></a>
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+                            <strong>Alerta!</strong> No se encontraron registros.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    }
+
+
+                </div>
+
+                <div class="tab-pane fade show @Model.TabPendienteActivo" id="pendiente" role="tabpanel" aria-labelledby="pendiente-tab">
+                   @if (Model.Pendientes.Count > 0)
+                   {
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Folio</th>
+                                <th scope="col">Dirección</th>
+                                <th scope="col">Reporto</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Observaciones</th>
+                                <th scope="col">Imagen</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.Pendientes)
+                            {
+                                <tr>
+                                    <td>@item.Toma.Folio</td>
+                                    <td>
+                                        @(item.Toma.Direccion.Calle + (!string.IsNullOrEmpty(item.Toma.Direccion.NumExt) ? " EXT." + item.Toma.Direccion.NumExt : string.Empty) +
+                                            (!string.IsNullOrEmpty(item.Toma.Direccion.NumInt) ? " INT." + item.Toma.Direccion.NumInt : string.Empty) +
+                                            " " + item.Toma.Direccion.Colonia)
+                                    </td> 
+                                    <td>@(item.UsuarioAlta.Persona.Nombre + " " + item.UsuarioAlta.Persona.ApellidoPaterno + " " + item.UsuarioAlta.Persona.ApellidoMaterno)</td>
+                                    <td>@item.FechaAlta.ToString("dd-MM-yyyy")</td>
+                                    <td>@item.Observaciones</td>
+                                    <td>
+                                        <a href="/NotificacionWebApi/Uploads/@item.UrlImagen" target="_blank">@item.UrlImagen</a>
+                                    </td>
+                                    <td style="font-size:x-large">
+                                        <a href='@Url.Action("ConcluirReporte", "Notificaciones", new { reporteId = item.ReporteId, usuarioId = Model.UsuarioCambioId })'><span title="Concluir" class="ion-forward naranja"></span></a>
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                   }
+                   else
+                   {
+                    <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+                        <strong>Alerta!</strong> No se encontraron registros.
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                   }
+
+                </div>
+
+                <div class="tab-pane fade show @Model.TabConcluidoActivo" id="concluido" role="tabpanel" aria-labelledby="concluido-tab">
+                    @if (Model.Concluidos.Count > 0)
+                    {
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Folio</th>
+                                <th scope="col">Dirección</th>
+                                <th scope="col">Reporto</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Observaciones</th>
+                                <th scope="col">Imagen</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.Concluidos)
+                            {
+                                <tr>
+                                    <td>@item.Toma.Folio</td>
+                                    <td>
+                                        @(item.Toma.Direccion.Calle + (!string.IsNullOrEmpty(item.Toma.Direccion.NumExt) ? " EXT." + item.Toma.Direccion.NumExt : string.Empty) +
+                                            (!string.IsNullOrEmpty(item.Toma.Direccion.NumInt) ? " INT." + item.Toma.Direccion.NumInt : string.Empty) +
+                                            " " + item.Toma.Direccion.Colonia)
+                                    </td> 
+                                    <td>@(item.UsuarioAlta.Persona.Nombre + " " + item.UsuarioAlta.Persona.ApellidoPaterno + " " + item.UsuarioAlta.Persona.ApellidoMaterno)</td>
+                                    <td>@item.FechaAlta.ToString("dd-MM-yyyy")</td>
+                                    <td>@item.Observaciones</td>
+                                    <td>
+                                        <a href="/NotificacionWebApi/Uploads/@item.UrlImagen" target="_blank">@item.UrlImagen</a>
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+                            <strong>Alerta!</strong> No se encontraron registros.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    }
+                </div>     
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

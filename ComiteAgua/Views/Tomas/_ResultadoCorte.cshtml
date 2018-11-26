@@ -1,0 +1,104 @@
+﻿@model ComiteAgua.ViewModels.Tomas.CorteViewModel
+
+<div class="col-md-12">
+    <div class="row">               
+        <h6 class="text-center">Total Ingresos: @Model.TotalIngresos</h6>   
+       
+        @using (Html.BeginForm("ImprimirCorte", "Tomas", FormMethod.Post, new { @class = "col-auto ml-auto" }))           
+        {
+            @Html.HiddenFor(x => x.FechaConsulta)           
+                <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                    <button type="submit" class="btn btn-secondary">Imprimir corte</button>
+                </div>               
+        }
+
+        <br />
+    </div>
+    <div class="row">
+        <h6 class="text-center">Total Gastos: @Model.TotalGastos</h6>
+    </div>
+    <div class="row">
+        <h6 class="text-center">Total: @Model.Total</h6>
+    </div>
+</div>  
+
+
+<div class="row">
+    <div class="col-md-6">
+
+        <h4 class="text-center">Ingresos</h4>
+
+        @if (Model.Pagos.Count > 0)
+        {
+            <table class="table table-bordered table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">No</th>
+                        <th scope="col">Concepto</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model.Pagos)
+                {
+                        <tr>
+                            <td>@(item.TipoPago+"-"+item.NoRecibo.ToString())</td>
+                            <td>@item.ConceptoPago</td>
+                        <td>@item.Total</td>
+                    </tr>
+                    }
+
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+                <strong>Alerta!</strong> No se encontraron registros.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-6">
+
+        <h4 class="text-center">Gastos</h4>
+
+        @if (Model.Gastos.Count > 0)
+        {
+            <table class="table table-bordered table-sm">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Concepto</th>
+                        <th scope="col">Total</th>                       
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model.Gastos)
+                {
+                        <tr>
+                            <td>@item.Concepto</td>
+                            <td>@item.Total</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+                <strong>Alerta!</strong> No se encontraron registros.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+   

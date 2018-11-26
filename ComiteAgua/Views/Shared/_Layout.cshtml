@@ -1,0 +1,160 @@
+﻿@using ComiteAgua.ViewModels.Tomas
+@using ComiteAgua
+<!DOCTYPE html>
+
+<html>
+<head>
+
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title - Comité Agua</title>
+    <link rel="shortcut icon" href="~/Images/gota2.png" />       
+    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/ionicons.min.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+   
+    <link href="~/Content/toastr.css" rel="stylesheet" />
+   
+    <link href="~/Content/dataTables.bootstrap4.min.css" rel="stylesheet" />    
+   
+    <script src="~/Scripts/jquery_3.3.1.js"></script>   
+
+</head>
+<body>
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="@Url.Action("LogOut", "Home")" title="Cerrar sesión"><span class="ion-locked"></span></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Tabs", "Tomas")" title="Agregar toma"><span class="ion-plus-round"></span> Toma<span class="sr-only">(current)</span></a>
+                    </li>                  
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Gastos
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="@Url.Action("GastosComite", "Tomas")">Agregar</a>
+                            <a class="dropdown-item" href="@Url.Action("ConsultarGastos", "Tomas")">Consultar</a>                            
+                        </div>
+                    </li>   
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("ConsultarCorte", "Tomas")" title="Consultar corte"><span class="ion-cash"></span> Corte<span class="sr-only">(current)</span></a>
+                    </li>                               
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-wrench"></i> Servicios
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="@Url.Action("ConsultarServicios", "Tomas")">Consultar</a>
+                            <a class="dropdown-item" href="@Url.Action("RegistroServicio", "Tomas")">Agregar</a>
+                        </div>
+                    </li> 
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("DescargarPadron", "Tomas")" title="Descargar Padron"><span class="ion-ios-arrow-thin-down"></span> Padron<span class="sr-only">(current)</span></a>
+                    </li>                       
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Notificaciones
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="@Url.Action("NotificacionesLista", "Notificaciones")">Notificaciones entregadas</a>
+                            <a class="dropdown-item" href="@Url.Action("NotificacionesPagadas", "Notificaciones")">Notificaciones pagadas</a>
+                        </div>
+                    </li> 
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("ReportesNotificacion", "Notificaciones")" title="Reportes Notificación"><span class="glyphicon glyphicon-bell"></span> Reportes Notificación<span class="sr-only">(current)</span></a>
+                    </li>  
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Recibos", "Tomas")" title="Reportes Notificación"><span class="glyphicon glyphicon-qrcode"></span> Recibos<span class="sr-only">(current)</span></a>
+                    </li>  
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Categorias
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="@Url.Action("EditAddCategoria", "Catalogos", new { urlRetorno = Url.Action("Index", "Home") })">Agregar</a>
+                            <a class="dropdown-item" href="@Url.Action("Categorias", "Catalogos")">Consultar</a>                            
+                        </div>
+                    </li> 
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Usuarios
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">                            
+                            <a class="dropdown-item" href="@Url.Action("Usuarios", "Seguridad")">Consultar</a>      
+                            <a class="dropdown-item" href="@Url.Action("AdministrarUsuarios", "Seguridad", new { urlRetorno = Url.Action("Usuarios", "Seguridad") })">Agregar</a>
+                        </div>
+                    </li> 
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Descuentos
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">                            
+                            <a class="dropdown-item" href="@Url.Action("Descuentos", "Catalogos")">Consultar</a>      
+                            <a class="dropdown-item" href="@Url.Action("EditAddDescuento", "Catalogos", new { urlRetorno = Url.Action("Index", "Home") })">Agregar</a>
+                        </div>
+                    </li> 
+                </ul>
+            </div>
+
+            <img src="~/Images/SAAPRecortada.png" />
+
+        </nav>
+
+    <div class="container-fluid">
+
+        @RenderBody()
+
+    </div>
+    
+    @Html.Partial("_Toastr")
+   
+    <script src="~/Scripts/toastr.js"></script>
+    <script src="~/Scripts/toastr.min.js"></script>
+    
+    <script src="~/Scripts/jquery.anexgrid.min.js"></script>
+
+    <script src="~/Scripts/jquery.dataTables.min.js"></script>      
+    <script src="~/Scripts/dataTables.bootstrap4.min.js"></script>
+
+    <script src="~/Scripts/popper.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>          
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/autoNumeric/autoNumeric-min.js"></script>
+
+    <script src="~/Scripts/bootbox.min.js"></script>
+
+   
+    @RenderSection("scripts", required: false)
+
+    <script>                     
+
+        function InIEvent() {            
+
+            $('.mp-pusher').css('padding-bottom', $('.row-footer').css('height'));
+            $('.enteros').autoNumeric('init', { mDec: '0', vMin: '0', vMax: '99999999' });
+            $('.decimales').autoNumeric('init', { vMin: '0', vMax: '99999999.99' });
+            $('.decimalesNegativo').autoNumeric('init', { vMin: '-99999999.99', vMax: '99999999.99' });
+            $('.decimales7Posiciones').autoNumeric('init', { vMin: '0', vMax: '9999.9999999', aSep: '' });
+            $('.moneda').autoNumeric('init', { aSign: ' $ ', vMin: '0', vMax: '99999999.99' });
+            $('.monedaNegativo').autoNumeric('init', { aSign: ' $ ', vMin: '-99999999.99', vMax: '99999999.99' });
+            $('.moneda13Posiciones').autoNumeric('init', { aSign: ' $ ', vMin: '0', vMax: '9999999999999.99' });
+            $('.moneda13PosicionesNegativo').autoNumeric('init', { aSign: ' $ ', vMin: '-9999999999999.99', vMax: '9999999999999.99' });
+            $('.porcentaje').autoNumeric('init', { aSign: ' %', pSign: 's', vMin: '0', vMax: '100' });                       
+
+        } // function InIEvent()
+
+        $(document).ready(InIEvent);
+
+    </script>
+
+</body>
+</html>
+

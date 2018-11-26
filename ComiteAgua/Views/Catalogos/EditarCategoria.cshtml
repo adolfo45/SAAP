@@ -1,0 +1,73 @@
+﻿@model ComiteAgua.ViewModels.Catalogos.CategoriasViewModel
+@{
+    ViewBag.Title = "Editar Categoría";
+}
+
+<br />
+
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Model.UrlRetorno">Regresar</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Gastos Comité</a></li>
+    </ol>
+</nav>
+
+@using (Html.BeginForm("GuardarCategoria", "Catalogos", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.TarifaId)
+    @Html.HiddenFor(m => m.CategoriaId)
+    @Html.HiddenFor(m => m.Accion)
+    @Html.HiddenFor(m => m.MesAnoFiltro)
+    @Html.HiddenFor(m => m.UrlRetorno)
+    <div class="col-md-9 mr-auto ml-auto">
+        <div class="card">
+            <div class="card-header text-center">
+                Categorías
+            </div>
+            <div class="card-body"> 
+                @*Categoría*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Categoria, new { @for = "Total", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.Categoria, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Categoria, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Abreviatura*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Abreviatura, new { @for = "Total", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.Abreviatura, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Abreviatura, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>   
+                @*Abreviatura*@
+                <div class="form-group row">
+                        @Html.LabelFor(x => x.MesAno, new { @for = "Total", @class = "col-md-2 col-form-label ml-auto" })
+                        <div class="col-sm-6 mr-auto">
+                            @Html.TextBoxFor(d => d.MesAno, new { @class = "form-control", @type="number" })
+                            @Html.ValidationMessageFor(m => m.MesAno, null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
+                    </div>
+                @*Costo Tarifa*@
+                <div class="form-group row">
+                        @Html.LabelFor(x => x.CostoTarifa, new { @for = "Total", @class = "col-md-2 col-form-label ml-auto" })
+                        <div class="col-sm-6 mr-auto">
+                            @Html.TextBoxFor(d => d.CostoTarifa, new { @class = "form-control moneda" })
+                            @Html.ValidationMessageFor(m => m.CostoTarifa, null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
+                    </div>
+            </div>
+            <div class="card-footer">
+                @*Button*@
+                <div class="row">
+                    <div class="mr-auto ml-auto">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+

@@ -1,0 +1,72 @@
+﻿@using ComiteAgua.ViewModels.Notificaciones
+@model IEnumerable<NotificacionesViewModel>
+
+@{
+    decimal porcentajeTotal = 0;
+    foreach (var item in Model)
+    {
+        porcentajeTotal += !string.IsNullOrEmpty(item.Porcentaje) ? Convert.ToDecimal(item.Porcentaje) : 0;
+    }
+}
+
+<style type="text/css">
+    .colorFondoAmarillo {
+        background-color: yellow;
+    }
+</style>
+
+<div class="col-md-12 text-left">
+    <div class="row">
+        <h6 class="text-center">Total Comisión: @porcentajeTotal.ToString("C2")</h6>
+    </div>
+</div>
+
+<div class="row">
+
+    @if (Model.Count() > 0)
+    {
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Folio</th>
+                    <th scope="col">Direccion</th>
+                    <th scope="col">Categoria</th>
+                    <th scope="col">Fecha Pago</th>
+                    <th scope="col">Notificador</th>
+                    <th scope="col">Tipo Notificación</th>
+                    <th scope="col">No. Recibo/Tarjeta</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Comisión(5%)</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Folio</td>
+                        <td>@item.Direccion</td>
+                        <td>@item.Categoria</td>
+                        <td>@item.FechaPago.ToString("dd/MM/yyyy")</td>
+                        <td>@item.UsuarioNotifico</td>
+                        <td>@item.TipoNotificacion</td>
+                        <td>@item.NoRecibo</td>
+                        <td>@Convert.ToDecimal(item.Total).ToString("C2")</td>
+                        <td>@(!string.IsNullOrEmpty(item.Porcentaje) ? Convert.ToDecimal(item.Porcentaje).ToString("C2") : string.Empty)</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+            <strong>Alerta!</strong> No se encontraron registros.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+</div>

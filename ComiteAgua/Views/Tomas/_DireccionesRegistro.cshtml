@@ -1,0 +1,60 @@
+﻿@model ComiteAgua.ViewModels.Tomas.DireccionesViewModel
+
+@{
+
+}
+
+@using (Html.BeginForm("GuardarDireccion", "Tomas", FormMethod.Post, new { role = "form" }))
+{
+
+    @Html.HiddenFor(m => m.PropietarioId)
+    @Html.HiddenFor(m => m.TomaId)
+    @Html.HiddenFor(m => m.DireccionId)
+
+    // Tipo Calle   
+    <div class="form-group row">
+        @Html.LabelFor(x => x.TipoCalleId, new { @for = "TipoCalleId", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.DropDownListFor(m => m.TipoCalleId, new SelectList(Model.TiposCalle, "TipoCalleId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.TipoCalleId, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+    //Calle
+    <div class="form-group row">
+        @Html.LabelFor(x => x.CalleId, new { @for = "CalleId", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.DropDownListFor(m => m.CalleId, new SelectList(Model.Calles, "CalleId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.CalleId, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+    // Num Int
+    <div class="form-group row">
+        @Html.LabelFor(x => x.NumInt, new { @for = "NumInt", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.NumInt, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.NumInt, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+    // Num Ext
+    <div class="form-group row">
+        @Html.LabelFor(x => x.NumExt, new { @for = "NumExt", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.NumExt, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.NumExt, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+    // Colonia   
+    <div class="form-group row">
+        @Html.LabelFor(x => x.ColoniaId, new { @for = "ColoniaId", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.DropDownListFor(m => m.ColoniaId, new SelectList(Model.Colonias, "ColoniaId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.ColoniaId, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+    // Button
+    <div class="row">
+        <div class="mr-auto ml-auto">
+            <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+    </div>
+}

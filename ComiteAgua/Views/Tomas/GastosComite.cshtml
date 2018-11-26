@@ -1,0 +1,142 @@
+﻿@model ComiteAgua.ViewModels.Tomas.GastosViewModel
+
+@{
+    ViewBag.Title = "Gastos Comité";
+}
+
+<br />
+
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Gastos Comité</a></li>
+    </ol>
+</nav>
+
+@using (Html.BeginForm("GuardarGasto", "Tomas", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.SucursalId)
+    @Html.HiddenFor(m => m.MultiComiteId)
+
+    <div class="col-md-9 mr-auto ml-auto">
+        <div class="card">
+            <div class="card-header text-center">
+                Gasto
+            </div>
+            <div class="card-body"> 
+                @*Total*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Total, new { @for = "Total", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.Total, new { @class = "form-control moneda" })
+                        @Html.ValidationMessageFor(m => m.Total, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Archivo*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.UrlArchivo, new { @for = "UrlArchivo", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">                       
+                        <button id="ModalArchivoButton" type="button" class="btn btn-primary" title="Agregar Archivo"><i class="ion-plus-round" aria-hidden="true"></i> Archivo</button>
+                        @*<div id="Archivos"></div>*@
+                    </div>
+                </div>  
+                @*Lista Archivos*@
+                <div class="form-group row">  
+                    <div class="col-md-4"></div>
+                    <div class="col-sm-6 mr-auto">                        
+                        <div id="Archivos"></div>
+                    </div>
+                </div>  
+                @*Concepto*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Concepto, new { @for = "Concepto", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextAreaFor(d => d.Concepto, new { @class = "form-control mayusculas", @style = "text-transform:uppercase" })
+                        @Html.ValidationMessageFor(m => m.Concepto, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                @*Button*@
+                <div class="row">
+                    <div class="mr-auto ml-auto">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Modal Archivo -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Archivo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data" method="post">
+                    <div class="form-group">                       
+                        @Html.TextBoxFor(d => d.UrlArchivo, new { @class = "form-control", @type = "file", @id = "file" })
+                    </div>                     
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button id="GuardarArchivoButton" type="button" class="btn btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+
+            $("#ModalArchivoButton").click(function () {
+
+                $('#exampleModal').modal('show');
+
+            });
+
+            $("#GuardarArchivoButton").click(function ()
+            {
+                var file = document.getElementById("file").files[0];   
+                var name = document.getElementById("file").files[0].name;                   
+
+                var formData = new FormData();
+                formData.append('file', file);
+                formData.append('name', name);
+
+                if (file == "")
+                {
+                    return;
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("_ListaArchivos", "Tomas")',
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        $("#Archivos").html(data)
+                        $("#file").val("")
+                        $('#exampleModal').modal('hide');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert('Error - ' + errorThrown);
+                    }
+                });
+
+            });
+    });
+    </script>
+}

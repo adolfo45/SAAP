@@ -1,0 +1,43 @@
+﻿@model List<ComiteAgua.ViewModels.PeriodosPagoViewModel>
+
+@{
+    ViewBag.Title = "Historial de Pagos";
+}
+
+<br />
+
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Historial de Pagos</a></li>
+    </ol>
+</nav>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>            
+            <th scope="col">Total</th>
+            <th scope="col">Periodo Inicio</th>
+            <th scope="col">Periodo Fin</th>
+            <th scope="col">Concepto de Pago</th>
+            <th scope="col">Fecha de Pago</th>
+        </tr>
+    </thead>
+    <tbody>  
+        
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.TotalPago</td>
+                <td>@item.MesAnoInicio</td>
+                <td>@item.MesAnoFin</td>
+                <td>@item.ConceptoPago</td>
+                <td>@item.FechaPago</td>
+            </tr>
+        }        
+        
+    </tbody>
+</table>
+
+

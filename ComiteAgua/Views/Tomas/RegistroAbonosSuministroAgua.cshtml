@@ -1,0 +1,128 @@
+﻿@model ComiteAgua.ViewModels.Tomas.PagosViewModel
+
+@{
+    ViewBag.Title = "Abono suministro Agua";
+}
+
+<br />
+
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Abono Suministro Agua</a></li>
+    </ol>
+</nav>
+
+@using (Html.BeginForm("GuardarPagoAbono", "Tomas", FormMethod.Post, new { role = "form" }))
+{
+    @Html.HiddenFor(m => m.TomaId)
+    @Html.HiddenFor(m => m.ConceptoPagoId)
+
+    <div class="col-md-9 mr-auto ml-auto">
+        <div class="card">
+            <div class="card-header text-center">
+                Abono Suministro Agua
+            </div>
+            <div class="card-body">
+
+                @if(Model.AbonoAnterior != "0")
+                {
+                    @*Abono Anterior*@
+                    <div class="form-group row">
+                        @Html.LabelFor(x => x.AbonoAnterior, new { @for = "AbonoAnterior", @class = "col-md-2 col-form-label ml-auto" })
+                        <div class="col-sm-6 mr-auto">
+                            @Html.TextBoxFor(d => d.AbonoAnterior, new { @class = "form-control moneda", @disabled = "disabled" })
+                            @Html.ValidationMessageFor(m => m.AbonoAnterior, null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
+                    </div>
+                }
+
+                @*Sub Total*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.SubTotal,"Total Abono", new { @for = "SubTotal", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.SubTotal, new { @class = "form-control moneda" })
+                        @Html.ValidationMessageFor(m => m.SubTotal, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+                @*Periodo inicio*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.MesAnoInicio, new { @for = "MesAnoInicio", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.MesAnoInicio, new { @class = "form-control", @type = "month" })
+                        @Html.ValidationMessageFor(m => m.MesAnoInicio, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+                @*Periodo fin*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.MesAnoFin, new { @for = "MesAnoFin", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.MesAnoFin, new { @class = "form-control", @type = "month", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(m => m.MesAnoFin, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+                @*Abono*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Abono,"Abono", new { @for = "Abono", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.Abono, new { @class = "form-control moneda", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(m => m.Abono, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-footer">
+                @*Button*@
+                <div class="row">
+                    <div class="mr-auto ml-auto">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts
+{
+   
+    <script>
+
+        $(document).ready(function () {
+
+            $("#SubTotal").change(function () {
+                var subTotal = $(this).val().replace(/[^0-9\.]/g, '');
+                var periodoInicio = $("#MesAnoInicio").val();
+
+                $.ajax({
+                    type: 'get',
+                    dataType: 'json',
+                    cache: false,
+                    url: '@Url.Action("CalcularPeriodoAbono", "Tomas")',
+                    data: { subTotal: (Number(subTotal) + Number(@Model.AbonoAnterior)) , periodoInicio: periodoInicio, categoriaId: @Model.CategoriaId },
+                    success: function (response) {
+                        $("#MesAnoFin").val(response.periodoFin)
+                        $("#Abono").val(response.nuevoAbono)
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        $("#SubTotal").val("");
+                        alert('Error - Ingresa el Periodo Inicio en primer lugar ' + errorThrown);
+                    }
+                });
+            });
+
+            var mesAnoInicio = $("#MesAnoInicio").val();
+
+            if (mesAnoInicio != "")
+            {
+                $("#MesAnoInicio").prop("readonly", true);
+            }
+
+        });
+
+    </script>
+}

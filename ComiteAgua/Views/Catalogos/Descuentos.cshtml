@@ -1,0 +1,61 @@
+﻿@using AdsertiVS2017ClassLibrary
+@model ComiteAgua.ViewModels.Catalogos.DescuentosViewModel
+@{
+    ViewBag.Title = @Model.Titulo;
+}
+<br />
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Descuentos</a></li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <table id="descuentos" class="table table-hover table-bordered table-sm" style="width: 100%">
+            <thead class="thead-dark text-center">
+            <tr>
+                <th>Mes Año</th>
+                <th>Porcentaje</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+
+            @foreach (var item in Model.Descuentos)
+            {
+                <tr class="text-center">
+                    <td>@AdsertiFunciones.FormatearTexto(item.MesAno.ToString("MMM yyyy"))</td>
+                    <td>@item.MontoPoncentaje%</td>
+                    <th>
+                        <a href="@Url.Action("EditAddDescuento", "Catalogos" , new { descuentoId = item.DescuentoId, urlRetorno = (string)ViewContext.RouteData.Values["action"]})" title="Editar"><i class="fas fa-pencil-alt fa-1x"></i></a>
+                    </th>
+                </tr>
+            }
+
+            </tbody>
+            <tfoot class="text-center">
+            <tr>
+                <th>Mes Año</th>
+                <th>Porcentaje</th>
+                <th></th>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+    @section scripts
+{
+        <script>
+            $(document).ready(function () {
+                $('#descuentos').DataTable();
+            });
+        </script>
+    }
+
+
+
+

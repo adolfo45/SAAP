@@ -1,0 +1,49 @@
+﻿@model ComiteAgua.ViewModels.Tomas.PagosViewModel
+
+@{
+
+}
+
+@using (Html.BeginForm("GuardarPagoTomaNueva", "Tomas", FormMethod.Post, new { role = "form" }))
+{
+  
+    @Html.HiddenFor(m => m.TomaId)
+    @Html.HiddenFor(m => m.PropietarioId)
+    @Html.HiddenFor(m => m.PagoId)
+    @Html.HiddenFor(m => m.PeriodoPagoId)    
+
+    // Sub Total
+    <div class="form-group row">
+        @Html.LabelFor(x => x.SubTotal, new { @for = "SubTotal", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.SubTotal, new { @class = "form-control moneda" })
+            @Html.ValidationMessageFor(m => m.SubTotal, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Descuento
+    <div class="form-group row">
+        @Html.LabelFor(x => x.Descuento, new { @for = "Descuento", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.Descuento, new { @class = "form-control validaDescuento moneda" })
+            @Html.ValidationMessageFor(m => m.Descuento, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Total
+    <div class="form-group row">
+        @Html.LabelFor(x => x.Total, new { @for = "Total", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.Total, new { @class = "form-control moneda", @readonly = "readonly" })
+            @Html.ValidationMessageFor(m => m.Total, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+
+    // Button
+    <div class="row">
+        <div class="mr-auto ml-auto">
+            <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+    </div>
+
+}

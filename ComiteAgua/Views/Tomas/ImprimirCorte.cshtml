@@ -1,0 +1,101 @@
+﻿@model ComiteAgua.ViewModels.Tomas.CorteViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+        <meta name="viewport" content="width=device-width" />
+
+        <title>Imprimir Corte</title>      
+
+        <style>
+            table {
+                width: 100%;                               
+            }
+
+            th, td {
+                width: 80%;                  
+            }           
+
+        </style>
+
+    </head>
+    <body>
+    
+        <h2 style="text-align:center">Corte @Model.FechaConsulta.ToString("dd-MM-yyyy")</h2>
+
+        <div>
+            <div>
+                <h4>Total Ingresos: @Model.TotalIngresos</h4>                                                                     
+            </div>
+            <div>
+                <h4 class="text-left">Total Gastos: @Model.TotalGastos</h4>
+            </div>
+            <div>
+                <h4>Total Caja: @Model.Total</h4>
+            </div>
+        </div>
+
+        <div>                     
+
+                @if (Model.Pagos.Count > 0)
+                {
+
+                    <h3 style="text-align:center">Ingresos</h3>
+
+                    <table border=1 cellspacing=0 cellpadding=2 bordercolor="000000">
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.Pagos)
+                            {
+                                <tr>
+                                    <td>@item.ConceptoPago</td>
+                                    <td style="text-align:center">@item.Total</td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                }                                                
+
+                @if (Model.Gastos.Count > 0)
+                {
+
+                    <h3 style="text-align:center">Gastos</h3>
+
+                    <table border=1 cellspacing=0 cellpadding=2 bordercolor="000000">
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.Gastos)
+                            {
+                                <tr>
+                                    <td>@item.Concepto</td>
+                                    <td style="text-align:center">@item.Total</td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                }                           
+
+        </div>
+
+    </body>
+</html>

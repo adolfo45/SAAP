@@ -1,0 +1,124 @@
+﻿@model ComiteAgua.ViewModels.Seguridad.UsuarioViewModel
+@{
+    ViewBag.Title = "Administrar Usuarios";
+}
+
+<br />
+
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Model.UrlRetorno">Regresar</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Gastos Comité</a></li>
+    </ol>
+</nav>
+
+@using (Html.BeginForm("Guardar", "Seguridad", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{    
+    @Html.HiddenFor(m => m.Accion) 
+    @Html.HiddenFor(m => m.UsuarioId)
+    @Html.HiddenFor(m => m.PersonaId) 
+    @Html.HiddenFor(m => m.UrlRetorno)
+    <div class="col-md-9 mr-auto ml-auto">
+        <div class="card">
+            <div class="card-header text-center">
+                Usuarios
+            </div>
+            <div class="card-body"> 
+                @*Nombre*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Persona.Nombre, new { @for = "Nombre", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(x => x.Persona.Nombre, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Persona.Nombre, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Apellido Paterno*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Persona.ApellidoPaterno, new { @for = "ApellidoPaterno", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(x => x.Persona.ApellidoPaterno, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Persona.ApellidoPaterno, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>   
+                @*Apellido Materno*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Persona.ApellidoMaterno, new { @for = "ApellidoMaterno", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(x => x.Persona.ApellidoMaterno, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Persona.ApellidoMaterno, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Fecha Nacimiento*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Persona.FechaNacimiento, new { @for = "FechaNacimiento", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(x => x.Persona.FechaNacimiento, new { @class = "form-control", @type = "date" })
+                        @Html.ValidationMessageFor(x => x.Persona.FechaNacimiento, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Teléfono*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Persona.Telefono, new { @for = "Telefono", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(x => x.Persona.Telefono, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Persona.Telefono, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Correo Electrónico*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Persona.CorreoElectroico, new { @for = "CorreoElectroico", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(x => x.Persona.CorreoElectroico, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(x => x.Persona.CorreoElectroico, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Usuario*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Usuario, new { @for = "Usuario", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(x => x.Usuario, new { @class = "form-control minusculas" })
+                        @Html.ValidationMessageFor(x => x.Usuario, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Contraseña*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Password, new { @for = "Password", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(x => x.Password, new { @class = "form-control", @type = "password" })
+                        @Html.ValidationMessageFor(x => x.Password, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Roles*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.RolIds, new { @for = "RolIds", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">                                            
+                        @for (var rolIndex = 0; rolIndex < Model.RolesVM.Count(); rolIndex++)
+                        {
+                            <div class="col-md-12">
+                                @Html.HiddenFor(m => m.RolesVM[rolIndex].RolId)
+                                @Html.HiddenFor(m => m.RolesVM[rolIndex].Nombre)
+                                @Html.CheckBoxFor(m => m.RolesVM[rolIndex].Seleccionado)
+                                @Html.LabelFor(m => m.RolesVM[rolIndex].Seleccionado, Model.RolesVM[rolIndex].Nombre)
+                            </div>
+                        }                       
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                @*Button*@
+                <div class="row">
+                    <div class="mr-auto ml-auto">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    
+</script>
+
+

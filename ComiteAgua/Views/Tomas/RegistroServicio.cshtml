@@ -1,0 +1,175 @@
+﻿@model ComiteAgua.ViewModels.Tomas.ServiciosViewModel
+@{
+    ViewBag.Title = "Registro Servicio";
+}
+
+<br />
+
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Servicios</a></li>
+    </ol>
+</nav>
+
+@if (Model.Imprimir)
+{
+    <div class="col-md-12">
+        <div class="row">
+            @using (Html.BeginForm("ImprimirServicio", "Tomas", FormMethod.Post, new { @class = "col-auto ml-auto" }))
+            {
+                @Html.HiddenFor(x => x.RutaArchivo)
+                <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                    <button type="submit" class="btn btn-secondary">Imprimir servicio</button>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@using (Html.BeginForm("GuardarServicio", "Tomas", FormMethod.Post, new { role = "form" }))
+{
+    @Html.HiddenFor(m => m.TomaId)
+    @Html.HiddenFor(m => m.Propietario)
+    @Html.HiddenFor(m => m.RutaArchivo)
+    @Html.HiddenFor(m => m.ServicioId)
+
+    <div class="col-md-9 mr-auto ml-auto">
+        <div class="card">
+            <div class="card-header text-center">
+                Servicios
+            </div>
+            <div class="card-body">
+
+                @*Nombre*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.NombreReporto, new { @for = "NombreReporto", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.NombreReporto, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.NombreReporto, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+                @*Dirección*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Direccion, new { @for = "Direccion", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextAreaFor(d => d.Direccion, new { @class = "form-control", @style = "text-transform:uppercase" })
+                        @Html.ValidationMessageFor(m => m.Direccion, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+                @*Colonia*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Colonia, new { @for = "Colonia", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.Colonia, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Colonia, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+                @*Teléfono*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Telefono, new { @for = "Telefono", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.Telefono, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Telefono, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+                @*Ubicación Servicio*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.UbicacionServicio, new { @for = "UbicacionServicio", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextAreaFor(d => d.UbicacionServicio, new { @class = "form-control", @style = "text-transform:uppercase" })
+                        @Html.ValidationMessageFor(m => m.UbicacionServicio, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+                @*Asunto*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.AsuntoId, new { @for = "AsuntoId", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.DropDownListFor(m => m.AsuntoId, new SelectList(Model.Asuntos, "AsuntoId", "Nombre"), "Seleccione una opción", new { id = "AsuntoId", @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.AsuntoId, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+                @*Asunto Descripcion*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.AsuntoDescripcionId, new { @for = "AsuntoDescripcionId", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.DropDownListFor(m => m.AsuntoDescripcionId, new SelectList(Model.AsuntosDescripcion, "AsuntoDescripcionId", "Nombre"), "Seleccione una opción", new { id = "AsuntoDescripcionId", @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.AsuntoDescripcionId, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+                @*Otro*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Otro, new { @for = "Otro", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextAreaFor(d => d.Otro, new { @class = "form-control", @style = "text-transform:uppercase" })
+                        @Html.ValidationMessageFor(m => m.Otro, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+                @*Observaciones*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Observaciones, new { @for = "Observaciones", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextAreaFor(d => d.Observaciones, new { @class = "form-control", @style = "text-transform:uppercase" })
+                        @Html.ValidationMessageFor(m => m.Observaciones, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-footer">
+                @*Button*@
+                <div class="row">
+                    <div class="mr-auto ml-auto">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+
+@section scripts
+{
+
+    <script>
+
+        $("#AsuntoId")
+            .change(function () {
+
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("CargarDescripcionAsunto", "Tomas")',
+                    data: { asuntoId: $("#AsuntoId").val() },
+                    datatype: "Json",
+                    success: function (data) {
+                        $.each(data.result,
+                            function (index, value) {
+                                $("#AsuntoDescripcionId")
+                                    .append("<option value='" +
+                                    value.AsuntoDescripcionId +
+                                    "'>" +
+                                    value.Nombre +
+                                    "</option>");
+                            });
+                    },
+                    error: function () {
+                        toastr.error("Error al obtener periodos pago.",
+                            "Sedes",
+                            { closeButton: true, progressBar: true, positionClass: "toast-bottom-full-width" });
+                    }
+                });
+
+            });
+
+    </script>
+
+}

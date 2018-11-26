@@ -1,0 +1,288 @@
+﻿@using ComiteAgua.Domain
+@using ComiteAgua.Domain.Global
+@using iTextSharp.text.pdf.qrcode
+@model ComiteAgua.ViewModels.Tomas.ConveniosViewModel
+
+@{
+    ViewBag.Title = "Agregar Convenio";
+}
+
+<br />
+
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Agregar Convenio</a></li>
+    </ol>
+</nav>
+
+@if (Model.BotonImprimirVisible)
+{
+    <div class="col-md-12">
+        <div class="row">
+            @using (Html.BeginForm("ImprimirConvenio", "Tomas", FormMethod.Post, new { @class = "col-auto ml-auto" }))
+            {
+            @Html.HiddenFor(x => x.RutaArchivo)
+            <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                <button type="submit" class="btn btn-secondary">Imprimir convenio</button>
+            </div>
+            }
+            @if (Model.EstatusConvenioId == (int)@EstatusConvenioDomain.EstatusConvenioEnum.Cancelado) { 
+                using (Html.BeginForm("EliminarConvenio", "Tomas", new{convenioId = Model.ConvenioId}, FormMethod.Post,null))
+                 {
+                     <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                         <button id="CancelarConvenioButton" type="submit" class="btn btn-danger">Cancelar convenio</button>
+                     </div>
+                 }
+            }
+        </div>
+    </div>
+ }
+<br />
+            @using (Html.BeginForm("GuardarConvenioSuministroAgua", "Tomas", FormMethod.Post, new { role = "form" }))
+            {
+                @Html.HiddenFor(m => m.TomaId)
+                @Html.HiddenFor(m => m.ConvenioId)
+                @Html.HiddenFor(m => m.RutaArchivo)
+
+                <div class="col-md-9 mr-auto ml-auto">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            Convenio Suministro Agua
+                        </div>
+                        <div class="card-body">
+
+                            @*Concepto Convenio*@
+                            <div class="form-group row">
+                                @Html.LabelFor(x => x.ConceptoConvenioId, new { @for = "ConceptoConvenioId", @class = "col-md-2 col-form-label ml-auto" })
+                                <div class="col-sm-6 mr-auto">
+                                    @Html.DropDownListFor(m => m.ConceptoConvenioId, new SelectList(Model.ConceptosConvenio, "ConceptoConvenioId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.ConceptoConvenioId, null, new { @class = "badge badge-pill badge-danger" })
+                                </div>
+                            </div>
+
+                            @*Periodo Inicio*@
+                            <div class="form-group row">
+                                @Html.LabelFor(x => x.PeriodoInicio, new { @for = "PeriodoInicio", @class = "col-md-2 col-form-label ml-auto" })
+                                <div class="col-sm-6 mr-auto">
+                                    @Html.TextBoxFor(d => d.PeriodoInicio, new { @class = "form-control", @type = "month" })
+                                    @Html.ValidationMessageFor(m => m.PeriodoInicio, null, new { @class = "badge badge-pill badge-danger" })
+                                </div>
+                            </div>
+
+                            @*Periodo Fin*@
+                            <div class="form-group row">
+                                @Html.LabelFor(x => x.PeriodoFin, new { @for = "PeriodoFin", @class = "col-md-2 col-form-label ml-auto" })
+                                <div class="col-sm-6 mr-auto">
+                                    @Html.TextBoxFor(d => d.PeriodoFin, new { @class = "form-control validaPeriodoFin", @type = "month" })
+                                    @Html.ValidationMessageFor(m => m.PeriodoFin, null, new { @class = "badge badge-pill badge-danger" })
+                                </div>
+                            </div>
+
+                            @*Fecha Inicio*@
+                            <div class="form-group row">
+                                @Html.LabelFor(x => x.FechaInicio, new { @for = "FechaInicio", @class = "col-md-2 col-form-label ml-auto" })
+                                <div class="col-sm-6 mr-auto">
+                                    @Html.TextBoxFor(d => d.FechaInicio, new { @class = "form-control", @type = "date" })
+                                    @Html.ValidationMessageFor(m => m.FechaInicio, null, new { @class = "badge badge-pill badge-danger" })
+                                </div>
+                            </div>
+
+                            @*Fecha Fin*@
+                            <div class="form-group row">
+                                @Html.LabelFor(x => x.FechaFin, new { @for = "FechaFin", @class = "col-md-2 col-form-label ml-auto" })
+                                <div class="col-sm-6 mr-auto">
+                                    @Html.TextBoxFor(d => d.FechaFin, new { @class = "form-control validaFechaFin", @type = "date" })
+                                    @Html.ValidationMessageFor(m => m.FechaFin, null, new { @class = "badge badge-pill badge-danger" })
+                                </div>
+                            </div>
+
+                            @*Periodo Convenio*@
+                            <div class="form-group row">
+                                @Html.LabelFor(x => x.PeriodoPagoConvenioId, new { @for = "PeriodoPagoConvenioId", @class = "col-md-2 col-form-label ml-auto" })
+                                <div class="col-sm-6 mr-auto">
+                                    @Html.DropDownListFor(m => m.PeriodoPagoConvenioId, new SelectList(Model.PeriodosPagoConvenio, "PeriodoPagoConvenioId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.PeriodoPagoConvenioId, null, new { @class = "badge badge-pill badge-danger" })
+                                </div>
+                            </div>
+
+                            @*Sub Total*@
+                            <div class="form-group row">
+                                @Html.LabelFor(x => x.SubTotal, new { @for = "SubTotal", @class = "col-md-2 col-form-label ml-auto" })
+                                <div class="col-sm-6 mr-auto">
+                                    @Html.TextBoxFor(d => d.SubTotal, new { @class = "form-control moneda" })
+                                    @Html.ValidationMessageFor(m => m.SubTotal, null, new { @class = "badge badge-pill badge-danger" })
+                                </div>
+                            </div>
+
+                            @*Descuento*@
+                            <div class="form-group row">
+                                @Html.LabelFor(x => x.Descuento, new { @for = "Descuento", @class = "col-md-2 col-form-label ml-auto" })
+                                <div class="col-sm-6 mr-auto">
+                                    @Html.TextBoxFor(d => d.Descuento, new { @class = "form-control validaDescuento moneda" })
+                                    @Html.ValidationMessageFor(m => m.Descuento, null, new { @class = "badge badge-pill badge-danger" })
+                                </div>
+                            </div>
+
+                            @*Total*@
+                            <div class="form-group row">
+                                @Html.LabelFor(x => x.Total, new { @for = "Total", @class = "col-md-2 col-form-label ml-auto" })
+                                <div class="col-sm-6 mr-auto">
+                                    @Html.TextBoxFor(d => d.Total, new { @class = "form-control moneda" })
+                                    @Html.ValidationMessageFor(m => m.Total, null, new { @class = "badge badge-pill badge-danger" })
+                                </div>
+                            </div>
+
+                            @*Autorizo*@
+                            <div class="form-group row">
+                                @Html.LabelFor(x => x.PersonaId, new { @for = "PersonaId", @class = "col-md-2 col-form-label ml-auto" })
+                                <div class="col-sm-6 mr-auto">
+                                    @Html.DropDownListFor(m => m.PersonaId, new SelectList(Model.PersonasSeguridad, "PersonaId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.PersonaId, null, new { @class = "badge badge-pill badge-danger" })
+                                </div>
+                            </div>
+
+                            @*Observaciones*@
+                            <div class="form-group row">
+                                @Html.LabelFor(x => x.Observaciones, new { @for = "Observaciones", @class = "col-md-2 col-form-label ml-auto" })
+                                <div class="col-sm-6 mr-auto">
+                                    @Html.TextAreaFor(d => d.Observaciones, new { @class = "form-control mayusculas", @style = "text-transform:uppercase", @rows = 3 })
+                                    @Html.ValidationMessageFor(m => m.Observaciones, null, new { @class = "badge badge-pill badge-danger" })
+                                </div>
+                            </div>
+
+                            @*Primer Pago*@
+                            <div class="form-group row">
+                                @Html.LabelFor(x => x.PimerPago, new { @for = "PimerPago", @class = "col-md-2 col-form-label ml-auto" })
+                                <div class="col-sm-6 mr-auto">
+                                    @Html.TextBoxFor(d => d.PimerPago, new { @class = "form-control moneda" })
+                                    @Html.ValidationMessageFor(m => m.PimerPago, null, new { @class = "badge badge-pill badge-danger" })
+                                </div>
+                            </div>
+
+                            @*Pagos De*@
+                            <div class="form-group row">
+                                @Html.LabelFor(x => x.PagosDe, new { @for = "PagosDe", @class = "col-md-2 col-form-label ml-auto" })
+                                <div class="col-sm-6 mr-auto">
+                                    @Html.TextBoxFor(d => d.PagosDe, new { @class = "form-control moneda" })
+                                    @Html.ValidationMessageFor(m => m.PagosDe, null, new { @class = "badge badge-pill badge-danger" })
+                                </div>
+                            </div>
+
+                            @*No Tarjeta*@
+                            <div class="form-group row">
+                                @Html.LabelFor(x => x.NoTarjeta, new { @for = "NoTarjeta", @class = "col-md-2 col-form-label ml-auto" })
+                                <div class="col-sm-6 mr-auto">
+                                    @Html.TextBoxFor(d => d.NoTarjeta, new { @class = "form-control enteros" })
+                                    @Html.ValidationMessageFor(m => m.NoTarjeta, null, new { @class = "badge badge-pill badge-danger" })
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card-footer">
+                            @*Button*@
+                            <div class="row">
+                                <div class="mr-auto ml-auto">
+                                    <button id="GuardarButton" type="submit" class="btn btn-success">Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+
+            @section scripts
+            {
+
+                <script>
+
+                    $(document).ready(function() {
+
+                        $.validator.addMethod("validaFechaFin",
+                            function() {
+                                return !($("#FechaFin").val() < $("#FechaInicio").val());
+                            },
+                            "La Fecha Fin no pude ser mayor a la Fecha Inicio.");
+
+                        $.validator.addMethod("validaPeriodoFin",
+                            function() {
+                                return !($("#PeriodoFin").val() < $("#PeriodoInicio").val());
+                            },
+                            "El Periodo Fin no pude ser menor al Periodo Inicio.");
+
+                        $("#Descuento").change(function() {
+                            var subTotal = $("#SubTotal").val().replace(/[^0-9\.]/g, '');
+                            var descuento = $(this).val().replace(/[^0-9\.]/g, '');
+
+                            $("#Total").val(subTotal - descuento);
+
+                            $.validator.addMethod("validaDescuento",
+                                function() {
+                                    return !(Number(descuento) > Number(subTotal));
+                                },
+                                "El descuento no puede ser mayor al Sub Total.");
+
+                        });
+
+                        $("#SubTotal").change(function() {
+                            var subTotal = $(this).val().replace(/[^0-9\.]/g, '');
+                            var descuento = $("#Descuento").val().replace(/[^0-9\.]/g, '');
+
+                            $("#Total").val(subTotal - descuento);
+
+                            $.validator.addMethod("validaDescuento",
+                                function() {
+                                    return !(Number(descuento) > Number(subTotal));
+                                },
+                                "El descuento no puede ser mayor al Sub Total.");
+                        });
+
+                        $("#PeriodoFin").change(function() {
+
+                            var periodoInicio = $("#PeriodoInicio").val();
+                            var periodoFin = $("#PeriodoFin").val();
+
+                            $.ajax({
+                                type: 'get',
+                                dataType: 'json',
+                                cache: false,
+                                url: '@Url.Action("CalcularMontoPeriodo", "Tomas")',
+                                data: {
+                                    periodoInicio: periodoInicio,
+                                    periodoFin: periodoFin,
+                                    categoriaId: @Model.CategoriaId
+                                },
+                                success: function(response) {
+                                    $("#SubTotal").val(response.success)
+                                    $("#Total").val(response.success)
+                                },
+                                error: function(jqXHR, textStatus, errorThrown) {
+                                    alert('Error - ' + errorThrown);
+                                }
+                            });
+
+                        });
+
+                        $("#Descuento").change(function() {
+                            var subTotal = $("#SubTotal").val().replace(/[^0-9\.]/g, '');
+                            var descuento = $(this).val().replace(/[^0-9\.]/g, '');
+
+                            $("#Total").val(subTotal - descuento);
+
+                            $.validator.addMethod("validaDescuento",
+                                function() {
+                                    return !(Number(descuento) > Number(subTotal));
+                                },
+                                "El descuento no puede ser mayor al Sub Total.");
+
+                        });
+
+                        var periodoInicio = $("#PeriodoInicio").val();                       
+
+                    });
+
+                </script>
+
+            }

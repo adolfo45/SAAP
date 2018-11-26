@@ -1,0 +1,177 @@
+﻿@using ComiteAgua.Filters.Security;
+@{
+    ViewBag.Title = "Tomas";
+}
+<link href="~/Content/AnexGrid.css" rel="stylesheet" />
+
+<style>
+    .rojo {
+        color: red;
+    }
+
+    .naranja {
+        color: orange
+    }
+
+    .verde {
+        color: green
+    }
+</style>
+
+<h2 class="text-center">Tomas</h2>
+
+<div id="list"></div>
+
+@section scripts
+{
+    <script>
+        var data = {
+            class: 'table-hover table-bordered table-condensed',
+            columnas: [
+                { leyenda: '', style: { width: '140px' }, class: 'text-center', columna: 'EstadoToma', filtro: function(){
+                    return anexGrid_select({
+                        class: 'btn btn-warning btn-xs',
+                        data: [
+                            { valor: '', contenido: 'Todos' },
+                            { valor: '1', contenido: 'Convenio Activo' },
+                            { valor: '2', contenido: 'Convenio Vencido' },
+                            { valor: '3', contenido: 'Notificación' },
+                            { valor: '4', contenido: 'Toma Inactiva' }
+                        ]
+                    });
+                }},
+                {
+                    leyenda: 'Folio',
+                    style: { width: '200px' },
+                    class: '',
+                    ordenable: true,
+                    columna: 'Folio',
+                    filtro: true
+                },
+                { leyenda: 'Propietario', class: '', ordenable: true, columna: 'Propietario', filtro: true },
+                { leyenda: 'Calle', class: '', ordenable: true, columna: 'Calle', filtro: true },
+                { leyenda: 'Colonia', class: '', ordenable: true, columna: 'Colonia', filtro: true },
+                { leyenda: 'Categoría', class: '', ordenable: true, columna: 'Categoria', filtro: false },
+                { leyenda: 'Periodo', class: '', ordenable: true, columna: 'PeriodoPago', filtro: false },
+            ],
+            modelo: [
+                {
+                    class: 'text-center',
+                    formato: function(tr, obj, valor) {
+                        if (obj.Activa == 1) {
+                            if (obj.ConvenioActivo || obj.ConvenioVencido) {
+                                return anexGrid_dropdown({
+                                    contenido: '<i class="glyphicon glyphicon-cog"></i>',
+                                    class: 'btn btn-primary btn-xs',
+                                    target: '_blank',
+                                    id: 'editar-' + obj.Nombre,
+                                    data: [
+                                        { href: '@Url.Action("ConceptoPago", "Tomas")?tomaId=' +
+                                                obj.TomaId +
+                                                '&conceptoPagoId=' +
+                                                obj.ConceptoPagoId,
+                                            contenido: 'Pago Convenio'
+                                        },
+                                        { href: '@Url.Action("Tabs", "Tomas")?propietarioId=' + obj.PropietarioId,
+                                            contenido: 'Editar Toma'
+                                        },
+                                        { href: '@Url.Action("RegistroConvenioSuministroAgua", "Tomas")?tomaId=' +
+                                                obj.TomaId,
+                                            contenido: 'Editar Convenio'
+                                        },
+                                        { href: '@Url.Action("RegistroServicio", "Tomas")?tomaId=' + obj.TomaId,
+                                            contenido: 'Agregar Servicio'
+                                        },
+                                        { href: '@Url.Action("ImprimirEstadoCuenta", "Tomas")?tomaId=' + obj.TomaId,
+                                        contenido: 'Estado Cuenta'
+                                        }                                        
+                                    ]
+                                });
+                            } else {
+                                return anexGrid_dropdown({
+                                    contenido: '<i class="glyphicon glyphicon-cog"></i>',
+                                    class: 'btn btn-primary btn-xs',
+                                    target: '_blank',
+                                    id: 'editar-' + obj.Nombre,
+                                    data: [
+                                        { href: '@Url.Action("ConceptoPago", "Tomas")?tomaId=' +
+                                                obj.TomaId +
+                                                '&conceptoPagoId=' +
+                                                obj.ConceptoPagoId,
+                                            contenido: 'Pago'
+                                        },
+                                        { href: '@Url.Action("Tabs", "Tomas")?propietarioId=' + obj.PropietarioId,
+                                            contenido: 'Editar Toma'
+                                        },
+                                        { href: '@Url.Action("RegistroConvenioSuministroAgua", "Tomas")?tomaId=' +
+                                                obj.TomaId + '&editar=' + false,
+                                            contenido: 'Agregar Convenio'
+                                        },
+                                        { href: '@Url.Action("HistorialPagos", "Tomas")?tomaId=' + obj.TomaId,
+                                            contenido: 'Historial de Pagos'
+                                        },
+                                        { href: '@Url.Action("RegistroServicio", "Tomas")?tomaId=' + obj.TomaId,
+                                            contenido: 'Agregar Servicio'
+                                        },
+                                        { href: '@Url.Action("ImprimirEstadoCuenta", "Tomas")?tomaId=' + obj.TomaId,
+                                            contenido: 'Estado Cuenta'
+                                        }
+                                    ]
+                                });
+                            }
+                        } else {
+                            return anexGrid_dropdown({
+                                contenido: '<i class="glyphicon glyphicon-cog"></i>',
+                                class: 'btn btn-primary btn-xs',
+                                target: '_blank',
+                                id: 'editar-' + obj.Nombre,
+                                data: [
+                                    { href: '@Url.Action("Tabs", "Tomas")?propietarioId=' + obj.PropietarioId,
+                                        contenido: 'Editar'
+                                    }
+                                ]
+                            });
+                        }
+                    }
+                },
+                {
+                    formato: function(tr, obj, valor) {
+
+                        var convenioActivo = obj.ConvenioActivo == 1
+                            ? '<i class="glyphicon glyphicon-link verde" title = "Convenio Activo"></i>'
+                            : '';
+                        var convenioVencido = obj.ConvenioVencido == 1
+                            ? '<i class="glyphicon glyphicon-link rojo" title = "Convenio Vencido"></i>'
+                            : '';
+                        var notificacion = obj.Notificacion == 1
+                            ? '<i class="glyphicon glyphicon-screenshot naranja" title = "' + obj.NotificacionDetalle + '"></i>'
+                            : '';
+                        var pasiva = obj.Pasiva == 1
+                            ? '<i class="glyphicon glyphicon-remove-circle naranja" title = "Inactiva"></i>'
+                            : '';
+
+                        return obj.Folio + ' ' + convenioActivo + '' + convenioVencido + ' ' + notificacion + ' ' + pasiva;
+
+                    }
+                },
+                { propiedad: 'Propietario' },
+                { propiedad: 'Calle' },
+                { propiedad: 'Colonia' },
+                { propiedad: 'Categoria', class: 'text-center', },
+                { propiedad: 'PeriodoPago', class: 'text-center', },
+            ],
+            url: '@Url.Content("~/home/listar")',
+            paginable: true,
+            filtrable: true,
+            limite: [20, 60, 100],
+            columna: 'Folio',
+            columna_orden: 'ASC'
+        };
+
+        $(document).ready(function () {
+            var grid = $("#list").anexGrid(data);
+        })
+
+    </script>
+}
+

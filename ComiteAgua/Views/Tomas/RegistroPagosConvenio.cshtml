@@ -1,0 +1,261 @@
+﻿@model ComiteAgua.ViewModels.Tomas.PagosViewModel
+
+@{
+    ViewBag.Title = "Pagos Convenio";
+}
+
+<br />
+
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Pago Convenio</a></li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-auto ml-auto">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+            <button id="ModalConvenioButton" type="button" class="btn btn-secondary">Ver Convenio</button>           
+        </div>
+    </div>
+</div>
+
+<br />
+
+@*@using (Html.BeginForm("GuardarPagoConvenio", "Tomas", FormMethod.Post, new { role = "form" }))*@
+@using (Html.BeginForm(null,null,FormMethod.Post, new { role = "form" }))
+{
+    @Html.HiddenFor(m => m.TomaId)
+    @Html.HiddenFor(m => m.ConvenioId)
+    @Html.HiddenFor(m => m.ConceptoPagoId)
+    @Html.HiddenFor(m => m.TotalPagosConvenio)
+    @Html.HiddenFor(m => m.TotalConvenio)
+    @Html.HiddenFor(m => m.FolioTarjeta)
+
+    <div class="col-md-9 mr-auto ml-auto">
+        <div class="card">
+            <div class="card-header text-center">
+                Pagos Convenio
+            </div>
+            <div class="card-body">
+
+                @*Resumen*@
+                <div class="form-group text-center">
+                    <label>@Model.ResumenPagoConvenio</label>
+                </div>
+
+                @*Total*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.SubTotal, "Total", new { @for = "SubTotal", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.SubTotal, new { @class = "form-control validaPago moneda" })
+                        @Html.ValidationMessageFor(m => m.SubTotal, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div> 
+                
+                @*Observaciones*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Observaciones, "Recibo Renglo 1", new { @for = "Observaciones", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.Observaciones, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Observaciones, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+                @*Adicional*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Adicional, "Recibo Renglo 2", new { @for = "Adicional", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.Adicional, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Adicional, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>  
+                
+                @*Fecha Alta*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.FechaAlta, "Fecha Pago", new { @for = "FechaAlta", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.FechaAlta, new { @class = "form-control", @type = "date" })
+                        @Html.ValidationMessageFor(m => m.FechaAlta, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+
+            </div>
+            <div class="card-footer">
+                @*Button*@
+                <div class="row">
+                    <div class="mr-auto ml-auto">
+                        <button type="submit" value="GuardarPagoConvenio" formaction="GuardarPagoConvenio" class="btn btn-success">Guardar</button>
+                        <button type="submit" value="GuardarPagoConvenioRecibo" formaction="GuardarPagoConvenioRecibo" class="btn btn-success">Guardar e Imprimir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Modal Convenio -->
+<div class="modal fade bd-example-modal-lg" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Convenio</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Propietario -->
+                <div class="form-group row">
+                    <label for="PropietarioTextBox" class="col-sm-4 col-form-label text-right">Responsable</label>
+                    <div class="col-sm-6">
+                        <input type="text" readonly class="form-control font-weight-bold" id="PropietarioTextBox">
+                    </div>
+                </div>
+                <!-- Concepto -->
+                <div class="form-group row">
+                    <label for="ConceptoTextBox" class="col-sm-4 col-form-label text-right">Concepto</label>
+                    <div class="col-sm-6">
+                        <input type="text" readonly class="form-control font-weight-bold" id="ConceptoTextBox">
+                    </div>
+                </div>
+                <!-- Periodo Pago -->
+                <div class="form-group row">
+                    <label for="PeriodoPagoTextBox" class="col-sm-4 col-form-label text-right">Periodo Pagos</label>
+                    <div class="col-sm-6">
+                        <input type="text" readonly class="form-control font-weight-bold" id="PeriodoPagoTextBox">
+                    </div>
+                </div>
+                <!-- Periodo Inicio -->
+                <div class="form-group row">
+                    <label for="PeriodoInicioTextBox" class="col-sm-4 col-form-label text-right">Periodo Inicio</label>
+                    <div class="col-sm-6">
+                        <input type="text" readonly class="form-control font-weight-bold" id="PeriodoInicioTextBox">
+                    </div>
+                </div>
+                <!-- Periodo Fin -->
+                <div class="form-group row">
+                    <label for="PeriodoFinTextBox" class="col-sm-4 col-form-label text-right">Periodo Fin</label>
+                    <div class="col-sm-6">
+                        <input type="text" readonly class="form-control font-weight-bold" id="PeriodoFinTextBox">
+                    </div>
+                </div>
+                <!-- Sub Total -->
+                <div class="form-group row">
+                    <label for="SubTotalTextBox" class="col-sm-4 col-form-label text-right">Sub Total</label>
+                    <div class="col-sm-6">
+                        <input type="text" readonly class="form-control font-weight-bold" id="SubTotalTextBox">
+                    </div>
+                </div>
+                <!-- Descuento -->
+                <div class="form-group row">
+                    <label for="DescuentoTextBox" class="col-sm-4 col-form-label text-right">Descuento</label>
+                    <div class="col-sm-6">
+                        <input type="text" readonly class="form-control font-weight-bold" id="DescuentoTextBox">
+                    </div>
+                </div>
+                <!-- Total -->
+                <div class="form-group row">
+                    <label for="TotalTextBox" class="col-sm-4 col-form-label text-right">Total</label>
+                    <div class="col-sm-6">
+                        <input type="text" readonly class="form-control font-weight-bold" id="TotalTextBox">
+                    </div>
+                </div>
+                <!-- Pagos de -->
+                <div class="form-group row">
+                    <label for="PagosDeTextBox" class="col-sm-4 col-form-label text-right">Pagos de</label>
+                    <div class="col-sm-6">
+                        <input type="text" readonly class="form-control font-weight-bold" id="PagosDeTextBox">
+                    </div>
+                </div>
+                <!-- Autoriza -->
+                <div class="form-group row">
+                    <label for="AutorizaTextBox" class="col-sm-4 col-form-label text-right">Autoriza</label>
+                    <div class="col-sm-6">
+                        <input type="text" readonly class="form-control font-weight-bold" id="AutorizaTextBox">
+                    </div>
+                </div>                
+                <!-- Observaciones -->
+                <div class="form-group row">
+                    <label for="ObservacionesTextBox" class="col-sm-4 col-form-label text-right">Observaciones</label>
+                    <div class="col-sm-6">
+                        <input type="text" readonly class="form-control font-weight-bold" id="ObservacionesTextBox">
+                    </div>
+                </div>
+
+                <div id="Tarjeta"></div>
+
+            </div>
+            <div class="modal-footer col-auto ml-auto mr-auto">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+
+        $(document).ready(function () {
+
+            $("#SubTotal").change(function () {
+                var subTotal = $(this).val().replace(/[^0-9\.]/g, '');
+                var restaConvenio = @Model.RestanConvenio;
+
+                $.validator.addMethod("validaPago", function () {
+                    return !(subTotal > restaConvenio);
+                }, "El total no puede ser mayor al restante para poder concluir el Convenio.");
+            });
+
+            $("#ModalConvenioButton").click(function () {
+
+                $.ajax({
+                    type: 'get',
+                    dataType: 'json',
+                    cache: false,
+                    url: '@Url.Action("ObtenerConvenio", "Tomas")',
+                    data: { convenioId: @Model.ConvenioId },
+                    success: function (model) {
+
+                        $("#ConceptoTextBox").val(model.convenioViewModel.ConceptoConvenio);
+                        $("#PeriodoPagoTextBox").val(model.convenioViewModel.PeriodoPago);
+                        $("#PeriodoInicioTextBox").val(model.convenioViewModel.PeriodoInicio);
+                        $("#PeriodoFinTextBox").val(model.convenioViewModel.PeriodoFin);
+                        $("#SubTotalTextBox").val(model.convenioViewModel.SubTotal);
+                        $("#DescuentoTextBox").val(model.convenioViewModel.Descuento);
+                        $("#TotalTextBox").val(model.convenioViewModel.Total);
+                        $("#ObservacionesTextBox").val(model.convenioViewModel.Observaciones);
+                        $("#PropietarioTextBox").val(model.convenioViewModel.Propietario);
+                        $("#AutorizaTextBox").val(model.convenioViewModel.Persona);
+                        $("#PagosDeTextBox").val(model.convenioViewModel.PagosDe);
+
+                        $('#exampleModal').modal('show');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert('Error - ' + errorThrown);
+                    }
+                });
+
+                 $.ajax({
+                            type: "GET",
+                            url: '@Url.Action("_TarjetaConvenio", "Tomas")',
+                            data: { convenioId: @Model.ConvenioId },
+                            datatype: "Json",
+                            success: function (data) {
+                                $("#Tarjeta").html(data)
+                                $('#tarjetaModal').modal('show');
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                alert('Error - ' + errorThrown);
+                            }
+                        });
+
+            });           
+
+        });
+
+    </script>
+}

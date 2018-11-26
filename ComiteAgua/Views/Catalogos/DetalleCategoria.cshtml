@@ -1,0 +1,61 @@
+﻿@model ComiteAgua.ViewModels.Catalogos.CategoriasViewModel
+@{
+    ViewBag.Title = "Detalle Categoría";
+}
+
+<br />
+
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Model.UrlRetorno">Regresar</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Gastos Comité</a></li>
+    </ol>
+</nav>
+
+<br/>
+
+@if (Model.Tarifas.Count > 0)
+{
+    <table id="categorias" class="table table-hover table-bordered table-sm" style="width:100%">
+        <thead class="thead-dark text-center">
+            <tr>
+                <th scope="col">Categoría</th>
+                <th scope="col">Abreviatura</th>
+                <th scope="col">Año</th>
+                <th scope="col">Costo</th>                
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model.Tarifas)
+            {
+                <tr class="text-center">
+                    <td scope="row">@item.Categoria.Nombre</td>
+                    <td>@item.Categoria.Abreviatura</td>
+                    <td>@item.MesAno</td>
+                    <td>@item.CostoTarifa.ToString("C")</td>                    
+                </tr>
+            }
+
+        </tbody>
+        <tfoot class="text-center">
+            <tr>
+                <th scope="col">Categoría</th>
+                <th scope="col">Abreviatura</th>
+                <th scope="col">Año</th>
+                <th scope="col">Costo</th>               
+            </tr>
+        </tfoot>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+        <strong>Alerta!</strong> No se encontraron registros.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
