@@ -111,7 +111,8 @@ namespace ComiteAgua.Domain.Recibos
         {
             var recibos = _context.Recibo
                 .Include(r => r.Pago)
-                .Include(r => r.Pago.Toma);
+                .Include(r => r.Pago.Toma)
+                .Where(r => r.PagoId != null);
 
             if (reciboId != null)
             {

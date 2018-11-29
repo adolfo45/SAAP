@@ -49,7 +49,6 @@ namespace ComiteAgua.Domain
 
             _context.SaveChanges();
         }
-
         public void Editar(Convenio model)
         {
             var bd = this.ObtenerConvenio(model.ConvenioId);           
@@ -75,7 +74,6 @@ namespace ComiteAgua.Domain
 
             _context.SaveChanges();
         }
-
         public void EliminarConvenio(int convenioId, int usuarioCambioId)
         {
             var result = _context.Convenio.Where(c => c.ConvenioId == convenioId).FirstOrDefault();
@@ -86,14 +84,12 @@ namespace ComiteAgua.Domain
 
             _context.SaveChanges();
         }
-
         public void Guardar(Convenio model)
         {            
             _context.Entry(model).State = EntityState.Added;
            
             _context.SaveChanges();
         } // public void Guardar(Toma model)      
-
         public Convenio ObtenerConvenio(int convenioId)
         {
             var result = _context.Convenio
@@ -101,13 +97,14 @@ namespace ComiteAgua.Domain
                 .Include(c => c.PeriodoPagoConvenio)
                 .Include(c => c.ConceptoConvenio)
                 .Include(c => c.Toma.Propietario.Persona.PersonaFisica)
-                .Include(c => c.Toma.Direccion)    
+                .Include(c => c.Toma.Direccion)
+                .Include(c => c.Toma.Direccion.TiposCalle)
+                .Include(c => c.Toma.Direccion.Calles)
                 .Include(c => c.Persona)
                 .Where(c => c.ConvenioId == convenioId).FirstOrDefault();
 
             return result;
         }
-
         public Convenio ObtenerConvenioTomaNueva(int tomaId = 0)
         {
             var result = _context.Convenio
@@ -117,7 +114,6 @@ namespace ComiteAgua.Domain
 
             return result;
         } // public Convenio ObtenerConvenioTomaNueva(int tomaId = 0)
-
         public Convenio ObtenerConvenioActivo(int tomaId = 0)
         {
             var result = _context.Convenio
@@ -129,6 +125,14 @@ namespace ComiteAgua.Domain
 
             return result;
         } // public Convenio ObtenerConvenioActivo(int tomaId = 0)        
+
+        public IQueryable<Pago> ObtenerPagosConvenio(int convenioId)
+        {
+            var result = _context.Pago
+                .Where(p => p.ConvenioId == convenioId);
+
+            return result;
+        } 
 
         #endregion
 

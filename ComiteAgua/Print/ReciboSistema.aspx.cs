@@ -45,6 +45,7 @@ namespace ComiteAgua.Print
 
             this.ReciboIdHiddenField.Value = this.Page.Request["reciboId"];
             this.UrlOrigenHiddenField.Value = this.Page.Request["UrlOrigen"];
+            this.ConvenioId.Value = this.Page.Request["convenioId"];
 
             this.InicializarPantalla();
         }
@@ -68,9 +69,36 @@ namespace ComiteAgua.Print
         public void InicializarPantalla()
         {
            
-            var recibosDomain = new RecibosDomain(_context);            
-           
+            var recibosDomain = new RecibosDomain(_context);
             var recibo = recibosDomain.ObtenerReciboImpresion(Convert.ToInt32(this.ReciboIdHiddenField.Value));
+
+            if (!string.IsNullOrEmpty(this.ConvenioId.Value))
+            {
+                var conveniosDomain = new ConveniosDomain(_context);
+                var reciboConvenio = recibosDomain.ObtenerReciboImpresion(Convert.ToInt32(this.ReciboIdHiddenField.Value));
+                var convenioPagos = conveniosDomain.ObtenerPagosConvenio(Convert.ToInt32(this.ConvenioId.Value));
+                var convenio = conveniosDomain.ObtenerConvenio(Convert.ToInt32(this.ConvenioId.Value));
+
+                this.UsuarioTextBox.InnerText = convenio.Toma.Propietario.Persona.PersonaFisica.Nombre + " " +
+                                                convenio.Toma.Propietario.Persona.PersonaFisica.ApellidoPaterno + " " +
+                                                convenio.Toma.Propietario.Persona.PersonaFisica.ApellidoMaterno;
+                this.DireccionTextBox.InnerText = convenio.Toma.DireccionId > 0 ? (convenio.Toma.Direccion.CalleId > 0 ? convenio.Toma.Direccion.TiposCalle.Nombre + " " + convenio.Toma.Direccion.Calles.Nombre : convenio.Toma.Direccion.Calle) + "" + (!string.IsNullOrEmpty(convenio.Toma.Direccion.NumExt) ? " EXT." + convenio.Toma.Direccion.NumExt : string.Empty) + "" +
+                                                                                     (!string.IsNullOrEmpty(convenio.Toma.Direccion.NumInt) ? " INT." + convenio.Toma.Direccion.NumInt : string.Empty) : string.Empty;
+                this.ConceptoPagoTextBox.InnerText = "PAGO POR CONVENIO";
+                this.FechaTextBox.InnerText = DateTime.Now.ToString("dd/MM/yyyy");
+                this.FolioTextBox.InnerText = convenio.Toma.Folio.ToString();
+                this.NoReciboTextBox.InnerText = recibo.NoRecibo.ToString();
+                this.CantidadLetraTextBox.InnerText = recibo.CantidadLetra;
+                this.TotalTextBox.InnerText = convenioPagos.Sum(c => c.Total).ToString("C");
+                this.SubTotalTextBox.InnerText = convenioPagos.Sum(c => c.Total).ToString("C");
+                // Muestra codigo QR                                    
+                CodigoImg.ImageUrl = "/UploadFiles/CodigosQR/" + recibo.CodigoQRurl;
+                CodigoImg.Height = 100;
+                CodigoImg.Width = 100;
+                this.CanceladoText.Visible = false;
+                return;
+            }
+                       
             this.CanceladoText.Visible = !recibo.Pago.Activo;
             this.UsuarioTextBox.InnerText = recibo.Pago.Toma.Propietario.Persona.PersonaFisica.Nombre + " " +
                                             recibo.Pago.Toma.Propietario.Persona.PersonaFisica.ApellidoPaterno + " " +

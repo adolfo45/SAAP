@@ -205,7 +205,8 @@ namespace ComiteAgua.Domain
                             Notificacion = e.Toma.Any(c => c.Notificacion.Any(ca => ca.Activa)) ? true : false,
                             NotificacionDetalle = e.Toma.Select(no => no.Notificacion.Where(ne => ne.Activa)
                                                     .Select(n => n.UsuarioNotifico.Persona.Nombre + " " + n.UsuarioNotifico.Persona.ApellidoPaterno + " " + n.UsuarioNotifico.Persona.ApellidoMaterno + ", " + n.TipoNotificacion.Nombre + ", " + n.FechaEntrega).LastOrDefault()).LastOrDefault(),
-                            Pasiva = e.Toma.Select(t => t.Pasiva).FirstOrDefault() == true ? 1 : 0
+                            Pasiva = e.Toma.Select(t => t.Pasiva).FirstOrDefault() == true ? 1 : 0,
+                            ConvenioId = e.Toma.Select(c => c.Convenio.Select(ca => ca.ConvenioId).LastOrDefault()).LastOrDefault()
                         }
                     ,
                     query.Count()

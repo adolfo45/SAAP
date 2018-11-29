@@ -333,6 +333,10 @@
     <Compile Include="Migrations\201809211607482_UpdateTablePagos.Designer.cs">
       <DependentUpon>201809211607482_UpdateTablePagos.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201811291758388_PagoIdNull_Recibos.cs" />
+    <Compile Include="Migrations\201811291758388_PagoIdNull_Recibos.Designer.cs">
+      <DependentUpon>201811291758388_PagoIdNull_Recibos.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ArchivoGasto.cs" />
     <Compile Include="Models\Asunto.cs" />
@@ -545,6 +549,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201809211607482_UpdateTablePagos.resx">
       <DependentUpon>201809211607482_UpdateTablePagos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811291758388_PagoIdNull_Recibos.resx">
+      <DependentUpon>201811291758388_PagoIdNull_Recibos.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

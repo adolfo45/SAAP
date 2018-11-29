@@ -2037,6 +2037,56 @@ namespace ComiteAgua.Controllers.Tomas
             };
             return View("Recibos", reciboVM);
         }
+        public ActionResult ImprimirReciboConvenio(int tomaId, int convenioId)
+        {
+            var conveniosDomain = new ConveniosDomain(_context);
+            var recibosDomain = new RecibosDomain(_context);
+            var usuariosDomain = new UsuariosDomain(_context);
+            var tomasDomain = new TomasDomain(_context);
+
+            //Guarda recibo
+            var noRecibo = recibosDomain.ObtenerNoRecibo() + 1;
+            var usuarioPersona = usuariosDomain.ObtenerUsuarioPersona(Convert.ToInt32(Session["UsuarioId"].ToString()));
+            var toma = tomasDomain.ObtenerToma(tomaId);
+            var convenio = conveniosDomain.ObtenerPagosConvenio(convenioId);
+
+
+            string informacionRecibo = string.Format("RECIBO DE PAGO NO: {1}{0}" +
+                                                     "FECHA: {2}{0}" +
+                                                     "CLAVE DE CONTROL: {3}{0}" +
+                                                     "CANTIDAD PAGADA: {4}{0}" +
+                                                     "CAJERO(A): {5}{0}",
+                Environment.NewLine, noRecibo,
+                DateTime.Now.ToString("dd/MM/yyyy"),
+                toma.Folio,
+                convenio.Sum(c => c.Total).ToString("C"),
+                //pago.Total.ToString("C"),
+                usuarioPersona.Persona.Nombre + " " + usuarioPersona.Persona.ApellidoPaterno + " " + usuarioPersona.Persona.ApellidoMaterno);
+            //Genera codigoQR
+            var QQRurl = this.GenerarCodigoQR(informacionRecibo);
+
+            var recibo = new Recibo()
+            {
+                //PagoId = pago.PagoId,
+                Fecha = DateTime.Now,
+                CodigoQRurl = QQRurl,
+                NoRecibo = noRecibo,
+                //Observaciones = !string.IsNullOrEmpty(model.Observaciones) ? AdsertiFunciones.FormatearTexto(model.Observaciones) : string.Empty,
+                //Adicional = !string.IsNullOrEmpty(model.Adicional) ? AdsertiFunciones.FormatearTexto(model.Adicional) : string.Empty,
+                CantidadLetra = this.Convertir(convenio.Sum(c => c.Total).ToString()),
+                FechaAlta = DateTime.Now,
+                UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
+                //RenglonAdicional1 = !string.IsNullOrEmpty(model.RenglonAdicional1) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional1) : string.Empty,
+                //RenglonAdicional2 = !string.IsNullOrEmpty(model.RenglonAdicional2) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional2) : string.Empty,
+                //RenglonAdicional3 = !string.IsNullOrEmpty(model.RenglonAdicional3) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional3) : string.Empty,
+            };
+
+            recibosDomain.Gurdar(recibo);
+
+            Response.Redirect("~/Print/ReciboSistema.aspx?reciboId=" + recibo.ReciboId + "&convenioId=" + convenioId);
+
+            return View();
+        }
 
         #endregion
 
