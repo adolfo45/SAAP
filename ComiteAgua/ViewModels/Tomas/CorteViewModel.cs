@@ -27,7 +27,7 @@ namespace ComiteAgua.ViewModels.Tomas
         public string TotalIngresos { get; set; }
         public string TotalGastos { get; set; }
         public string Total { get; set; }
-        public DateTime FechaConsulta { get; set; }
+        public DateTime FechaConsulta { get; set; }       
 
         #endregion
 

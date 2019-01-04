@@ -2068,6 +2068,7 @@ namespace ComiteAgua.Controllers.Tomas
             var recibo = new Recibo()
             {
                 //PagoId = pago.PagoId,
+                ConvenioId = convenioId,
                 Fecha = DateTime.Now,
                 CodigoQRurl = QQRurl,
                 NoRecibo = noRecibo,
@@ -2213,14 +2214,15 @@ namespace ComiteAgua.Controllers.Tomas
                     Total = item.Total.ToString("C"),
                     TipoPago = (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua) || (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva) ? "Recibo" :
                                 (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count == 0) ? "Tarjeta" :
-                                (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count > 0) ? "Recibo" : string.Empty
-
+                                (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count > 0) ? "Recibo" : string.Empty,
+                    Activo = item.Activo
                 };
 
                 listaPagos.Add(pagosViewModel);
             }
 
-            var totalIngresos = ingresos.Sum(x => x.Total);
+            //var totalIngresos = ingresos.Sum(x => x.Total);
+            var totalIngresos = ingresos.Where(x => x.Activo).Sum(x => x.Total);
             var totalGastos = gastos.Sum(x => x.Total);
             var total = totalIngresos - totalGastos;
 

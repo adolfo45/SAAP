@@ -33,19 +33,19 @@
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("Tabs", "Tomas")" title="Agregar toma"><span class="ion-plus-round"></span> Toma<span class="sr-only">(current)</span></a>
-                    </li>                  
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Gastos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="@Url.Action("GastosComite", "Tomas")">Agregar</a>
-                            <a class="dropdown-item" href="@Url.Action("ConsultarGastos", "Tomas")">Consultar</a>                            
+                            <a class="dropdown-item" href="@Url.Action("ConsultarGastos", "Tomas")">Consultar</a>
                         </div>
-                    </li>   
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("ConsultarCorte", "Tomas")" title="Consultar corte"><span class="ion-cash"></span> Corte<span class="sr-only">(current)</span></a>
-                    </li>                               
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-wrench"></i> Servicios
@@ -54,52 +54,52 @@
                             <a class="dropdown-item" href="@Url.Action("ConsultarServicios", "Tomas")">Consultar</a>
                             <a class="dropdown-item" href="@Url.Action("RegistroServicio", "Tomas")">Agregar</a>
                         </div>
-                    </li> 
-                    <li class="nav-item">
+                    </li>
+                    @*<li class="nav-item">
                         <a class="nav-link" href="@Url.Action("DescargarPadron", "Tomas")" title="Descargar Padron"><span class="ion-ios-arrow-thin-down"></span> Padron<span class="sr-only">(current)</span></a>
-                    </li>                       
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Notificaciones
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="@Url.Action("NotificacionesLista", "Notificaciones")">Notificaciones entregadas</a>
-                            <a class="dropdown-item" href="@Url.Action("NotificacionesPagadas", "Notificaciones")">Notificaciones pagadas</a>
-                        </div>
-                    </li> 
+                    </li>*@
+                    @*<li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Notificaciones
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="@Url.Action("NotificacionesLista", "Notificaciones")">Notificaciones entregadas</a>
+                <a class="dropdown-item" href="@Url.Action("NotificacionesPagadas", "Notificaciones")">Notificaciones pagadas</a>
+            </div>
+        </li>
                     <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("ReportesNotificacion", "Notificaciones")" title="Reportes Notificación"><span class="glyphicon glyphicon-bell"></span> Reportes Notificación<span class="sr-only">(current)</span></a>
-                    </li>  
+                    </li>*@
                     <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("Recibos", "Tomas")" title="Reportes Notificación"><span class="glyphicon glyphicon-qrcode"></span> Recibos<span class="sr-only">(current)</span></a>
-                    </li>  
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Categorias
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="@Url.Action("EditAddCategoria", "Catalogos", new { urlRetorno = Url.Action("Index", "Home") })">Agregar</a>
-                            <a class="dropdown-item" href="@Url.Action("Categorias", "Catalogos")">Consultar</a>                            
+                            <a class="dropdown-item" href="@Url.Action("Categorias", "Catalogos")">Consultar</a>
                         </div>
-                    </li> 
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Usuarios
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">                            
-                            <a class="dropdown-item" href="@Url.Action("Usuarios", "Seguridad")">Consultar</a>      
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="@Url.Action("Usuarios", "Seguridad")">Consultar</a>
                             <a class="dropdown-item" href="@Url.Action("AdministrarUsuarios", "Seguridad", new { urlRetorno = Url.Action("Usuarios", "Seguridad") })">Agregar</a>
                         </div>
-                    </li> 
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Descuentos
                         </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">                            
-                            <a class="dropdown-item" href="@Url.Action("Descuentos", "Catalogos")">Consultar</a>      
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="@Url.Action("Descuentos", "Catalogos")">Consultar</a>
                             <a class="dropdown-item" href="@Url.Action("EditAddDescuento", "Catalogos", new { urlRetorno = Url.Action("Index", "Home") })">Agregar</a>
                         </div>
-                    </li> 
+                    </li>
                 </ul>
             </div>
 

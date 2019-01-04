@@ -1,4 +1,5 @@
-﻿using ComiteAgua.Models.Seguridad;
+﻿using ComiteAgua.Models.Recibos;
+using ComiteAgua.Models.Seguridad;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,6 +55,7 @@ namespace ComiteAgua.Models
         public int? UsuarioCambioId { get; set; }
 
         public List<Pago> Pago { get; set; }
+        public List<Recibo> Recibo { get; set; }
 
         #endregion
 

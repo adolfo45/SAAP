@@ -1,5 +1,11 @@
 ﻿@model ComiteAgua.ViewModels.Tomas.CorteViewModel
 
+<style>
+    .amarillo {
+        background-color: gold;
+    }
+</style>
+
 <div class="col-md-12">
     <div class="row">               
         <h6 class="text-center">Total Ingresos: @Model.TotalIngresos</h6>   
@@ -42,12 +48,12 @@
 
                     @foreach (var item in Model.Pagos)
                 {
-                        <tr>
-                            <td>@(item.TipoPago+"-"+item.NoRecibo.ToString())</td>
+                        <tr class="@(!item.Activo ? "amarillo" : "")">
+                            <td>@(item.TipoPago+"-"+item.NoRecibo.ToString()) @(!item.Activo ? "(Cancelado)" : "")</td>
                             <td>@item.ConceptoPago</td>
-                        <td>@item.Total</td>
-                    </tr>
-                    }
+                            <td>@item.Total</td>
+                        </tr>
+                }
 
                 </tbody>
             </table>

@@ -337,6 +337,10 @@
     <Compile Include="Migrations\201811291758388_PagoIdNull_Recibos.Designer.cs">
       <DependentUpon>201811291758388_PagoIdNull_Recibos.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201811291902192_RelacionConvenioRecibos.cs" />
+    <Compile Include="Migrations\201811291902192_RelacionConvenioRecibos.Designer.cs">
+      <DependentUpon>201811291902192_RelacionConvenioRecibos.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ArchivoGasto.cs" />
     <Compile Include="Models\Asunto.cs" />
@@ -552,6 +556,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201811291758388_PagoIdNull_Recibos.resx">
       <DependentUpon>201811291758388_PagoIdNull_Recibos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811291902192_RelacionConvenioRecibos.resx">
+      <DependentUpon>201811291902192_RelacionConvenioRecibos.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

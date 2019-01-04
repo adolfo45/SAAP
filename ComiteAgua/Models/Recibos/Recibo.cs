@@ -24,8 +24,10 @@ namespace ComiteAgua.Models.Recibos
         #region * Propiedades declaradas por Comité Agua * 
 
         public int ReciboId { get; set; }
-        public int? PagoId { get; set; }
+        public int? PagoId { get; set; }        
         public Pago Pago { get; set; }
+        public int? ConvenioId { get; set; }
+        public Convenio Convenio { get; set; }
         public DateTime Fecha { get; set; }
         public string CodigoQRurl { get; set; }
         public int NoRecibo { get; set; }
