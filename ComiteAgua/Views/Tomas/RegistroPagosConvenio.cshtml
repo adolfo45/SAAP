@@ -1,5 +1,5 @@
 ﻿@model ComiteAgua.ViewModels.Tomas.PagosViewModel
-
+@using ComiteAgua.Domain
 @{
     ViewBag.Title = "Pagos Convenio";
 }
@@ -9,7 +9,7 @@
 @*Breadcrumb*@
 <nav aria-label="breadcrumb" role="navigation">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
+        <li class="breadcrumb-item"><a href="@Model.UrlRetorno">Regresar</a></li>
         <li class="breadcrumb-item active" aria-current="page"><a>Pago Convenio</a></li>
     </ol>
 </nav>
@@ -17,82 +17,93 @@
 <div class="row">
     <div class="col-auto ml-auto">
         <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-            <button id="ModalConvenioButton" type="button" class="btn btn-secondary">Ver Convenio</button>           
+            <button id="ModalConvenioButton" type="button" class="btn btn-secondary">Ver Convenio</button>
         </div>
     </div>
 </div>
 
 <br />
 
-@*@using (Html.BeginForm("GuardarPagoConvenio", "Tomas", FormMethod.Post, new { role = "form" }))*@
-@using (Html.BeginForm(null,null,FormMethod.Post, new { role = "form" }))
+@if (!(Model.EstatusConvenioId == (int)EstatusConvenioDomain.EstatusConvenioEnum.Concluido))
 {
-    @Html.HiddenFor(m => m.TomaId)
-    @Html.HiddenFor(m => m.ConvenioId)
-    @Html.HiddenFor(m => m.ConceptoPagoId)
-    @Html.HiddenFor(m => m.TotalPagosConvenio)
-    @Html.HiddenFor(m => m.TotalConvenio)
-    @Html.HiddenFor(m => m.FolioTarjeta)
+    using (Html.BeginForm(null, null, FormMethod.Post, new { role = "form" }))
+    {
+        @Html.HiddenFor(m => m.TomaId)
+        @Html.HiddenFor(m => m.ConvenioId)
+        @Html.HiddenFor(m => m.ConceptoPagoId)
+        @Html.HiddenFor(m => m.TotalPagosConvenio)
+        @Html.HiddenFor(m => m.TotalConvenio)
+        @Html.HiddenFor(m => m.FolioTarjeta)
 
-    <div class="col-md-9 mr-auto ml-auto">
-        <div class="card">
-            <div class="card-header text-center">
-                Pagos Convenio
-            </div>
-            <div class="card-body">
-
-                @*Resumen*@
-                <div class="form-group text-center">
-                    <label>@Model.ResumenPagoConvenio</label>
+        <div class="col-md-9 mr-auto ml-auto">
+            <div class="card">
+                <div class="card-header text-center">
+                    Pagos Convenio
                 </div>
+                <div class="card-body">
 
-                @*Total*@
-                <div class="form-group row">
-                    @Html.LabelFor(x => x.SubTotal, "Total", new { @for = "SubTotal", @class = "col-md-2 col-form-label ml-auto" })
-                    <div class="col-sm-6 mr-auto">
-                        @Html.TextBoxFor(d => d.SubTotal, new { @class = "form-control validaPago moneda" })
-                        @Html.ValidationMessageFor(m => m.SubTotal, null, new { @class = "badge badge-pill badge-danger" })
+                    @*Resumen*@
+                    <div class="form-group text-center">
+                        <label>@Model.ResumenPagoConvenio</label>
                     </div>
-                </div> 
-                
-                @*Observaciones*@
-                <div class="form-group row">
-                    @Html.LabelFor(x => x.Observaciones, "Recibo Renglo 1", new { @for = "Observaciones", @class = "col-md-2 col-form-label ml-auto" })
-                    <div class="col-sm-6 mr-auto">
-                        @Html.TextBoxFor(d => d.Observaciones, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Observaciones, null, new { @class = "badge badge-pill badge-danger" })
+
+                    @*Total*@
+                    <div class="form-group row">
+                        @Html.LabelFor(x => x.SubTotal, "Total", new { @for = "SubTotal", @class = "col-md-2 col-form-label ml-auto" })
+                        <div class="col-sm-6 mr-auto">
+                            @Html.TextBoxFor(d => d.SubTotal, new { @class = "form-control validaPago moneda" })
+                            @Html.ValidationMessageFor(m => m.SubTotal, null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
                     </div>
+
+                    @*Observaciones*@
+                    <div class="form-group row">
+                        @Html.LabelFor(x => x.Observaciones, "Recibo Renglo 1", new { @for = "Observaciones", @class = "col-md-2 col-form-label ml-auto" })
+                        <div class="col-sm-6 mr-auto">
+                            @Html.TextBoxFor(d => d.Observaciones, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Observaciones, null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
+                    </div>
+
+                    @*Adicional*@
+                    <div class="form-group row">
+                        @Html.LabelFor(x => x.Adicional, "Recibo Renglo 2", new { @for = "Adicional", @class = "col-md-2 col-form-label ml-auto" })
+                        <div class="col-sm-6 mr-auto">
+                            @Html.TextBoxFor(d => d.Adicional, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Adicional, null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
+                    </div>
+
+                    @*Fecha Alta*@
+                    <div class="form-group row">
+                        @Html.LabelFor(x => x.FechaAlta, "Fecha Pago", new { @for = "FechaAlta", @class = "col-md-2 col-form-label ml-auto" })
+                        <div class="col-sm-6 mr-auto">
+                            @Html.TextBoxFor(d => d.FechaAlta, new { @class = "form-control", @type = "date" })
+                            @Html.ValidationMessageFor(m => m.FechaAlta, null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
+                    </div>
+
                 </div>
-
-                @*Adicional*@
-                <div class="form-group row">
-                    @Html.LabelFor(x => x.Adicional, "Recibo Renglo 2", new { @for = "Adicional", @class = "col-md-2 col-form-label ml-auto" })
-                    <div class="col-sm-6 mr-auto">
-                        @Html.TextBoxFor(d => d.Adicional, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Adicional, null, new { @class = "badge badge-pill badge-danger" })
-                    </div>
-                </div>  
-                
-                @*Fecha Alta*@
-                <div class="form-group row">
-                    @Html.LabelFor(x => x.FechaAlta, "Fecha Pago", new { @for = "FechaAlta", @class = "col-md-2 col-form-label ml-auto" })
-                    <div class="col-sm-6 mr-auto">
-                        @Html.TextBoxFor(d => d.FechaAlta, new { @class = "form-control", @type = "date" })
-                        @Html.ValidationMessageFor(m => m.FechaAlta, null, new { @class = "badge badge-pill badge-danger" })
-                    </div>
-                </div>
-
-            </div>
-            <div class="card-footer">
-                @*Button*@
-                <div class="row">
-                    <div class="mr-auto ml-auto">
-                        <button type="submit" value="GuardarPagoConvenio" formaction="GuardarPagoConvenio" class="btn btn-success">Guardar</button>
-                        <button type="submit" value="GuardarPagoConvenioRecibo" formaction="GuardarPagoConvenioRecibo" class="btn btn-success">Guardar e Imprimir</button>
+                <div class="card-footer">
+                    @*Button*@
+                    <div class="row">
+                        <div class="mr-auto ml-auto">
+                            <button type="submit" value="GuardarPagoConvenio" formaction="GuardarPagoConvenio" class="btn btn-success">Guardar</button>
+                            <button type="submit" value="GuardarPagoConvenioRecibo" formaction="GuardarPagoConvenioRecibo" class="btn btn-success">Guardar e Imprimir</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    }
+}
+else
+{
+    <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+        <strong>Alerta!</strong> Convenio concluido.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
 }
 
@@ -176,7 +187,7 @@
                     <div class="col-sm-6">
                         <input type="text" readonly class="form-control font-weight-bold" id="AutorizaTextBox">
                     </div>
-                </div>                
+                </div>
                 <!-- Observaciones -->
                 <div class="form-group row">
                     <label for="ObservacionesTextBox" class="col-sm-4 col-form-label text-right">Observaciones</label>
@@ -253,7 +264,7 @@
                             }
                         });
 
-            });           
+            });
 
         });
 

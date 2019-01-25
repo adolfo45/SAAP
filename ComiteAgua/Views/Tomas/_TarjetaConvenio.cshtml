@@ -5,20 +5,29 @@
     <table class="table table-bordered">
         <thead class="thead-dark">
             <tr>
+                <th scope="col">No Recibo</th>
                 <th scope="col">Fecha</th>
                 <th scope="col">Abono</th>
                 <th scope="col">Saldo</th>
+                <th scope="col">Recibo</th>
             </tr>
         </thead>
         <tbody>
 
             @foreach (var item in Model)
             {
-                <tr>
-                    <td>@item.FechaAbono</td>
-                    <td>@item.AbonoConvenio</td>
-                    <td>@item.Saldo</td>
-                </tr>
+            <tr>
+                <td>@item.NoRecibo</td>
+                <td>@item.FechaAbono</td>
+                <td>@item.AbonoConvenio</td>
+                <td>@item.Saldo</td>
+                <td class="text-center">
+                    @if (!item.ReciboImpreso)
+                    {
+                        <a href='@Url.Action("GenerarReciboPagadoConvenio", "Tomas", new { pagoId = item.PagoId})' title="Imprimir recibo"><i class="fas fa-qrcode"></i></a>
+                    }
+                </td>
+            </tr>
             }
 
         </tbody>

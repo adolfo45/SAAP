@@ -85,7 +85,7 @@ namespace ComiteAgua.Print
                 this.DireccionTextBox.InnerText = convenio.Toma.DireccionId > 0 ? (convenio.Toma.Direccion.CalleId > 0 ? convenio.Toma.Direccion.TiposCalle.Nombre + " " + convenio.Toma.Direccion.Calles.Nombre : convenio.Toma.Direccion.Calle) + "" + (!string.IsNullOrEmpty(convenio.Toma.Direccion.NumExt) ? " EXT." + convenio.Toma.Direccion.NumExt : string.Empty) + "" +
                                                                                      (!string.IsNullOrEmpty(convenio.Toma.Direccion.NumInt) ? " INT." + convenio.Toma.Direccion.NumInt : string.Empty) : string.Empty;
                 this.ConceptoPagoTextBox.InnerText = "PAGO POR CONVENIO";
-                this.FechaTextBox.InnerText = DateTime.Now.ToString("dd/MM/yyyy");
+                this.FechaTextBox.InnerText = recibo.FechaAlta.ToString("dd/MM/yyyy");
                 this.FolioTextBox.InnerText = convenio.Toma.Folio.ToString();
                 this.NoReciboTextBox.InnerText = recibo.NoRecibo.ToString();
                 this.CantidadLetraTextBox.InnerText = recibo.CantidadLetra;
@@ -108,7 +108,7 @@ namespace ComiteAgua.Print
                                                         (!string.IsNullOrEmpty(recibo.Pago.Toma.Direccion.NumInt) ? " INT." + recibo.Pago.Toma.Direccion.NumInt : string.Empty) : string.Empty;
 
             this.ConceptoPagoTextBox.InnerText = recibo.Pago.ConceptoPago.Nombre;
-            this.FechaTextBox.InnerText = DateTime.Now.ToString("dd/MM/yyyy");
+            this.FechaTextBox.InnerText = recibo.FechaAlta.ToString("dd/MM/yyyy");
             this.FolioTextBox.InnerText = recibo.Pago.Toma.Folio.ToString();            
             this.NoReciboTextBox.InnerText = recibo.NoRecibo.ToString();
             this.ObservacionesTextBox.InnerText = recibo.Observaciones;

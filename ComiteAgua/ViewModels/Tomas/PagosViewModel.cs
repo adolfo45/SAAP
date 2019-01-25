@@ -45,10 +45,12 @@ namespace ComiteAgua.ViewModels.Tomas
         public string Descuento { get; set; }
         [Display(Name = "Descuento Pronto Pago")]
         public string DescuentoProntoPago { get; set; }
-
+        public int EstatusConvenioId { get; set; }
         [Display(Name = "Total")]
         [Required(ErrorMessage = "El {0} es requerido.")]
         public string Total { get; set; }        
+        public bool ReciboImpreso { get; set; }
+        public string UrlRetorno { get; set; }
         public DateTime FechaAlta { get; set; }
         public int UsuarioAltaId { get; set; }
         public DateTime? FechaCambio { get; set; }

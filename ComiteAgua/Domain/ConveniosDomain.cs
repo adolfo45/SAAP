@@ -1,4 +1,5 @@
 ﻿using ComiteAgua.Models;
+using ComiteAgua.ViewModels.Tomas;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -124,8 +125,7 @@ namespace ComiteAgua.Domain
                 .OrderByDescending(c => c.ConvenioId).FirstOrDefault();
 
             return result;
-        } // public Convenio ObtenerConvenioActivo(int tomaId = 0)        
-
+        } // public Convenio ObtenerConvenioActivo(int tomaId = 0)               
         public IQueryable<Pago> ObtenerPagosConvenio(int convenioId)
         {
             var result = _context.Pago
@@ -133,9 +133,49 @@ namespace ComiteAgua.Domain
 
             return result;
         } 
+        public IQueryable<ConveniosViewModel> ObtenerConvenios()
+        {
+            var query = _context.Convenio
+               .Join(_context.EstatusConvenio,
+                   c => c.EstatusConvenioId,
+                   ec => ec.EstatusConvenioId,
+                   (c, ec) => new { Convenio = c, EstatusConvenio = ec })
+               .Join(_context.ConceptoConvenio,
+                   c_c => c_c.Convenio.ConceptoConvenioId,
+                   cc => cc.ConceptoConvenioId,
+                   (c_c, cc) => new { c_c.Convenio, c_c.EstatusConvenio, ConceptoConvenio = cc })
+               .Join(_context.Toma,
+                    c_c_c => c_c_c.Convenio.TomaId,
+                    t => t.TomaId,
+                    (c_c_c, t) => new { c_c_c.Convenio, c_c_c.EstatusConvenio, c_c_c.ConceptoConvenio, Toma = t })
+               .Join(_context.Propietario,
+                    t_t => t_t.Toma.PropietarioId,
+                    p => p.PropietarioId,
+                    (t_t, p) => new { t_t.Toma, t_t.Convenio, t_t.EstatusConvenio, t_t.ConceptoConvenio, Propietario = p })
+                .Join(_context.Persona,
+                    p_p => p_p.Propietario.PersonaId,
+                    per => per.PersonaId,
+                    (p_p, per) => new { p_p.Propietario, p_p.Toma, p_p.Convenio, p_p.EstatusConvenio, p_p.ConceptoConvenio, Persona = per })
+                .Join(_context.PersonaFisica,
+                    per_per => per_per.Persona.PersonaId,
+                    pf => pf.PersonaId,
+                    (per_per, pf) => new { per_per.Persona, per_per.Propietario, per_per.Toma, per_per.Convenio, per_per.EstatusConvenio, per_per.ConceptoConvenio, PersonaFisica = pf })
+                    .Select(c => new ConveniosViewModel
+                    {
+                        ConvenioId = c.Convenio.ConvenioId,
+                        ConceptoConvenio = c.ConceptoConvenio.Nombre,
+                        EstatusConvenio = c.EstatusConvenio.Nombre,
+                        TomaId = c.Toma.TomaId,
+                        Folio = c.Toma.Folio,
+                        NoTarjeta = c.Convenio.NoTarjeta,
+                        NombreCompleto = c.PersonaFisica.Nombre + " " + c.PersonaFisica.ApellidoPaterno + " " + c.PersonaFisica.ApellidoMaterno
+                    })
+                    .OrderBy(x => x.Folio);
+
+            return query;
+        }
 
         #endregion
 
     } // public class ConveniosDomain
-
 } // namespace ComiteAgua.Domain

@@ -1,0 +1,120 @@
+﻿@model ComiteAgua.ViewModels.Account.AuthenticationViewModel
+@using System.Web.Optimization
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>SAAP&#8482</title>
+    <link rel="shortcut icon" href="~/Images/gota2.png" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Authentication/css")
+    @Scripts.Render("~/Scripts/jquery")
+    
+</head>
+<body>
+   
+    <div class="container">
+        <div class="row">
+            <img src="/Images/LogoGrande.png" class="img-fluid" alt="Responsive image" />
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h3 class="sombra">
+                    SISTEMA ADMINISTRATIVO DE AGUA POTABLE &#8482
+                </h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h3>
+                    <img src="/Images/SAAPRecortada.png" />
+                </h3>
+            </div>
+        </div>
+
+        @using (Html.BeginForm("Authenticate", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+                <div class="offset-md-3 col-md-6">
+                    <h4>Inicio Sesión</h4>
+                    <hr />
+                </div>
+            </div>
+            <div class="row">
+                <div class="offset-md-3 col-md-6">
+                    <div class="form-group">
+                        <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                            <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-user"></i></div>
+                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", placeholder = "Usuario", autofocus = true })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-control-feedback">
+                        @Html.ValidationMessageFor(m => m.UserName, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="offset-md-3 col-md-6">
+                    <div class="form-group">
+                        <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                            <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-key"></i></div>
+                            @Html.TextBoxFor(m => m.Password, new { @class = "form-control", placeholder = "Contraseña", type = "password" })
+                        </div>
+                    </div>
+                    <hr />
+                </div>
+                <div class="col-md-3">
+                    <div class="form-control-feedback">
+                        @Html.ValidationMessageFor(m => m.Password, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="offset-md-3 col-md-6 text-center">
+                    <button type="submit" class="btn btn-success">Entrar</button>
+                </div>
+            </div>
+        }
+    </div>
+ 
+    @Scripts.Render("~/Scripts/js")
+    @Html.Partial("_Toastr")
+    <script>
+        function BloquearProcesando() {
+            $.blockUI({
+                css: {
+                    border: 'none',
+                    padding: '15px',
+                    backgroundColor: '#000',
+                    '-webkit-border-radius': '10px',
+                    '-moz-border-radius': '10px',
+                    opacity: 0.50,
+                    color: '#fff'
+                },
+                message: 'Procesando...'
+            });
+        } // function BloquearProcesando()
+        function InIEvent() {
+            $(".form-horizontal").submit(function (event) {
+                if ($(".form-horizontal").valid()) {
+                    BloquearProcesando();
+                }
+            });
+        }
+        $(document).ready(InIEvent);
+    </script>
+</body>
+</html>

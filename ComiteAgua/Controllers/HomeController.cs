@@ -49,34 +49,13 @@ namespace ComiteAgua.Controllers
 
             return View();          
         }
-
         public JsonResult Listar(AnexGRID agrid)
         {
             var propietariosDomain = new PropietariosDomain(_context);
 
             return Json(propietariosDomain.Listar(agrid), JsonRequestBehavior.AllowGet);
-        }
-
-        public void LogOut()
-        {
-            //TODO (Terminar implementacion de login)
-            if ((Session["UsuarioId"] != null))
-            {
-                var usuarioId = Convert.ToInt32(Session["UsuarioId"]);
-
-                //var usuarioPerfilesDomain = new UsuarioPerfilesDomain(_context);
-
-                //usuarioPerfilesDomain.FinalizarSesion(usuarioId);                
-
-            } // if ((Session["UsuarioId"] != null))
-
-            Session.Clear();
-            Session.Abandon();
-            UserSession.DestroyUserSession();
-
-            Response.Redirect("~/Login.aspx");
-        } // public void LogOut()
-
+        }        
+       
         #endregion
 
         #region * Métodos creados por Comité Agua *

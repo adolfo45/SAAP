@@ -100,10 +100,13 @@ namespace ComiteAgua.ViewModels.Tomas
         public int UsuarioAltaId { get; set; }
         public DateTime? FechaCambio { get; set; }
         public int? UsuarioCambioId { get; set; }
+        public int Folio { get; set; }
+        public string EstatusConvenio { get; set; }
+        public string NombreCompleto { get; set; }
 
 
         public List<ConceptoConvenio> ConceptosConvenio { get; set; }
-        public List<EstatusConvenio> EstatusConvenio { get; set; }
+        //public List<EstatusConvenio> EstatusConvenio { get; set; }
         public List<PeriodoPagoConvenio> PeriodosPagoConvenio { get; set; }
         public List<PersonaSeguridad> PersonasSeguridad { get; set; }       
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Data.Entity;
 using ComiteAgua.Classes;
+using System.Globalization;
 
 namespace ComiteAgua.Domain
 {
@@ -81,7 +82,7 @@ namespace ComiteAgua.Domain
         } // public void Guardar(Propietario model)
 
         public AnexGRIDResponde Listar(AnexGRID agrid)
-        {
+        {            
             try
             {
                 agrid.Inicializar();
@@ -179,7 +180,7 @@ namespace ComiteAgua.Domain
                 var propietarios = query.Skip(agrid.pagina)
                                              .Take(agrid.limite)
                                              .ToList();
-
+                
                 agrid.SetData(
                         from e in propietarios
                         select new
@@ -192,8 +193,7 @@ namespace ComiteAgua.Domain
                                     (!string.IsNullOrEmpty(e.Toma.Select(d => d.Direccion.NumExt).FirstOrDefault()) ? " EXT " + e.Toma.Select(d => d.Direccion.NumExt).FirstOrDefault() : string.Empty)) : String.Empty,
                             Colonia = e.Toma.Select(d => d.Direccion).FirstOrDefault() != null ? (e.Toma.Select(d => d.Direccion.ColoniaId).FirstOrDefault() > 0 ? e.Toma.Select(d => d.Direccion.Colonias.Nombre).FirstOrDefault() : string.Empty) : string.Empty,
                             Categoria = e.Toma.Select(d => d.Categoria.Abreviatura),
-                            PeriodoPago = e.Toma.Select(d => d.PeriodoPago.Select(p => p.MesAnoFin).LastOrDefault()).LastOrDefault() != null ? Convert.ToDateTime(e.Toma.Select(d => d.PeriodoPago.Select(u => u.MesAnoFin).LastOrDefault()).LastOrDefault()).ToString("MMM-yyyy") :  e.Toma.Select(d => d.PeriodoPago.Select(u => u.UltimoPeriodoPago).LastOrDefault()).LastOrDefault(),
-                            //ConceptoPagoId = e.Toma.Select(c => c.Convenio.Select(co => co.EstatusConvenioId).LastOrDefault()).FirstOrDefault() == (int)EstatusConvenioDomain.EstatusConvenioEnum.Activo ? Convert.ToInt32(ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio) : Convert.ToInt32(ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua),
+                            PeriodoPago = e.Toma.Select(d => d.PeriodoPago.Select(p => p.MesAnoFin).LastOrDefault()).LastOrDefault() != null ? Convert.ToDateTime(e.Toma.Select(d => d.PeriodoPago.Select(u => u.MesAnoFin).LastOrDefault()).LastOrDefault()).ToString("MMM-yyyy", new CultureInfo("es-ES")) :  e.Toma.Select(d => d.PeriodoPago.Select(u => u.UltimoPeriodoPago).LastOrDefault()).LastOrDefault(),                            
                             ConceptoPagoId = e.Toma.Select(c => c.Convenio.Select(co => co.EstatusConvenioId).LastOrDefault()).FirstOrDefault() == (int)EstatusConvenioDomain.EstatusConvenioEnum.Activo ? Convert.ToInt32(ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio) : 
                                              e.Toma.Select(l => l.LiquidacionTomaId).FirstOrDefault() == (int)LiquidacionesTomaDomain.LiquidacionesTomaEnum.TomaNueva ? Convert.ToInt32(ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva) : Convert.ToInt32(ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua),
                             TomaId = e.Toma.Select(x => x.TomaId),
