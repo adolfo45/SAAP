@@ -93,20 +93,7 @@
     @Scripts.Render("~/Scripts/js")
     @Html.Partial("_Toastr")
     <script>
-        function BloquearProcesando() {
-            $.blockUI({
-                css: {
-                    border: 'none',
-                    padding: '15px',
-                    backgroundColor: '#000',
-                    '-webkit-border-radius': '10px',
-                    '-moz-border-radius': '10px',
-                    opacity: 0.50,
-                    color: '#fff'
-                },
-                message: 'Procesando...'
-            });
-        } // function BloquearProcesando()
+        
         function InIEvent() {
             $(".form-horizontal").submit(function (event) {
                 if ($(".form-horizontal").valid()) {

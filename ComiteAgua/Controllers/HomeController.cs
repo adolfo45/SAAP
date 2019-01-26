@@ -42,8 +42,7 @@ namespace ComiteAgua.Controllers
         // GET: Home
         [Route("home")]
         public ActionResult Index(bool bandera = false)
-        {                          
-
+        {
             if (bandera)
                 ShowToastMessage("SAAP", "Bienvenido a SAAP...", ToastMessage.ToastType.Info);
 
@@ -54,8 +53,8 @@ namespace ComiteAgua.Controllers
             var propietariosDomain = new PropietariosDomain(_context);
 
             return Json(propietariosDomain.Listar(agrid), JsonRequestBehavior.AllowGet);
-        }        
-       
+        }               
+
         #endregion
 
         #region * Métodos creados por Comité Agua *

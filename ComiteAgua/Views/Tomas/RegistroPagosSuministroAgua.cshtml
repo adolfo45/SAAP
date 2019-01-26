@@ -15,9 +15,9 @@
     </ol>
 </nav>
 
-@using (Html.BeginForm("GuardarPagoSuministroAgua", "Tomas", FormMethod.Post, new { role = "form" }))
+@using (Html.BeginForm("GuardarPagoSuministroAgua", "Tomas", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
-
+    @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.TomaId)
     @Html.HiddenFor(m => m.ConvenioId)
     @Html.HiddenFor(m => m.ConceptoPagoId)
@@ -69,15 +69,15 @@
                 </div>
                 @if (Model.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
                 {
-                  @*Precio Toma*@
+                    @*Precio Toma*@
                     <div class="form-group row">
                         @Html.LabelFor(x => x.PrecioToma, new { @for = "PrecioToma", @class = "col-md-2 col-form-label ml-auto" })
                         <div class="col-sm-6 mr-auto">
                             @Html.TextBoxFor(d => d.PrecioToma, new { @class = "form-control moneda", @id = "PrecioTomaTextBox" })
                             @Html.ValidationMessageFor(m => m.PrecioToma, null, new { @class = "badge badge-pill badge-danger" })
                         </div>
-                    </div>   
-                }               
+                    </div>
+                }
                 @*Descuento*@
                 <div class="form-group row">
                     @Html.LabelFor(x => x.Descuento, new { @for = "Descuento", @class = "col-md-2 col-form-label ml-auto" })
@@ -86,7 +86,7 @@
                         @Html.ValidationMessageFor(m => m.Descuento, null, new { @class = "badge badge-pill badge-danger" })
                     </div>
                 </div>
-                
+
                 <div id="DescuntoProntoPagoDiv" style="display: none">
                     @*Descuento pronto pago*@
                     <div class="form-group row">
@@ -109,31 +109,31 @@
 
                 @*Folio Tarjeta*@
                 <div class="form-group row">
-                    @Html.LabelFor(x => x.FolioTarjeta,"No Recibo", new { @for = "FolioTarjeta", @class = "col-md-2 col-form-label ml-auto" })
+                    @Html.LabelFor(x => x.FolioTarjeta, "No Recibo", new { @for = "FolioTarjeta", @class = "col-md-2 col-form-label ml-auto" })
                     <div class="col-sm-6 mr-auto">
                         @Html.TextBoxFor(d => d.FolioTarjeta, new { @class = "form-control validaPago enteros" })
                         @Html.ValidationMessageFor(m => m.FolioTarjeta, null, new { @class = "badge badge-pill badge-danger" })
                     </div>
-                </div>   
-                
+                </div>
+
                 @*Observaciones*@
                 <div class="form-group row">
-                    @Html.LabelFor(x => x.Observaciones,"Recibo Renglo 1", new { @for = "Observaciones", @class = "col-md-2 col-form-label ml-auto" })
+                    @Html.LabelFor(x => x.Observaciones, "Recibo Renglo 1", new { @for = "Observaciones", @class = "col-md-2 col-form-label ml-auto" })
                     <div class="col-sm-6 mr-auto">
                         @Html.TextBoxFor(d => d.Observaciones, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.Observaciones, null, new { @class = "badge badge-pill badge-danger" })
                     </div>
-                </div>   
-                
+                </div>
+
                 @*Adicional*@
                 <div class="form-group row">
-                    @Html.LabelFor(x => x.Adicional,"Recibo Renglo 2", new { @for = "Adicional", @class = "col-md-2 col-form-label ml-auto" })
+                    @Html.LabelFor(x => x.Adicional, "Recibo Renglo 2", new { @for = "Adicional", @class = "col-md-2 col-form-label ml-auto" })
                     <div class="col-sm-6 mr-auto">
                         @Html.TextBoxFor(d => d.Adicional, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.Adicional, null, new { @class = "badge badge-pill badge-danger" })
                     </div>
-                </div>    
-                
+                </div>
+
                 @*Renglon Adicional 1*@
                 <div class="form-group row">
                     @Html.LabelFor(x => x.RenglonAdicional1, "Recibo Renglo 3", new { @for = "Adicional", @class = "col-md-2 col-form-label ml-auto" })
@@ -141,8 +141,8 @@
                         @Html.TextBoxFor(d => d.RenglonAdicional1, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.RenglonAdicional1, null, new { @class = "badge badge-pill badge-danger" })
                     </div>
-                </div>    
-                
+                </div>
+
                 @*Renglon Adicional 2*@
                 <div class="form-group row">
                     @Html.LabelFor(x => x.RenglonAdicional2, "Recibo Renglo 4", new { @for = "Adicional", @class = "col-md-2 col-form-label ml-auto" })
@@ -150,7 +150,7 @@
                         @Html.TextBoxFor(d => d.RenglonAdicional2, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.RenglonAdicional2, null, new { @class = "badge badge-pill badge-danger" })
                     </div>
-                </div>    
+                </div>
 
                 @*Renglon Adicional 3*@
                 <div class="form-group row">
@@ -159,7 +159,7 @@
                         @Html.TextBoxFor(d => d.RenglonAdicional3, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.RenglonAdicional3, null, new { @class = "badge badge-pill badge-danger" })
                     </div>
-                </div>    
+                </div>
 
             </div>
 
@@ -167,14 +167,14 @@
                 @*Button*@
                 <div class="row">
                     <div class="mr-auto ml-auto">
-                        <button type="submit" class="btn btn-success">Guardar</button>                       
+                        <button type="submit" class="btn btn-success">Guardar</button>
                     </div>
                 </div>
             </div>
 
         </div>
     </div>
-   
+
 }
 
 
@@ -195,10 +195,10 @@
 
                 var SubTotal = $("#SubTotal").val().replace(/[^0-9\.]/g, '');
                 var descuento = $(this).val().replace(/[^0-9\.]/g, '');
-                var descuentoProntoPago = $("#DescuentoProntoPagoTextBox").val().replace(/[^0-9\.]/g, '');                
+                var descuentoProntoPago = $("#DescuentoProntoPagoTextBox").val().replace(/[^0-9\.]/g, '');
 
                 @if (Model.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
-                {                    
+                {
                     <Text>
                         var precioToma = $("#PrecioTomaTextBox").val().replace(/[^0-9\.]/g, '');
                         $("#Total").val(precioToma - descuento);
@@ -209,13 +209,13 @@
                 }
                 else
                 {
-                    <Text>                                 
+                    <Text>
                         $("#Total").val(SubTotal - descuento - descuentoProntoPago);
                         $.validator.addMethod("validaDescuent", function () {
                             return !(Number(descuento) > Number(SubTotal));
                         }, "El descuento no puede ser mayor al Sub Total.");
                     </Text>
-                }              
+                }
 
             });
 
@@ -287,15 +287,21 @@
 
             });
 
-            $("#PrecioTomaTextBox").change(function () {                
+            $("#PrecioTomaTextBox").change(function () {
                 var precioToma = $(this).val().replace(/[^0-9\.]/g, '');
                 var descuento = $("#Descuento").val().replace(/[^0-9\.]/g, '');
 
-                $("#Total").val(Number(precioToma) - descuento);               
+                $("#Total").val(Number(precioToma) - descuento);
+            });
+
+            $(".form-horizontal").submit(function (event) {
+                if ($(".form-horizontal").valid()) {
+                    BloquearProcesando();
+                }
             });
 
         });
-
+        
     </script>
 
 }

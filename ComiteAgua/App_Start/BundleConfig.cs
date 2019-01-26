@@ -62,7 +62,8 @@ namespace ComiteAgua.App_Start
                "~/Scripts/dataTables.bootstrap4.min.js",
                "~/Scripts/popper.js",               
                "~/Scripts/autoNumeric/autoNumeric-min.js",
-               "~/Scripts/bootbox.min.js"                   
+               "~/Scripts/bootbox.min.js",
+               "~/Scripts/Site.js"
            ));
 
             bundles.Add(new ScriptBundle("~/Scripts/jquery").Include(

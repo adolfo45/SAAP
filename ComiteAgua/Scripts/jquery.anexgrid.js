@@ -117,12 +117,25 @@ $.fn.anexGrid = function (config) {
             anexGrid.tabla = $('<table id="' + id + '" style="' + anexGrid.style + '" class="table ' + anexGrid.class + '"><thead class="' + clase.columnas + '"><tr></tr></thead><tbody class="' + clase.filas + '"></tbody><tfoot class="' + clase.paginador + '"></tfoot></table>');
 
             /* Registros por página */
-            anexGrid.porPagina = typeof anexGrid.limite == 'number' ? anexGrid.limite : anexGrid.limite[0];
+            anexGrid.porPagina = typeof anexGrid.limite === 'number' ? anexGrid.limite : anexGrid.limite[0];
         },
         cargarColumnas: function () {
             cargarColumnas();
         },
         cargarData: function () {
+            $.blockUI({
+                css: {
+                    border: 'none',
+                    padding: '15px',
+                    backgroundColor: '#000',
+                    '-webkit-border-radius': '10px',
+                    '-moz-border-radius': '10px',
+                    opacity: 0.50,
+                    color: '#fff'
+                },
+                message: 'Cargarndo <i class="fa fa-spinner fa-pulse"></i>'
+            });
+
             /* Bloqueamos los controles de la grilla */
             paginadorBloqueaControles(true);
             filtroBloqueaControles(true);
@@ -155,16 +168,24 @@ $.fn.anexGrid = function (config) {
                     anexGrid.total = r.total;
 
                     cargarData();
+
+                    $.unblockUI(); // quita mensaje de bloquear Cargando...
+
+                    //toastr.info("Bienvenido a SAAP...",
+                    //    "SAAP",
+                    //    { closeButton: true, progressBar: true, positionClass: "toast-bottom-full-width" }); // Mustra mensaje de bienvenida
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    paginadorBloqueaControles(false);
-                    filtroBloqueaControles(false);
-                    ordenarBloqueaControles(false);
+                    //paginadorBloqueaControles(false);
+                    //filtroBloqueaControles(false);
+                    //ordenarBloqueaControles(false);
 
-                    tbody.html('<tr class="danger"><td colspan="' + anexGrid.columnas.length + '" class="danger text-center">' + texto.error_cargando + '</td></tr>');
-                    console.log(errorThrown + ' | ' + textStatus);
+                    //tbody.html('<tr class="danger"><td colspan="' + anexGrid.columnas.length + '" class="danger text-center">' + texto.error_cargando + '</td></tr>');
+                    //console.log(errorThrown + ' | ' + textStatus);
+                    //TODO cuando caduca la sesion no carga el data
+                    window.location.href = "/Account"; 
                 }
-            })
+            });
         },
         obtener: function (n) {
             return anexGrid.data[n];
@@ -285,7 +306,7 @@ $.fn.anexGrid = function (config) {
                 return;
             }
 
-            if ($(this).val() == anexGrid.pagina) return;
+            if ($(this).val() === anexGrid.pagina) return;
             else if ($(this).val() > anexGrid.paginas) return;
             else if ($(this).val() === 0) return;
 
@@ -310,7 +331,7 @@ $.fn.anexGrid = function (config) {
         if ($(this).attr('disabled')) return;
 
         if (!esNumerico(anexGrid.pagina)) return;
-        if ($("." + clase.paginador_pagina_actual).val() == 1) return;
+        if ($("." + clase.paginador_pagina_actual).val() === 1) return;
 
         anexGrid.pagina = 1;
         anexGrid.cargarData();
@@ -321,7 +342,7 @@ $.fn.anexGrid = function (config) {
         if ($(this).attr('disabled')) return;
 
         if (!esNumerico(anexGrid.pagina)) return;
-        if ($("." + clase.paginador_pagina_actual).val() == 1) return;
+        if ($("." + clase.paginador_pagina_actual).val() === 1) return;
 
         anexGrid.pagina -= 1;
         anexGrid.cargarData();
@@ -332,7 +353,7 @@ $.fn.anexGrid = function (config) {
         if ($(this).attr('disabled')) return;
 
         if (!esNumerico(anexGrid.pagina)) return;
-        if ($("." + clase.paginador_pagina_actual).val() == anexGrid.paginas) return;
+        if ($("." + clase.paginador_pagina_actual).val() === anexGrid.paginas) return;
 
         anexGrid.pagina = anexGrid.paginas;
         anexGrid.cargarData();

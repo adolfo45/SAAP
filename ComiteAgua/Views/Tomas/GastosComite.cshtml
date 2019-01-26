@@ -14,7 +14,7 @@
     </ol>
 </nav>
 
-@using (Html.BeginForm("GuardarGasto", "Tomas", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("GuardarGasto", "Tomas", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
 {
     @Html.HiddenFor(m => m.SucursalId)
     @Html.HiddenFor(m => m.MultiComiteId)
@@ -105,17 +105,15 @@
 
             });
 
-            $("#GuardarArchivoButton").click(function ()
-            {
-                var file = document.getElementById("file").files[0];   
-                var name = document.getElementById("file").files[0].name;                   
+            $("#GuardarArchivoButton").click(function () {
+                var file = document.getElementById("file").files[0];
+                var name = document.getElementById("file").files[0].name;
 
                 var formData = new FormData();
                 formData.append('file', file);
                 formData.append('name', name);
 
-                if (file == "")
-                {
+                if (file == "") {
                     return;
                 }
 
@@ -137,6 +135,11 @@
                 });
 
             });
-    });
+            $(".form-horizontal").submit(function (event) {
+                if ($(".form-horizontal").valid()) {
+                    BloquearProcesando();
+                }
+            });
+        });
     </script>
 }

@@ -61,7 +61,7 @@ namespace ComiteAgua.Classes.Security
             var cookie = FormsAuthentication.GetAuthCookie("usuario", persist);
 
             cookie.Name = FormsAuthentication.FormsCookieName;
-            cookie.Expires = DateTime.Now.AddMonths(3);            
+            cookie.Expires = DateTime.Now.AddDays(1);            
 
             var ticket = FormsAuthentication.Decrypt(cookie.Value);
             var newTicket = new FormsAuthenticationTicket(ticket.Version, ticket.Name, ticket.IssueDate, ticket.Expiration, ticket.IsPersistent, id);

@@ -26,8 +26,9 @@
 
 @if (!(Model.EstatusConvenioId == (int)EstatusConvenioDomain.EstatusConvenioEnum.Concluido))
 {
-    using (Html.BeginForm(null, null, FormMethod.Post, new { role = "form" }))
+    using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
     {
+        @Html.AntiForgeryToken()
         @Html.HiddenFor(m => m.TomaId)
         @Html.HiddenFor(m => m.ConvenioId)
         @Html.HiddenFor(m => m.ConceptoPagoId)
@@ -250,22 +251,25 @@ else
                     }
                 });
 
-                 $.ajax({
-                            type: "GET",
-                            url: '@Url.Action("_TarjetaConvenio", "Tomas")',
-                            data: { convenioId: @Model.ConvenioId },
-                            datatype: "Json",
-                            success: function (data) {
-                                $("#Tarjeta").html(data)
-                                $('#tarjetaModal').modal('show');
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                alert('Error - ' + errorThrown);
-                            }
-                        });
-
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("_TarjetaConvenio", "Tomas")',
+                    data: { convenioId: @Model.ConvenioId },
+                    datatype: "Json",
+                    success: function (data) {
+                        $("#Tarjeta").html(data)
+                        $('#tarjetaModal').modal('show');
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert('Error - ' + errorThrown);
+                    }
+                });
             });
-
+            $(".form-horizontal").submit(function (event) {
+                if ($(".form-horizontal").valid()) {
+                    BloquearProcesando();
+                }
+            });
         });
 
     </script>

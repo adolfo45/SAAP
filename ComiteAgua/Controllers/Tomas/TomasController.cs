@@ -735,6 +735,7 @@ namespace ComiteAgua.Controllers.Tomas
             return PartialView("_ListaArchivos", listaArchivo);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult GuardarGasto(GastosViewModel model)
         {
             ArchivosGastoDomain archivosGastoDomain = new ArchivosGastoDomain(_context);
@@ -986,6 +987,7 @@ namespace ComiteAgua.Controllers.Tomas
             return RedirectToAction("Index","Home");
 
         }
+        [ValidateAntiForgeryToken]
         public ActionResult GuardarPagoConvenio(PagosViewModel model)
         {           
             var pagosDomain = new PagosDomain(_context);
@@ -1266,7 +1268,8 @@ namespace ComiteAgua.Controllers.Tomas
             }
             return HttpNotFound();
         }
-        [HttpPost]       
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult GuardarPagoSuministroAgua(PagosViewModel model)
         {
             var pagosDomain = new PagosDomain(_context);
