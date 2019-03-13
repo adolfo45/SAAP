@@ -46,6 +46,7 @@ namespace ComiteAgua.Print
             this.ReciboIdHiddenField.Value = this.Page.Request["reciboId"];
             this.UrlOrigenHiddenField.Value = this.Page.Request["UrlOrigen"];
             this.ConvenioId.Value = this.Page.Request["convenioId"];
+            this.ConstanciaIdHiddenField.Value = this.Page.Request["constanciaId"];
 
             this.InicializarPantalla();
         }
@@ -68,10 +69,32 @@ namespace ComiteAgua.Print
 
         public void InicializarPantalla()
         {
-           
             var recibosDomain = new RecibosDomain(_context);
             var recibo = recibosDomain.ObtenerReciboImpresion(Convert.ToInt32(this.ReciboIdHiddenField.Value));
 
+            //Recibo constancia
+            if (!string.IsNullOrEmpty(this.ConstanciaIdHiddenField.Value))
+            {
+                this.UsuarioTextBox.InnerText = recibo.Pago.Constancia.Propietario;
+                this.DireccionTextBox.InnerText = recibo.Pago.Constancia.TiposCalle.Nombre + " " + recibo.Pago.Constancia.Calles.Nombre + 
+                                                        "" + (!string.IsNullOrEmpty(recibo.Pago.Constancia.NoExt) ? " EXT." + recibo.Pago.Constancia.NoExt : string.Empty) + "" +
+                                                        (!string.IsNullOrEmpty(recibo.Pago.Constancia.NoInt) ? " INT." + recibo.Pago.Constancia.NoInt : string.Empty);
+                this.ConceptoPagoTextBox.InnerText = recibo.Pago.ConceptoPago.Nombre;
+                this.FechaTextBox.InnerText = recibo.FechaAlta.ToString("dd/MM/yyyy");
+                this.NoReciboTextBox.InnerText = recibo.NoRecibo.ToString();
+                this.AdicionalTextBox.InnerText = recibo.Adicional;
+                this.TotalTextBox.InnerText = recibo.Pago.Total.ToString("C");
+                this.SubTotalTextBox.InnerText = recibo.Pago.SubTotal.ToString("C");
+                this.CantidadLetraTextBox.InnerText = recibo.CantidadLetra;
+                // Muestra codigo QR                                    
+                CodigoImg.ImageUrl = "/UploadFiles/CodigosQR/" + recibo.CodigoQRurl;
+                CodigoImg.Height = 100;
+                CodigoImg.Width = 100;
+                this.CanceladoText.Visible = false;
+                return;
+            }//if (!string.IsNullOrEmpty(this.ConstanciaIdHiddenField.Value))
+
+            //Recibo convenio
             if (!string.IsNullOrEmpty(this.ConvenioId.Value))
             {
                 var conveniosDomain = new ConveniosDomain(_context);
@@ -97,8 +120,8 @@ namespace ComiteAgua.Print
                 CodigoImg.Width = 100;
                 this.CanceladoText.Visible = false;
                 return;
-            }
-                       
+            }//if (!string.IsNullOrEmpty(this.ConvenioId.Value))
+
             this.CanceladoText.Visible = !recibo.Pago.Activo;
             this.UsuarioTextBox.InnerText = recibo.Pago.Toma.Propietario.Persona.PersonaFisica.Nombre + " " +
                                             recibo.Pago.Toma.Propietario.Persona.PersonaFisica.ApellidoPaterno + " " +

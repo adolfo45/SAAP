@@ -94,6 +94,11 @@ namespace ComiteAgua.Domain.Recibos
                 .Include(x => x.Pago.Toma.Direccion.TiposCalle)
                 .Include(x => x.Pago.Toma.Direccion.Calles)
                 .Include(r => r.Pago.DescuentoProntoPago)
+                .Include(r => r.Pago.Constancia)
+                .Include(r => r.Pago.Constancia.TiposCalle)
+                .Include(r => r.Pago.Constancia.Calles)
+                .Include(r => r.Pago.Constancia.Colonias)
+                .Include(r => r.Pago.Constancia.TiposConstancia)
                 .Where(r => r.ReciboId == reciboId).FirstOrDefault();
 
             return result;
@@ -135,7 +140,7 @@ namespace ComiteAgua.Domain.Recibos
             return recibos;
 
         }//public IQueryable<Recibo> ObtenerRecibos(int? noRecibo, int? folio, DateTime? fecha)
-
+       
         #endregion
 
     } // public class RecibosDomain

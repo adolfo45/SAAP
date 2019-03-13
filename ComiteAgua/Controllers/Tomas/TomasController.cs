@@ -982,7 +982,7 @@ namespace ComiteAgua.Controllers.Tomas
             };            
 
             periodosPagoDomain.Guardar(periodoPago);
-            tomasDomain.EditarActiva(pago.TomaId, true, Convert.ToInt32(Session["UsuarioId"].ToString()));
+            tomasDomain.EditarActiva(Convert.ToInt32(pago.TomaId), true, Convert.ToInt32(Session["UsuarioId"].ToString()));
 
             return RedirectToAction("Index","Home");
 
@@ -1466,7 +1466,7 @@ namespace ComiteAgua.Controllers.Tomas
                     document.ReplaceText("{PagosDe}", !string.IsNullOrEmpty(model.PagosDe) ? Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.PagosDe)).ToString("C") : "N/A", false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
                     document.ReplaceText("{Periodos}", periodoPagoConvenio.Nombre, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
                     document.ReplaceText("{DiaHoy}", DateTime.Now.ToString("dd"), false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-                    document.ReplaceText("{MesHoy}", DateTime.Now.ToString("MMMMMMMMMM").ToUpper(), false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    document.ReplaceText("{MesHoy}", DateTime.Now.ToString("MMMMMMMMMM", new CultureInfo("es-ES")).ToUpper(), false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
                     document.ReplaceText("{AñoHoy}", DateTime.Now.ToString("yyyy").ToUpper(), false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 
                     //Si no existe el directorio se crea

@@ -1,0 +1,133 @@
+﻿@model ComiteAgua.ViewModels.Constancias.ConstanciasViewModel
+@{
+    ViewBag.Title = Model.Titulo;
+}
+
+<br />
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Regresar</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>@Model.Titulo</a></li>
+    </ol>
+</nav>
+
+
+<form method="post" id="FormFiltros">
+    <div class="col-md-6 mr-auto ml-auto">
+        <div class="card">
+            <div class="card-body">
+                @*Folio Filtro*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.FolioFiltro, new { @for = "FolioFiltro", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.FolioFiltro, new { @class = "form-control form-control-sm" })
+                    </div>
+                </div>
+                @*Propietario Filtro*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.PropietarioFiltro, new { @for = "PropietarioFiltro", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.PropietarioFiltro, new { @class = "form-control form-control-sm" })
+                    </div>
+                </div>
+                @*Calle Filtro*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.CalleFiltro, new { @for = "CalleFiltro", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.CalleFiltro, new { @class = "form-control form-control-sm" })
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-3 offset-md-2 text-center">
+                        <button id="BuscarButton" type="button" class="btn btn-success">Buscar</button>
+                    </div>
+                    <div class="col-md-3 offset-md-2 text-center">
+                        <button id="LimpiarButton" type="button" class="btn btn-primary">Limpiar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<br />
+
+<div id="ConsultaNoAdeudoTable"></div>
+
+@section scripts
+{
+    <script>
+
+        $(document).ready(function () {  
+            
+            //variables globales
+            var folioFiltro;
+            var propietarioFiltro;
+            var calleFiltro;
+            
+            $("#BuscarButton").click(function () {               
+
+                ObtenerValoresFiltros();
+
+                if (folioFiltro.length == 0 && propietarioFiltro.length == 0 && calleFiltro.length == 0)
+                {
+                    toastr.warning(
+                        "Debe ingresar al menos un filtro",
+                        "Alerta",
+                        {
+                            closeButton: true,
+                            progressBar: true,
+                            positionClass: "toast-bottom-full-width"
+                        });
+                    return;
+                }//if (folioFiltro.length == 0 && propietarioFiltro.length == 0 && calleFiltro.length == 0)    
+                
+                $.ajax({
+                    type: 'get',
+                    cache: false,
+                    url: '@Url.Action("_ConstanciaNoAdeudoConsulta", "Constancias")',
+                    data:
+                    {
+                        folio: folioFiltro,
+                        propietario: propietarioFiltro,
+                        calle: calleFiltro
+                    },
+                    success: function (data) {
+                        $("#ConsultaNoAdeudoTable").html(data);     
+                        $('#tomas').DataTable({
+                            "filter": false
+                        });
+                        div = document.getElementById('tomas_length');
+                        div.style.display = 'none';
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert('Error - ' + errorThrown);
+                    }                   
+                });//$.ajax({
+                $("#LimpiarButton").click(function () {
+                    LimpiarFiltros();
+                });//$("#LimpiarButton").click(function () {
+            });//$("#BuscarButton").click(function () {     
+            function ObtenerValoresFiltros() {
+                folioFiltro = $("#FolioFiltro").val().trim();
+                propietarioFiltro = $("#PropietarioFiltro").val().trim();
+                calleFiltro = $("#CalleFiltro").val().trim();
+            }//function ObtenerValoresFiltros() {
+            function LimpiarFiltros() {
+                $("#FolioFiltro").val("");
+                $("#PropietarioFiltro").val("");
+                $("#CalleFiltro").val("");   
+                //$("#ConsultaNoAdeudoTable").html("");
+                var table = $('#tomas').DataTable();
+                table
+                    .clear()
+                    .draw();
+            }//function LimpiarFiltros() {           
+        });  
+    </script>
+}
+
+

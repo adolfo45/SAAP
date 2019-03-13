@@ -1,0 +1,98 @@
+﻿@model ComiteAgua.ViewModels.Constancias.ConstanciaNoServicioViewModel
+@{
+    ViewBag.Title = Model.Titulo;
+}
+
+<br />
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Regresar</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>@Model.Titulo</a></li>
+    </ol>
+</nav>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+   
+    @Html.HiddenFor(m => m.ConstanciaId)
+    <div class="col-md-6 mr-auto ml-auto">
+        <div class="card">
+            <div class="card-header text-center">
+                Constancia de no servicio
+            </div>
+            <div class="card-body">
+                @*Nombre propietario*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Propietario, new { @for = "Propietario", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.Propietario, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.Propietario, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Tipo Calle*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.TipoCalleId, new { @for = "TipoCalleId", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.DropDownListFor(m => m.TipoCalleId, new SelectList(Model.TiposCalle, "TipoCalleId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.TipoCalleId, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Calle*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.CalleId, new { @for = "CalleId", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.DropDownListFor(m => m.CalleId, new SelectList(Model.Calles, "CalleId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.CalleId, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Colonia*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.ColoniaId, new { @for = "ColoniaId", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.DropDownListFor(m => m.ColoniaId, new SelectList(Model.Colonias, "ColoniaId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.ColoniaId, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*No Int*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.NoInt, new { @for = "NoInt", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.NoInt, new { @class = "form-control form-control-sm" })
+                    </div>
+                </div>
+                @*No Ext*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.NoExt, new { @for = "NoExt", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.NoExt, new { @class = "form-control form-control-sm" })
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-3 offset-md-2 text-center">
+                        <button id="DescargarButton" type="submit" formaction="DescargarConstanciaNoServicio" class="btn btn-success">Descargar</button>
+                    </div>
+                    <div class="col-md-3 offset-md-2 text-center">
+                        <button id="ImprimirButton" type="submit" formaction='@Url.Action("ImprimirReciboConstanciaNoServicio", new { propietario = Model.Propietario})' class="btn btn-primary" disabled>Imprimir recibo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $(".form-horizontal").submit(function (event) {
+                if ($(".form-horizontal").valid()) {
+                    $("#ImprimirButton").prop('disabled', false);
+                }
+            });
+            $("button[disabled=disabled]").removeClass('btn-primary').addClass('grisClaro');
+        });
+    </script>
+}

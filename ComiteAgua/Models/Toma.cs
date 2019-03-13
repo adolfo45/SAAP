@@ -47,6 +47,7 @@ namespace ComiteAgua.Models
         public List<Servicio> Servicio { get; set; }        
         public List<Notificacion> Notificacion { get; set; }
         public List<Reporte> Reporte { get; set; }
+        public List<Constancia> Constancia { get; set; }
 
         #endregion
 

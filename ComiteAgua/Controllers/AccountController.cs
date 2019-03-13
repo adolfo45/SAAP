@@ -1,6 +1,7 @@
 ﻿using ComiteAgua.Classes.Security;
 using ComiteAgua.Domain.Seguridad;
 using ComiteAgua.Domain.Transacciones_Automaticas;
+using ComiteAgua.Filters.Security;
 using ComiteAgua.Models;
 using ComiteAgua.ViewModels.Account;
 using System;
@@ -11,6 +12,7 @@ using System.Web.Mvc;
 
 namespace ComiteAgua.Controllers
 {
+    [Authorized]
     public class AccountController : MessageControllerBase
     {
        

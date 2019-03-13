@@ -30,6 +30,7 @@ namespace ComiteAgua.Models.Direcciones
         public int? UsuarioCambioId { get; set; }
 
         public List<Direccion> Direccion { get; set; }
+        public List<Constancia> Constancia { get; set; }
 
         #endregion
 

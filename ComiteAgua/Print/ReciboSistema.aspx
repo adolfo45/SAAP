@@ -243,6 +243,7 @@
             <asp:HiddenField ID="ReciboIdHiddenField" runat="server" /> 
             <asp:HiddenField ID="UrlOrigenHiddenField" runat="server" /> 
             <asp:HiddenField ID="ConvenioId" runat="server" /> 
+            <asp:HiddenField ID="ConstanciaIdHiddenField" runat="server" /> 
         </ContentTemplate>
     </asp:UpdatePanel>    
 

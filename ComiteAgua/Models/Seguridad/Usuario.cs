@@ -57,6 +57,10 @@ namespace ComiteAgua.Models.Seguridad
         public List<Servicio> ServicioCambio { get; set; }
         public List<DescuentoProntoPago> DescuentoProntoPagoAlta { get; set; }
         public List<DescuentoProntoPago> DescuentoProntoPagoCambio { get; set; }
+        public List<Constancia> ConstanciaAlta { get; set; }
+        public List<Constancia> ConstanciaCambio { get; set; }
+        public List<TiposConstancia> TiposConstanciaAlta { get; set; }
+        public List<TiposConstancia> TiposConstanciaCambio { get; set; }
 
         #endregion
 

@@ -26,6 +26,7 @@ namespace ComiteAgua.Domain
             Abono,
             Convenio,
             TomaNueva,
+            Constancia
         } // ConceptosPagoDomainEnum
 
         #endregion

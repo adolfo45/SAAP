@@ -1,0 +1,56 @@
+﻿@model List<ComiteAgua.ViewModels.Tomas.TomasViewModel>
+<style>
+    a.disabled {
+        pointer-events: none;
+        cursor: default;
+        color: gray;
+    }
+</style>
+@if (Model.Count > 0)
+    {
+        <table id="tomas" class="table table-hover table-bordered table-sm">
+            <thead class="thead-dark text-center">
+                <tr>
+                    <th scope="col">Folio</th>
+                    <th scope="col">Propietario</th>
+                    <th scope="col">Calle</th>
+                    <th scope="col">Colonia</th>
+                    <th scope="col">Periodo Pago</th>
+                    <th scope="col">Descargar</th>
+                    <th scope="col">Imprimir</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td scope="row" class="text-center">@item.Folio</td>
+                    <td>@item.Propietario</td>
+                    <td>@item.Calle</td>
+                    <td>@item.Colonia</td>
+                    <td>@item.UltimoPeriodoPago</td>
+                    <td class="text-center"><a href='@Url.Action("DescargarConstanciaNoAdeudo", "Constancias", new { tomaId = item.TomaId})' title="Descargar constancia" id="DescargarConstanciaButton"><i class="fas fa-file-download verde"></i></a></td>                 
+                    <td class="text-center"><a href="@Url.Action("ImprimirReciboConstanciaNoAdeudo", "Constancias", new { tomaId = item.TomaId})" id="ImprimirReciboButton" title="Imprimir recibo" class='@(item.ReciboImpreso ? "disabled" : string.Empty )'><i class="fas fa-qrcode"></i></a></td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+            <strong>Alerta!</strong> No se encontraron registros.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+        <script>
+            $("#DescargarConstanciaButton").click(function () {
+                $("#ImprimirReciboButton").removeClass('disabled');
+            });//$("#DescargarConstanciaButton").click(function () {
+           
+
+            $("button[disabled=disabled]").removeClass('btn-primary').addClass('grisClaro');
+        </script>

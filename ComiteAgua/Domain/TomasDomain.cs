@@ -197,6 +197,10 @@ namespace ComiteAgua.Domain
                 .Include(t => t.Pago.Select(c => c.ConceptoPago))   
                 .Include(t => t.Convenio)
                 .Include(t => t.Notificacion)
+                .Include(t => t.Direccion.TiposCalle)
+                .Include(t => t.Direccion.Calles)
+                .Include(t => t.Direccion.Colonias)
+                .Include(t => t.Constancia)
                 .Where(t => t.TomaId == tomaId).FirstOrDefault();
 
             return result;

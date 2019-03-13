@@ -64,21 +64,19 @@ namespace ComiteAgua.Domain
 
         public IQueryable<Colonias> ObtenerColonias()
         {
-            var colonias = _context.Colonias;
+            var colonias = _context.Colonias.OrderBy(x => x.Nombre);
 
             return colonias;
         }
-
         public IQueryable<Calles> ObtenerCalles()
         {
-            var calles = _context.Calles;
+            var calles = _context.Calles.OrderBy(x => x.Nombre);
 
             return calles;
         }
-
         public IQueryable<TiposCalle> ObtenerTiposCalle()
         {
-            var tipoCalle = _context.TiposCalle;
+            var tipoCalle = _context.TiposCalle.OrderBy(x => x.Nombre);
 
             return tipoCalle;
         }

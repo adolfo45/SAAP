@@ -27,10 +27,12 @@ namespace ComiteAgua.Models
         public int PagoId { get; set; }
         public int ConceptoPagoId { get; set; }
         public ConceptoPago ConceptoPago { get; set; }
-        public int TomaId { get; set; }
+        public int? TomaId { get; set; }
         public Toma Toma { get; set; }
         public int? ConvenioId { get; set; }
         public Convenio Convenio { get;set;}
+        public int? ConstanciaId { get; set; }
+        public Constancia Constancia { get; set; }
         public decimal SubTotal { get; set; }
         public decimal? Descuento { get; set; }
         public decimal? DescuentProntoPago { get; set; }

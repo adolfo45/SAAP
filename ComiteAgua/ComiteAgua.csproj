@@ -207,7 +207,6 @@
     <Content Include="Images\Recibo\Regresar.png" />
     <Content Include="Images\SAAP.png" />
     <Content Include="Images\SAAPRecortada.png" />
-    <Content Include="Print\Recibo.aspx" />
     <Content Include="Print\ReciboSistema.aspx" />
     <Content Include="Rotativa\help-wkhtmltoimage.txt" />
     <Content Include="Rotativa\help-wkhtmltopdf.txt" />
@@ -243,6 +242,7 @@
     <Compile Include="Classes\Security\UserSession.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\Catalogos\CatalogosController.cs" />
+    <Compile Include="Controllers\Constancias\ConstanciasController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MessageControllerBase.cs" />
     <Compile Include="Controllers\Notificaciones\NotificacionesController.cs" />
@@ -254,6 +254,7 @@
     <Compile Include="Domain\CategoriasDomain.cs" />
     <Compile Include="Domain\ConceptosConvenioDomain.cs" />
     <Compile Include="Domain\ConceptosPagoDomain.cs" />
+    <Compile Include="Domain\ConstanciasDomain.cs" />
     <Compile Include="Domain\ConveniosDomain.cs" />
     <Compile Include="Domain\DescuentosProntoPagoDomain.cs" />
     <Compile Include="Domain\DireccionesDomain.cs" />
@@ -277,86 +278,52 @@
     <Compile Include="Domain\Seguridad\UsuariosRolesDomain.cs" />
     <Compile Include="Domain\ServiciosDomain.cs" />
     <Compile Include="Domain\TarifasDomain.cs" />
+    <Compile Include="Domain\TipoConstanciaDomain.cs" />
     <Compile Include="Domain\TomasDomain.cs" />
     <Compile Include="Domain\Transacciones Automaticas\TiposTransaccionesAutomaticasDomain.cs" />
     <Compile Include="Domain\Transacciones Automaticas\TransaccionesAutomaticasDomain.cs" />
     <Compile Include="Filters\Security\Authenticate.cs" />
+    <Compile Include="Filters\Security\Authorized.cs" />
     <Compile Include="Filters\Security\Permission.cs" />
     <Compile Include="Filters\Security\ValidaRol.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201804261739320_Nothing.cs" />
-    <Compile Include="Migrations\201804261739320_Nothing.Designer.cs">
-      <DependentUpon>201804261739320_Nothing.cs</DependentUpon>
+    <Compile Include="Migrations\201902272302581_AgregoTablaConstancia.cs" />
+    <Compile Include="Migrations\201902272302581_AgregoTablaConstancia.Designer.cs">
+      <DependentUpon>201902272302581_AgregoTablaConstancia.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201804261801222_AddTableRecibos.cs" />
-    <Compile Include="Migrations\201804261801222_AddTableRecibos.Designer.cs">
-      <DependentUpon>201804261801222_AddTableRecibos.cs</DependentUpon>
+    <Compile Include="Migrations\201902272309046_EliminoTablaConstancia.cs" />
+    <Compile Include="Migrations\201902272309046_EliminoTablaConstancia.Designer.cs">
+      <DependentUpon>201902272309046_EliminoTablaConstancia.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201805051626282_AgregoTablaReportes.cs" />
-    <Compile Include="Migrations\201805051626282_AgregoTablaReportes.Designer.cs">
-      <DependentUpon>201805051626282_AgregoTablaReportes.cs</DependentUpon>
+    <Compile Include="Migrations\201902272314204_AgregoTablaConstancia1.cs" />
+    <Compile Include="Migrations\201902272314204_AgregoTablaConstancia1.Designer.cs">
+      <DependentUpon>201902272314204_AgregoTablaConstancia1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201805151511536_AgregoCampo_Revisado_y_Concluido.cs" />
-    <Compile Include="Migrations\201805151511536_AgregoCampo_Revisado_y_Concluido.Designer.cs">
-      <DependentUpon>201805151511536_AgregoCampo_Revisado_y_Concluido.cs</DependentUpon>
+    <Compile Include="Migrations\201902272344118_AgregaronRelaciones.cs" />
+    <Compile Include="Migrations\201902272344118_AgregaronRelaciones.Designer.cs">
+      <DependentUpon>201902272344118_AgregaronRelaciones.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201805202029404_AddTableSensor.cs" />
-    <Compile Include="Migrations\201805202029404_AddTableSensor.Designer.cs">
-      <DependentUpon>201805202029404_AddTableSensor.cs</DependentUpon>
+    <Compile Include="Migrations\201902280014267_AgregaronCorrecciones.cs" />
+    <Compile Include="Migrations\201902280014267_AgregaronCorrecciones.Designer.cs">
+      <DependentUpon>201902280014267_AgregaronCorrecciones.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201805232054217_AddTableEvidenciaServicio.cs" />
-    <Compile Include="Migrations\201805232054217_AddTableEvidenciaServicio.Designer.cs">
-      <DependentUpon>201805232054217_AddTableEvidenciaServicio.cs</DependentUpon>
+    <Compile Include="Migrations\201902280021228_Detalles.cs" />
+    <Compile Include="Migrations\201902280021228_Detalles.Designer.cs">
+      <DependentUpon>201902280021228_Detalles.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201805241545331_AddRelationUsuarios.cs" />
-    <Compile Include="Migrations\201805241545331_AddRelationUsuarios.Designer.cs">
-      <DependentUpon>201805241545331_AddRelationUsuarios.cs</DependentUpon>
+    <Compile Include="Migrations\201902281523521_AgregoTablaTiposConstancia.cs" />
+    <Compile Include="Migrations\201902281523521_AgregoTablaTiposConstancia.Designer.cs">
+      <DependentUpon>201902281523521_AgregoTablaTiposConstancia.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201807101519480_AddPropertiesRecibo.cs" />
-    <Compile Include="Migrations\201807101519480_AddPropertiesRecibo.Designer.cs">
-      <DependentUpon>201807101519480_AddPropertiesRecibo.cs</DependentUpon>
+    <Compile Include="Migrations\201903011622024_AgregoCampoTablaConstancia.cs" />
+    <Compile Include="Migrations\201903011622024_AgregoCampoTablaConstancia.Designer.cs">
+      <DependentUpon>201903011622024_AgregoCampoTablaConstancia.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201807110100445_UpdateTableTomas.cs" />
-    <Compile Include="Migrations\201807110100445_UpdateTableTomas.Designer.cs">
-      <DependentUpon>201807110100445_UpdateTableTomas.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201807180139138_UpdateTableUsuarios.cs" />
-    <Compile Include="Migrations\201807180139138_UpdateTableUsuarios.Designer.cs">
-      <DependentUpon>201807180139138_UpdateTableUsuarios.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201808281536301_AddTokenFirebaseTableUsuarios.cs" />
-    <Compile Include="Migrations\201808281536301_AddTokenFirebaseTableUsuarios.Designer.cs">
-      <DependentUpon>201808281536301_AddTokenFirebaseTableUsuarios.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201809121529388_AddTableDescuentoProntoPago.cs" />
-    <Compile Include="Migrations\201809121529388_AddTableDescuentoProntoPago.Designer.cs">
-      <DependentUpon>201809121529388_AddTableDescuentoProntoPago.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201809121646357_AlterTablePagos.cs" />
-    <Compile Include="Migrations\201809121646357_AlterTablePagos.Designer.cs">
-      <DependentUpon>201809121646357_AlterTablePagos.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201809121651573_Add-Relation.cs" />
-    <Compile Include="Migrations\201809121651573_Add-Relation.Designer.cs">
-      <DependentUpon>201809121651573_Add-Relation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201809131631214_UpdateTablePago.cs" />
-    <Compile Include="Migrations\201809131631214_UpdateTablePago.Designer.cs">
-      <DependentUpon>201809131631214_UpdateTablePago.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201809211607482_UpdateTablePagos.cs" />
-    <Compile Include="Migrations\201809211607482_UpdateTablePagos.Designer.cs">
-      <DependentUpon>201809211607482_UpdateTablePagos.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201811291758388_PagoIdNull_Recibos.cs" />
-    <Compile Include="Migrations\201811291758388_PagoIdNull_Recibos.Designer.cs">
-      <DependentUpon>201811291758388_PagoIdNull_Recibos.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201811291902192_RelacionConvenioRecibos.cs" />
-    <Compile Include="Migrations\201811291902192_RelacionConvenioRecibos.Designer.cs">
-      <DependentUpon>201811291902192_RelacionConvenioRecibos.cs</DependentUpon>
+    <Compile Include="Migrations\201903061838055_TomaIdNullPagos.cs" />
+    <Compile Include="Migrations\201903061838055_TomaIdNullPagos.Designer.cs">
+      <DependentUpon>201903061838055_TomaIdNullPagos.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ArchivoGasto.cs" />
@@ -365,6 +332,7 @@
     <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\ConceptoConvenio.cs" />
     <Compile Include="Models\ConceptoPago.cs" />
+    <Compile Include="Models\Constancia.cs" />
     <Compile Include="Models\Convenio.cs" />
     <Compile Include="Models\DataContext.cs" />
     <Compile Include="Models\Descuento.cs" />
@@ -404,18 +372,12 @@
     <Compile Include="Models\Servicio.cs" />
     <Compile Include="Models\Servicios\EvidenciaServicio.cs" />
     <Compile Include="Models\Tarifa.cs" />
+    <Compile Include="Models\TiposConstancia.cs" />
     <Compile Include="Models\ToastMessage.cs" />
     <Compile Include="Models\Toastr.cs" />
     <Compile Include="Models\Toma.cs" />
     <Compile Include="Models\TransaccionesAutomaticas\TipoTransaccionAutomatica.cs" />
     <Compile Include="Models\TransaccionesAutomaticas\TransaccionAutomatica.cs" />
-    <Compile Include="Print\Recibo.aspx.cs">
-      <DependentUpon>Recibo.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Print\Recibo.aspx.designer.cs">
-      <DependentUpon>Recibo.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Print\ReciboSistema.aspx.cs">
       <DependentUpon>ReciboSistema.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -427,6 +389,8 @@
     <Compile Include="ViewModels\Account\AuthenticationViewModel.cs" />
     <Compile Include="ViewModels\Catalogos\CategoriasViewModel.cs" />
     <Compile Include="ViewModels\Catalogos\DescuentosViewModel.cs" />
+    <Compile Include="ViewModels\Constancias\ConstanciaNoServicioViewModel.cs" />
+    <Compile Include="ViewModels\Constancias\ConstanciasViewModel.cs" />
     <Compile Include="ViewModels\Notificaciones\NotificacionesViewModel.cs" />
     <Compile Include="ViewModels\Notificaciones\ReportesViewModel.cs" />
     <Compile Include="ViewModels\PeriodosPagoViewModel.cs" />
@@ -494,6 +458,7 @@
     <Content Include="Views\Notificaciones\ReportesNotificacion.cshtml" />
     <Content Include="Views\Shared\_Toastr.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Print\ConstanciaNoAdeudo.docx" />
     <None Include="Properties\PublishProfiles\GoDaddy.pubxml" />
     <None Include="Properties\PublishProfiles\LocalHost.pubxml" />
     <None Include="Properties\PublishProfiles\Sevidor.pubxml" />
@@ -509,6 +474,9 @@
     <Content Include="Views\Tomas\ImprimirEstadoCuenta.cshtml" />
     <Content Include="Views\Tomas\Convenios.cshtml" />
     <Content Include="Views\Account\Authentication.cshtml" />
+    <Content Include="Views\Constancias\ConstanciaNoAdeudo.cshtml" />
+    <Content Include="Views\Constancias\_ConstanciaNoAdeudoConsulta.cshtml" />
+    <Content Include="Views\Constancias\ConstanciaNoServicio.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -519,6 +487,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="UploadFiles\CodigosQR\" />
+    <Folder Include="UploadFiles\ConstanciasNoAdeudo\" />
     <Folder Include="UploadFiles\Convenios\" />
     <Folder Include="UploadFiles\Gastos\" />
     <Folder Include="UploadFiles\Servicios\" />
@@ -527,59 +496,32 @@
     <Folder Include="Views\MessageControllerBase\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201804261739320_Nothing.resx">
-      <DependentUpon>201804261739320_Nothing.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902272302581_AgregoTablaConstancia.resx">
+      <DependentUpon>201902272302581_AgregoTablaConstancia.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201804261801222_AddTableRecibos.resx">
-      <DependentUpon>201804261801222_AddTableRecibos.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902272309046_EliminoTablaConstancia.resx">
+      <DependentUpon>201902272309046_EliminoTablaConstancia.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201805051626282_AgregoTablaReportes.resx">
-      <DependentUpon>201805051626282_AgregoTablaReportes.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902272314204_AgregoTablaConstancia1.resx">
+      <DependentUpon>201902272314204_AgregoTablaConstancia1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201805151511536_AgregoCampo_Revisado_y_Concluido.resx">
-      <DependentUpon>201805151511536_AgregoCampo_Revisado_y_Concluido.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902272344118_AgregaronRelaciones.resx">
+      <DependentUpon>201902272344118_AgregaronRelaciones.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201805202029404_AddTableSensor.resx">
-      <DependentUpon>201805202029404_AddTableSensor.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902280014267_AgregaronCorrecciones.resx">
+      <DependentUpon>201902280014267_AgregaronCorrecciones.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201805232054217_AddTableEvidenciaServicio.resx">
-      <DependentUpon>201805232054217_AddTableEvidenciaServicio.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902280021228_Detalles.resx">
+      <DependentUpon>201902280021228_Detalles.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201805241545331_AddRelationUsuarios.resx">
-      <DependentUpon>201805241545331_AddRelationUsuarios.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201902281523521_AgregoTablaTiposConstancia.resx">
+      <DependentUpon>201902281523521_AgregoTablaTiposConstancia.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201807101519480_AddPropertiesRecibo.resx">
-      <DependentUpon>201807101519480_AddPropertiesRecibo.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201903011622024_AgregoCampoTablaConstancia.resx">
+      <DependentUpon>201903011622024_AgregoCampoTablaConstancia.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201807110100445_UpdateTableTomas.resx">
-      <DependentUpon>201807110100445_UpdateTableTomas.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201807180139138_UpdateTableUsuarios.resx">
-      <DependentUpon>201807180139138_UpdateTableUsuarios.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201808281536301_AddTokenFirebaseTableUsuarios.resx">
-      <DependentUpon>201808281536301_AddTokenFirebaseTableUsuarios.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201809121529388_AddTableDescuentoProntoPago.resx">
-      <DependentUpon>201809121529388_AddTableDescuentoProntoPago.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201809121646357_AlterTablePagos.resx">
-      <DependentUpon>201809121646357_AlterTablePagos.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201809121651573_Add-Relation.resx">
-      <DependentUpon>201809121651573_Add-Relation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201809131631214_UpdateTablePago.resx">
-      <DependentUpon>201809131631214_UpdateTablePago.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201809211607482_UpdateTablePagos.resx">
-      <DependentUpon>201809211607482_UpdateTablePagos.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201811291758388_PagoIdNull_Recibos.resx">
-      <DependentUpon>201811291758388_PagoIdNull_Recibos.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201811291902192_RelacionConvenioRecibos.resx">
-      <DependentUpon>201811291902192_RelacionConvenioRecibos.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201903061838055_TomaIdNullPagos.resx">
+      <DependentUpon>201903061838055_TomaIdNullPagos.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

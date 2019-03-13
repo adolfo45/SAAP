@@ -60,7 +60,8 @@ namespace ComiteAgua.Models
         public DbSet<Sensor> Sensor { get; set; }
         public DbSet<EvidenciaServicio> EvidenciaServicio { get; set; }
         public DbSet<DescuentoProntoPago> DescuentoProntoPago { get; set; }
-
+        public DbSet<Constancia> Constancia { get; set; }
+        public DbSet<TiposConstancia> TiposConstancia { get; set; }
         public DataContext()
             : base("name=DataContext")
         {
@@ -878,7 +879,56 @@ namespace ComiteAgua.Models
                 .HasOptional(p => p.UsuarioCambio)
                 .WithMany(u => u.DescuentoProntoPagoCambio)
                 .HasForeignKey(p => p.UsuarioCambioId);
+            #endregion
 
+            #region * Constancia *
+            modelBuilder.Entity<Constancia>().ToTable("Constancias", "Comite")
+                .HasKey(x => new { x.ConstanciaId });
+
+            modelBuilder.Entity<Constancia>()
+               .HasRequired(p => p.UsuarioAlta)
+               .WithMany(u => u.ConstanciaAlta)
+               .HasForeignKey(p => p.UsuarioAltaId);
+
+            modelBuilder.Entity<Constancia>()
+                .HasOptional(p => p.UsuarioCambio)
+                .WithMany(u => u.ConstanciaCambio)
+                .HasForeignKey(p => p.UsuarioCambioId);
+
+            modelBuilder.Entity<Constancia>().Property(x => x.NoInt)
+                .HasMaxLength(10)
+                .IsOptional();
+
+            modelBuilder.Entity<Constancia>().Property(x => x.NoExt)
+                .HasMaxLength(10)
+                .IsOptional();
+
+            modelBuilder.Entity<Constancia>().Property(x => x.FechaLetra)
+               .HasMaxLength(100)
+               .IsOptional();
+
+            modelBuilder.Entity<Constancia>().Property(x => x.Propietario)
+                .HasMaxLength(100)
+                .IsOptional();
+            #endregion
+
+            #region * TiposConstancia *
+            modelBuilder.Entity<TiposConstancia>().ToTable("TiposConstancia", "Comite")
+                .HasKey(x => new { x.TipoConstanciaId });
+
+            modelBuilder.Entity<TiposConstancia>()
+               .HasRequired(p => p.UsuarioAlta)
+               .WithMany(u => u.TiposConstanciaAlta)
+               .HasForeignKey(p => p.UsuarioAltaId);
+
+            modelBuilder.Entity<TiposConstancia>()
+                .HasOptional(p => p.UsuarioCambio)
+                .WithMany(u => u.TiposConstanciaCambio)
+                .HasForeignKey(p => p.UsuarioCambioId);
+
+            modelBuilder.Entity<TiposConstancia>().Property(x => x.Nombre)
+                .HasMaxLength(100)
+                .IsRequired();          
             #endregion
 
         } // protected override void OnModelCreating(DbModelBuilder modelBuilder)
