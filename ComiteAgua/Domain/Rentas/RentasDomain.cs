@@ -1,57 +1,49 @@
 ﻿using ComiteAgua.Models;
+using ComiteAgua.Models.Rentas;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 
-namespace ComiteAgua.Domain
+namespace ComiteAgua.Domain.Rentas
 {
-    public class ConceptosPagoDomain
+    public class RentasDomain
     {
 
         #region * Constructor generado por Comité Agua *
-
-        public ConceptosPagoDomain(DataContext applicationDbContext)
+        public RentasDomain(DataContext applicationDbContext)
         {
             _context = applicationDbContext;
-        } // public ConceptosPagoDomain(DataContext applicationDbContext)
-
+        }//public RentasDomain(DataContext applicationDbContext)
         #endregion
 
         #region * Enumeraciones declaradas por Comité Agua *
 
-        public enum ConceptosPagoDomainEnum
-        {
-            SuministroAgua = 1,
-            Abono,
-            Convenio,
-            TomaNueva,
-            Constancia,
-            Renta
-        } // ConceptosPagoDomainEnum
-
         #endregion
 
         #region * Variables declaradas por Comité Agua *
-
         private readonly DataContext _context;
-
         #endregion
 
         #region * Propiedades declaradas por Comité Agua * 
 
         #endregion
 
-        #region * Eventos generados por Comité Agua *
+        #region * Acciones generados por Comité Agua *
 
         #endregion
 
         #region * Métodos creados por Comité Agua *
 
+        public void Guardar(Renta model)
+        {
+            _context.Entry(model).State = EntityState.Added;
 
+            _context.SaveChanges();
+        }//public void Guardar(Renta model)
 
         #endregion
 
-    } // public class ConceptosPagoDomain
-
-} // namespace ComiteAgua.Domain
+    }//public class RentasDomain
+}//namespace ComiteAgua.Domain.Rentas

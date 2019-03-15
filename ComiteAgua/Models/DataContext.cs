@@ -13,6 +13,7 @@ namespace ComiteAgua.Models
     using ComiteAgua.Models.Recibos;
     using ComiteAgua.Models.Sensores;
     using ComiteAgua.Models.Servicios;
+    using ComiteAgua.Models.Rentas;
 
     public class DataContext : DbContext
     {
@@ -62,6 +63,8 @@ namespace ComiteAgua.Models
         public DbSet<DescuentoProntoPago> DescuentoProntoPago { get; set; }
         public DbSet<Constancia> Constancia { get; set; }
         public DbSet<TiposConstancia> TiposConstancia { get; set; }
+        public DbSet<Renta> Renta { get; set; }
+        public DbSet<TipoRenta> TipoRenta { get; set; }
         public DataContext()
             : base("name=DataContext")
         {
@@ -928,7 +931,80 @@ namespace ComiteAgua.Models
 
             modelBuilder.Entity<TiposConstancia>().Property(x => x.Nombre)
                 .HasMaxLength(100)
-                .IsRequired();          
+                .IsRequired();
+            #endregion
+
+            #region * Renta *
+
+            modelBuilder.Entity<Renta>().ToTable("Rentas", "Comite")
+               .HasKey(x => new { x.RentaId });
+
+            modelBuilder.Entity<Renta>()
+               .HasRequired(p => p.UsuarioAlta)
+               .WithMany(u => u.RentaAlta)
+               .HasForeignKey(p => p.UsuarioAltaId);
+
+            modelBuilder.Entity<Renta>()
+                .HasOptional(p => p.UsuarioCambio)
+                .WithMany(u => u.RentaCambio)
+                .HasForeignKey(p => p.UsuarioCambioId);
+
+            modelBuilder.Entity<Renta>().Property(x => x.Nombre)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            modelBuilder.Entity<Renta>().Property(x => x.ApellidoPaterno)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            modelBuilder.Entity<Renta>().Property(x => x.ApellidoMaterno)
+                .HasMaxLength(50)
+                .IsOptional();
+
+            modelBuilder.Entity<Renta>().Property(x => x.Calle)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            modelBuilder.Entity<Renta>().Property(x => x.Colonia)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            modelBuilder.Entity<Renta>().Property(x => x.Municipio)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            modelBuilder.Entity<Renta>().Property(x => x.NoInt)
+                .HasMaxLength(10)
+                .IsOptional();
+
+            modelBuilder.Entity<Renta>().Property(x => x.NoExt)
+               .HasMaxLength(10)
+               .IsOptional();
+
+            modelBuilder.Entity<Renta>().Property(x => x.Costo)
+               .IsRequired();
+
+            #endregion
+
+            #region * TipoRenta *
+
+            modelBuilder.Entity<TipoRenta>().ToTable("TiposRenta", "Comite")
+              .HasKey(x => new { x.TipoRentaId });
+
+            modelBuilder.Entity<TipoRenta>()
+              .HasRequired(p => p.UsuarioAlta)
+              .WithMany(u => u.TipoRentaAlta)
+              .HasForeignKey(p => p.UsuarioAltaId);
+
+            modelBuilder.Entity<TipoRenta>()
+                .HasOptional(p => p.UsuarioCambio)
+                .WithMany(u => u.TipoRentaCambio)
+                .HasForeignKey(p => p.UsuarioCambioId);
+
+            modelBuilder.Entity<TipoRenta>().Property(x => x.Nombre)
+                .HasMaxLength(150)
+                .IsRequired();
+
             #endregion
 
         } // protected override void OnModelCreating(DbModelBuilder modelBuilder)

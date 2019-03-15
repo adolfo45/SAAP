@@ -1,5 +1,6 @@
 ﻿using ComiteAgua.Models.Notificaciones;
 using ComiteAgua.Models.Recibos;
+using ComiteAgua.Models.Rentas;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,8 @@ namespace ComiteAgua.Models
         public Convenio Convenio { get;set;}
         public int? ConstanciaId { get; set; }
         public Constancia Constancia { get; set; }
+        public int? RentaId { get; set; }
+        public Renta Renta { get; set; }
         public decimal SubTotal { get; set; }
         public decimal? Descuento { get; set; }
         public decimal? DescuentProntoPago { get; set; }

@@ -1,18 +1,22 @@
-﻿using ComiteAgua.Models.Recibos;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace ComiteAgua.ViewModels.Tomas
+namespace ComiteAgua.Domain.Rentas
 {
-    public class RecibosViewModel
+    public class TiposRentaDomain
     {
         #region * Constructor generado por Comité Agua *
 
         #endregion
 
         #region * Enumeraciones declaradas por Comité Agua *
+
+        public enum TiposRentaEnum
+        {
+            MaquinaRetroexcavadora = 1
+        }//public enum TiposRentaEnum
 
         #endregion
 
@@ -21,13 +25,6 @@ namespace ComiteAgua.ViewModels.Tomas
         #endregion
 
         #region * Propiedades declaradas por Comité Agua * 
-
-        public int? NoReciboFiltro { get; set; }
-        public int? FolioFiltro { get; set; }
-        public DateTime? FechaFiltro { get; set; }
-        public int? ReciboId { get; set; }
-        public List<Recibo> Recibos { get; set; }
-        public string UrlOrigen { get; set; }
 
         #endregion
 
@@ -38,5 +35,5 @@ namespace ComiteAgua.ViewModels.Tomas
         #region * Métodos creados por Comité Agua *
 
         #endregion
-    }//public class RecibosViewModel
-}//namespace ComiteAgua.ViewModels.Tomas
+    }//public class TiposRentaDomain
+}//namespace ComiteAgua.Domain.Rentas

@@ -45,22 +45,21 @@ namespace ComiteAgua.Print
 
             this.ReciboIdHiddenField.Value = this.Page.Request["reciboId"];
             this.UrlOrigenHiddenField.Value = this.Page.Request["UrlOrigen"];
-            this.ConvenioId.Value = this.Page.Request["convenioId"];
-            this.ConstanciaIdHiddenField.Value = this.Page.Request["constanciaId"];
+            this.ConvenioId.Value = this.Page.Request["convenioId"];                        
 
             this.InicializarPantalla();
         }
 
         protected void Unnamed_Click(object sender, EventArgs e)
-        {
-            if (this.UrlOrigenHiddenField.Value == "1")
+        {            
+            if (!string.IsNullOrEmpty(this.UrlOrigenHiddenField.Value))
             {
-                Response.Redirect("~/tomas/Recibos?reciboId=" + this.ReciboIdHiddenField.Value);
+                Response.Redirect("~" + this.UrlOrigenHiddenField.Value.Trim());
             }
             else
             {
                 Response.Redirect("~/home");
-            }           
+            }
         }
 
         #endregion
@@ -70,15 +69,16 @@ namespace ComiteAgua.Print
         public void InicializarPantalla()
         {
             var recibosDomain = new RecibosDomain(_context);
-            var recibo = recibosDomain.ObtenerReciboImpresion(Convert.ToInt32(this.ReciboIdHiddenField.Value));
+            var recibo = recibosDomain.ObtenerReciboImpresion(Convert.ToInt32(this.ReciboIdHiddenField.Value.Trim()));
 
-            //Recibo constancia
-            if (!string.IsNullOrEmpty(this.ConstanciaIdHiddenField.Value))
+            //Recibo Renta
+            if (recibo.Pago.RentaId != null)
             {
-                this.UsuarioTextBox.InnerText = recibo.Pago.Constancia.Propietario;
-                this.DireccionTextBox.InnerText = recibo.Pago.Constancia.TiposCalle.Nombre + " " + recibo.Pago.Constancia.Calles.Nombre + 
-                                                        "" + (!string.IsNullOrEmpty(recibo.Pago.Constancia.NoExt) ? " EXT." + recibo.Pago.Constancia.NoExt : string.Empty) + "" +
-                                                        (!string.IsNullOrEmpty(recibo.Pago.Constancia.NoInt) ? " INT." + recibo.Pago.Constancia.NoInt : string.Empty);
+                this.UsuarioTextBox.InnerText = recibo.Pago.Renta.Nombre + " " + recibo.Pago.Renta.ApellidoPaterno + " " + recibo.Pago.Renta.ApellidoMaterno;
+                this.DireccionTextBox.InnerText = recibo.Pago.Renta.Calle +
+                                                        "" + (!string.IsNullOrEmpty(recibo.Pago.Renta.NoExt) ? " EXT." + recibo.Pago.Renta.NoExt : string.Empty) + "" +
+                                                        (!string.IsNullOrEmpty(recibo.Pago.Renta.NoInt) ? " INT." + recibo.Pago.Renta.NoInt : string.Empty) +
+                                                        " COL. " + recibo.Pago.Renta.Colonia + ", " + recibo.Pago.Renta.Municipio;
                 this.ConceptoPagoTextBox.InnerText = recibo.Pago.ConceptoPago.Nombre;
                 this.FechaTextBox.InnerText = recibo.FechaAlta.ToString("dd/MM/yyyy");
                 this.NoReciboTextBox.InnerText = recibo.NoRecibo.ToString();
@@ -92,7 +92,32 @@ namespace ComiteAgua.Print
                 CodigoImg.Width = 100;
                 this.CanceladoText.Visible = false;
                 return;
-            }//if (!string.IsNullOrEmpty(this.ConstanciaIdHiddenField.Value))
+            }//if (recibo.Pago.RentaId != null)
+
+            //Recibo constancia
+            if (recibo.Pago.ConstanciaId != null)
+            {
+                if (recibo.Pago.Constancia.TipoConstanciaId != (int)TipoConstanciaDomain.TipoConstanciaEnum.ConstanciaNoAdeudo)
+                {               
+                    this.UsuarioTextBox.InnerText = recibo.Pago.Constancia.Propietario;
+                    this.DireccionTextBox.InnerText = recibo.Pago.Constancia.TiposCalle.Nombre + " " + recibo.Pago.Constancia.Calles.Nombre + 
+                                                            "" + (!string.IsNullOrEmpty(recibo.Pago.Constancia.NoExt) ? " EXT." + recibo.Pago.Constancia.NoExt : string.Empty) + "" +
+                                                            (!string.IsNullOrEmpty(recibo.Pago.Constancia.NoInt) ? " INT." + recibo.Pago.Constancia.NoInt : string.Empty);
+                    this.ConceptoPagoTextBox.InnerText = recibo.Pago.ConceptoPago.Nombre;
+                    this.FechaTextBox.InnerText = recibo.FechaAlta.ToString("dd/MM/yyyy");
+                    this.NoReciboTextBox.InnerText = recibo.NoRecibo.ToString();
+                    this.AdicionalTextBox.InnerText = recibo.Adicional;
+                    this.TotalTextBox.InnerText = recibo.Pago.Total.ToString("C");
+                    this.SubTotalTextBox.InnerText = recibo.Pago.SubTotal.ToString("C");
+                    this.CantidadLetraTextBox.InnerText = recibo.CantidadLetra;
+                    // Muestra codigo QR                                    
+                    CodigoImg.ImageUrl = "/UploadFiles/CodigosQR/" + recibo.CodigoQRurl;
+                    CodigoImg.Height = 100;
+                    CodigoImg.Width = 100;
+                    this.CanceladoText.Visible = false;
+                    return;
+                }//if (recibo.Pago.Constancia.TipoConstanciaId != (int)TipoConstanciaDomain.TipoConstanciaEnum.ConstanciaNoAdeudo)
+            }//if (recibo.Pago.ConstanciaId != null)
 
             //Recibo convenio
             if (!string.IsNullOrEmpty(this.ConvenioId.Value))
@@ -121,6 +146,7 @@ namespace ComiteAgua.Print
                 this.CanceladoText.Visible = false;
                 return;
             }//if (!string.IsNullOrEmpty(this.ConvenioId.Value))
+
 
             this.CanceladoText.Visible = !recibo.Pago.Activo;
             this.UsuarioTextBox.InnerText = recibo.Pago.Toma.Propietario.Persona.PersonaFisica.Nombre + " " +

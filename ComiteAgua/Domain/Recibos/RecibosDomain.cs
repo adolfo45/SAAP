@@ -99,6 +99,8 @@ namespace ComiteAgua.Domain.Recibos
                 .Include(r => r.Pago.Constancia.Calles)
                 .Include(r => r.Pago.Constancia.Colonias)
                 .Include(r => r.Pago.Constancia.TiposConstancia)
+                .Include(r => r.Pago.Renta)
+                .Include(r => r.Pago.Renta.TipoRenta)
                 .Where(r => r.ReciboId == reciboId).FirstOrDefault();
 
             return result;
@@ -117,6 +119,9 @@ namespace ComiteAgua.Domain.Recibos
             var recibos = _context.Recibo
                 .Include(r => r.Pago)
                 .Include(r => r.Pago.Toma)
+                .Include(r => r.Pago.Constancia.TiposConstancia)
+                .Include(r => r.Pago.Renta.TipoRenta)
+                .Include(r => r.Pago.ConceptoPago)
                 .Where(r => r.PagoId != null);
 
             if (reciboId != null)

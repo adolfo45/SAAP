@@ -246,6 +246,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MessageControllerBase.cs" />
     <Compile Include="Controllers\Notificaciones\NotificacionesController.cs" />
+    <Compile Include="Controllers\Rentas\RentasController.cs" />
     <Compile Include="Controllers\Seguridad\SeguridadController.cs" />
     <Compile Include="Controllers\Tomas\TomasController.cs" />
     <Compile Include="Domain\ArchivosGastoDomain.cs" />
@@ -272,6 +273,8 @@
     <Compile Include="Domain\PeriodosPagoDomain.cs" />
     <Compile Include="Domain\PropietariosDomain.cs" />
     <Compile Include="Domain\Recibos\RecibosDomain.cs" />
+    <Compile Include="Domain\Rentas\RentasDomain.cs" />
+    <Compile Include="Domain\Rentas\TiposRentaDomain.cs" />
     <Compile Include="Domain\Seguridad\PersonasSeguridadDomain.cs" />
     <Compile Include="Domain\Seguridad\RolesDomain.cs" />
     <Compile Include="Domain\Seguridad\UsuariosDomain.cs" />
@@ -325,6 +328,14 @@
     <Compile Include="Migrations\201903061838055_TomaIdNullPagos.Designer.cs">
       <DependentUpon>201903061838055_TomaIdNullPagos.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903131727564_tablasRentas.cs" />
+    <Compile Include="Migrations\201903131727564_tablasRentas.Designer.cs">
+      <DependentUpon>201903131727564_tablasRentas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903131736108_Relacion_RentaPago.cs" />
+    <Compile Include="Migrations\201903131736108_Relacion_RentaPago.Designer.cs">
+      <DependentUpon>201903131736108_Relacion_RentaPago.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ArchivoGasto.cs" />
     <Compile Include="Models\Asunto.cs" />
@@ -361,6 +372,8 @@
     <Compile Include="Models\PersonaMoral.cs" />
     <Compile Include="Models\Propietario.cs" />
     <Compile Include="Models\Recibos\Recibo.cs" />
+    <Compile Include="Models\Rentas\Renta.cs" />
+    <Compile Include="Models\Rentas\TipoRenta.cs" />
     <Compile Include="Models\Seguridad\MultiComite.cs" />
     <Compile Include="Models\Seguridad\MultiComiteSucursal.cs" />
     <Compile Include="Models\Seguridad\PersonaSeguridad.cs" />
@@ -390,6 +403,7 @@
     <Compile Include="ViewModels\Catalogos\CategoriasViewModel.cs" />
     <Compile Include="ViewModels\Catalogos\DescuentosViewModel.cs" />
     <Compile Include="ViewModels\Constancias\ConstanciaNoServicioViewModel.cs" />
+    <Compile Include="ViewModels\Rentas\RentasViewModel.cs" />
     <Compile Include="ViewModels\Constancias\ConstanciasViewModel.cs" />
     <Compile Include="ViewModels\Notificaciones\NotificacionesViewModel.cs" />
     <Compile Include="ViewModels\Notificaciones\ReportesViewModel.cs" />
@@ -477,6 +491,7 @@
     <Content Include="Views\Constancias\ConstanciaNoAdeudo.cshtml" />
     <Content Include="Views\Constancias\_ConstanciaNoAdeudoConsulta.cshtml" />
     <Content Include="Views\Constancias\ConstanciaNoServicio.cshtml" />
+    <Content Include="Views\Rentas\Rentas.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -522,6 +537,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903061838055_TomaIdNullPagos.resx">
       <DependentUpon>201903061838055_TomaIdNullPagos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903131727564_tablasRentas.resx">
+      <DependentUpon>201903131727564_tablasRentas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903131736108_Relacion_RentaPago.resx">
+      <DependentUpon>201903131736108_Relacion_RentaPago.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

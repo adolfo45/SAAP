@@ -44,6 +44,7 @@ namespace ComiteAgua.Controllers.Constancias
         #endregion
 
         #region * Acciones generados por Comité Agua *
+
         public ActionResult ConstanciaNoAdeudoFiltros()
         {           
             var constanciasViewModel = new ConstanciasViewModel()
@@ -94,7 +95,7 @@ namespace ComiteAgua.Controllers.Constancias
             };
 
             return View(constanciaNoServicioVM);
-        }
+        }       
         public ActionResult DescargarConstanciaNoAdeudo(int tomaId)
         {
             var constanciasDomain = new ConstanciasDomain(_context);
@@ -381,12 +382,14 @@ namespace ComiteAgua.Controllers.Constancias
             var constancia = constanciasDomain.ObtenerConstancia(propietario);
             constanciasDomain.EditarConstanciaReciboImpreso(constancia.ConstanciaId, usuarioId);
             int reciboId = constancia.Pago.Select(r => r.Recibo.Select(re => re.ReciboId).FirstOrDefault()).FirstOrDefault();
-            Response.Redirect("~/Print/ReciboSistema.aspx?reciboId=" + reciboId + "&constanciaId=" + constancia.ConstanciaId);
+            Response.Redirect("~/Print/ReciboSistema.aspx?reciboId=" + reciboId);
             return null;
         }
+        
         #endregion
 
         #region * Métodos creados por Comité Agua *
+
         public string ConvertirFecha(string num)
         {
             string res, dec = "";
@@ -536,6 +539,7 @@ namespace ComiteAgua.Controllers.Constancias
             }
             return Num2Text;
         }//private string toText(double value)
+        
         #endregion
     }//public class ConstanciasController : MessageControllerBase
 }//namespace ComiteAgua.Controllers.Constancias

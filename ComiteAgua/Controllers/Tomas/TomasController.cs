@@ -2387,7 +2387,8 @@ namespace ComiteAgua.Controllers.Tomas
                 FolioFiltro = folio,
                 FechaFiltro = fecha,
                 ReciboId = reciboId,
-                Recibos = recibos
+                Recibos = recibos,
+                UrlOrigen = Url.Action("Recibos", "Tomas")
             };
 
             return reciboVM;

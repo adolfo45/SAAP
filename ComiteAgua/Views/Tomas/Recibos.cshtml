@@ -1,4 +1,5 @@
 ﻿@model ComiteAgua.ViewModels.Tomas.RecibosViewModel
+@using ComiteAgua.Domain
 @{
     ViewBag.Title = "Recibos";
 }
@@ -12,43 +13,43 @@
 </nav>
 
 <div class="col-md-6 mr-auto ml-auto">
-    @using (Html.BeginForm(null,null, FormMethod.Post, new { role = "form" }))
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { role = "form" }))
     {
-    <div class="card">
-        <div class="card-body">
-            @*NO RECIBO*@
-            <div class="form-group row">
-                @Html.LabelFor(x => x.NoReciboFiltro, new { @for = "NoReciboFiltro", @class = "col-md-3 col-form-label offset-md-2" })
-                <div class="col-sm-6">
-                    @Html.TextBoxFor(d => d.NoReciboFiltro, new { @class = "form-control", @type = "number" })                    
+        <div class="card">
+            <div class="card-body">
+                @*NO RECIBO*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.NoReciboFiltro, new { @for = "NoReciboFiltro", @class = "col-md-3 col-form-label offset-md-2" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(d => d.NoReciboFiltro, new { @class = "form-control", @type = "number" })
+                    </div>
                 </div>
-            </div>           
-            @*FOLIO TOMA*@
-            <div class="form-group row">
-                @Html.LabelFor(x => x.FolioFiltro, new { @for = "FolioFiltro", @class = "col-md-3 col-form-label offset-md-2" })
-                <div class="col-sm-6">
-                    @Html.TextBoxFor(d => d.FolioFiltro, new { @class = "form-control", @type = "number" })
+                @*FOLIO TOMA*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.FolioFiltro, new { @for = "FolioFiltro", @class = "col-md-3 col-form-label offset-md-2" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(d => d.FolioFiltro, new { @class = "form-control", @type = "number" })
+                    </div>
+                </div>
+                @*FECHA*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.FechaFiltro, new { @for = "FechaFiltro", @class = "col-md-3 col-form-label offset-md-2" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(d => d.FechaFiltro, new { @class = "form-control", @type = "date" })
+                    </div>
                 </div>
             </div>
-            @*FECHA*@
-            <div class="form-group row">
-                @Html.LabelFor(x => x.FechaFiltro, new { @for = "FechaFiltro", @class = "col-md-3 col-form-label offset-md-2" })
-                <div class="col-sm-6">
-                    @Html.TextBoxFor(d => d.FechaFiltro, new { @class = "form-control", @type = "date" })
+            <div class="card-footer">
+                <div class="row">
+                    <div class="offset-md-3 col-2 text-center">
+                        <button id="BuscarButton" type="submit" formaction="BuscarRecibos" class="btn btn-success">Buscar</button>
+                    </div>
+                    <div class="offset-md-2 col-2 text-center">
+                        <button id="LimpiarButton" type="submit" formaction="Limpiar" class="btn btn-primary">Limpiar</button>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="card-footer">
-            <div class="row">
-                <div class="offset-md-3 col-2 text-center">
-                    <button id="BuscarButton" type="submit" formaction="BuscarRecibos" class="btn btn-success">Buscar</button>
-                </div>
-                <div class="offset-md-2 col-2 text-center">
-                    <button id="LimpiarButton" type="submit" formaction="Limpiar" class="btn btn-primary">Limpiar</button>
-                </div>
-            </div>
-        </div>
-    </div>
     }
 </div>
 
@@ -62,6 +63,7 @@
                 <th scope="col">No Recibo</th>
                 <th scope="col">Folio</th>
                 <th scope="col">Fecha</th>
+                <th scope="col">Concepto</th>
                 <th scope="col">Cancelar</th>
                 <th scope="col">Ver</th>
             </tr>
@@ -69,13 +71,23 @@
         <tbody>
 
             @foreach (var item in Model.Recibos)
-                {
-                <tr class="text-center">
-                    <td scope="row">@item.NoRecibo</td>
-                    <td>@item.Pago.Toma.Folio</td>
-                    <td>@item.Fecha.ToString("dd/MM/yyyy")</td>
-                    <td><a href="@Url.Action("CancelarRecibo","Tomas", new { reciboId = item.ReciboId, estado = item.Pago.Activo})" title="Cancelar"><span class='@(item.Pago.Activo ? "fas fa-check fa-1x verde" : "fas fa-times fa-1x rojo")'></span></a></td>
-                    <td><a href="~/Print/ReciboSistema.aspx?reciboId= + @item.ReciboId +&UrlOrigen=1" title="Ver"><span class="far fa-eye fa-1x azul"></span></a></td>
+            {
+                <tr>
+                    <td class="text-center" scope="row">@item.NoRecibo</td>
+                    <td class="text-center">@(item.Pago.Toma != null ? item.Pago.Toma.Folio : (int?)null)</td>
+                    <td class="text-center">@item.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>@(item.Pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia ?
+                                                      item.Pago.Constancia.TiposConstancia.Nombre :
+                          item.Pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Renta ?
+                                                      item.Pago.Renta.TipoRenta.Nombre :
+                          item.Pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua ?
+                                                       item.Pago.ConceptoPago.Nombre :
+                          item.Pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio ?
+                                                       item.Pago.ConceptoPago.Nombre :
+                          item.Pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva ?
+                                                       item.Pago.ConceptoPago.Nombre : string.Empty)</td>
+                    <td class="text-center"><a href="@Url.Action("CancelarRecibo","Tomas", new { reciboId = item.ReciboId, estado = item.Pago.Activo})" title="Cancelar"><span class='@(item.Pago.Activo ? "fas fa-check fa-1x verde" : "fas fa-times fa-1x rojo")'></span></a></td>
+                    <td class="text-center"><a href="~/Print/ReciboSistema.aspx?reciboId= + @item.ReciboId + &UrlOrigen= + @Model.UrlOrigen" title="Ver"><span class="far fa-eye fa-1x azul"></span></a></td>
                 </tr>
             }
 
@@ -85,6 +97,7 @@
                 <th>No Recibo</th>
                 <th>Folio</th>
                 <th>Fecha</th>
+                <th>Concepto</th>
                 <th>Cancelar</th>
                 <th>Ver</th>
             </tr>

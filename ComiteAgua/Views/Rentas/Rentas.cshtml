@@ -1,0 +1,110 @@
+﻿@model ComiteAgua.ViewModels.Rentas.RentasViewModel
+@{
+    ViewBag.Title = @Model.Titulo;
+}
+
+<br />
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Regresar</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>@Model.Titulo</a></li>
+    </ol>
+</nav>
+
+@using (Html.BeginForm("Guardar", "Rentas", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.RentaId)
+    @Html.HiddenFor(m => m.Accion)
+
+    <div class="col-md-6 mr-auto ml-auto">
+        <div class="card">
+            <div class="card-header text-center">
+                Renta Retroexcavadora
+            </div>
+            <div class="card-body">
+                @*Nombre*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Nombre, new { @for = "Nombre", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.Nombre, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Apellido Paterno*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.ApellidoPaterno, new { @for = "ApellidoPaterno", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.ApellidoPaterno, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.ApellidoPaterno, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Apellido Materno*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.ApellidoMaterno, new { @for = "ApellidoMaterno", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.ApellidoMaterno, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.ApellidoMaterno, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Calle*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Calle, new { @for = "Calle", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.Calle, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.Calle, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Colonia*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Colonia, new { @for = "Calle", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.Colonia, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.Colonia, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Municipio*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Municipio, new { @for = "Municipio", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.Municipio, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.Municipio, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*No. Int*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.NoInt, new { @for = "NoInt", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.NoInt, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.NoInt, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*No. Ext*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.NoExt, new { @for = "NoExt", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.NoExt, new { @class = "form-control form-control-sm" })
+                        @Html.ValidationMessageFor(m => m.NoExt, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*Costo*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Costo, new { @for = "Costo", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.Costo, new { @class = "form-control form-control-sm moneda" })
+                        @Html.ValidationMessageFor(m => m.Costo, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-2 offset-md-5 text-center">
+                        <button id="GuardarButton" type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

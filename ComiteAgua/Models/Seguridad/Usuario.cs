@@ -1,6 +1,7 @@
 ﻿using ComiteAgua.Global;
 using ComiteAgua.Models.Notificaciones;
 using ComiteAgua.Models.Recibos;
+using ComiteAgua.Models.Rentas;
 using ComiteAgua.Models.Servicios;
 using ComiteAgua.Models.TransaccionesAutomaticas;
 using System;
@@ -61,6 +62,10 @@ namespace ComiteAgua.Models.Seguridad
         public List<Constancia> ConstanciaCambio { get; set; }
         public List<TiposConstancia> TiposConstanciaAlta { get; set; }
         public List<TiposConstancia> TiposConstanciaCambio { get; set; }
+        public List<Renta> RentaAlta { get; set; }
+        public List<Renta> RentaCambio { get; set; }
+        public List<TipoRenta> TipoRentaAlta { get; set; }
+        public List<TipoRenta> TipoRentaCambio { get; set; }
 
         #endregion
 
