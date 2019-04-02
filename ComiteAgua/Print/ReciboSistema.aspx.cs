@@ -54,7 +54,7 @@ namespace ComiteAgua.Print
         {            
             if (!string.IsNullOrEmpty(this.UrlOrigenHiddenField.Value))
             {
-                Response.Redirect("~" + this.UrlOrigenHiddenField.Value.Trim());
+                Response.Redirect(this.UrlOrigenHiddenField.Value.Trim());
             }
             else
             {
@@ -90,7 +90,7 @@ namespace ComiteAgua.Print
                 CodigoImg.ImageUrl = "/UploadFiles/CodigosQR/" + recibo.CodigoQRurl;
                 CodigoImg.Height = 100;
                 CodigoImg.Width = 100;
-                this.CanceladoText.Visible = false;
+                this.CanceladoText.Visible = !recibo.Pago.Activo;
                 return;
             }//if (recibo.Pago.RentaId != null)
 
@@ -114,7 +114,7 @@ namespace ComiteAgua.Print
                     CodigoImg.ImageUrl = "/UploadFiles/CodigosQR/" + recibo.CodigoQRurl;
                     CodigoImg.Height = 100;
                     CodigoImg.Width = 100;
-                    this.CanceladoText.Visible = false;
+                    this.CanceladoText.Visible = !recibo.Pago.Activo;
                     return;
                 }//if (recibo.Pago.Constancia.TipoConstanciaId != (int)TipoConstanciaDomain.TipoConstanciaEnum.ConstanciaNoAdeudo)
             }//if (recibo.Pago.ConstanciaId != null)
@@ -143,7 +143,7 @@ namespace ComiteAgua.Print
                 CodigoImg.ImageUrl = "/UploadFiles/CodigosQR/" + recibo.CodigoQRurl;
                 CodigoImg.Height = 100;
                 CodigoImg.Width = 100;
-                this.CanceladoText.Visible = false;
+                this.CanceladoText.Visible = !recibo.Pago.Activo;
                 return;
             }//if (!string.IsNullOrEmpty(this.ConvenioId.Value))
 

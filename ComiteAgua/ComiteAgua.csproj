@@ -217,6 +217,7 @@
     <Content Include="Scripts\bootbox.min.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\dataTables.bootstrap4.min.js" />
+    <Content Include="Scripts\jquery-cookie.js" />
     <Content Include="Scripts\jquery.anexgrid.js" />
     <Content Include="Scripts\jquery.blockUI.js" />
     <Content Include="Scripts\jquery.dataTables.min.js" />
@@ -277,6 +278,7 @@
     <Compile Include="Domain\Rentas\TiposRentaDomain.cs" />
     <Compile Include="Domain\Seguridad\PersonasSeguridadDomain.cs" />
     <Compile Include="Domain\Seguridad\RolesDomain.cs" />
+    <Compile Include="Domain\Seguridad\SeguridadDomain.cs" />
     <Compile Include="Domain\Seguridad\UsuariosDomain.cs" />
     <Compile Include="Domain\Seguridad\UsuariosRolesDomain.cs" />
     <Compile Include="Domain\ServiciosDomain.cs" />

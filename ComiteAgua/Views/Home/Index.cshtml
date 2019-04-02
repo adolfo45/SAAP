@@ -117,7 +117,9 @@
                                             { href: '@Url.Action("RegistroServicio", "Tomas")?tomaId=' + obj.TomaId,
                                                 contenido: 'Agregar Servicio'
                                             },
-                                            { href: '@Url.Action("ImprimirEstadoCuenta", "Tomas")?tomaId=' + obj.TomaId,
+                                            {
+                                                @*href: '@Url.Action("ImprimirEstadoCuenta", "Tomas")?tomaId=' + obj.TomaId,*@
+                                                href: 'javascript:block(' + obj.TomaId + ');',
                                                 contenido: 'Estado Cuenta'
                                             }
                                         ]
@@ -173,8 +175,29 @@
             };
 
     $(document).ready(function () {
-        var grid = $("#list").anexGrid(data);
+        var grid = $("#list").anexGrid(data);      
     });
+    var token = new Date().getTime(); //use the current timestamp as the token value
+    function block(tomaId) {
+        blockUIForDownload(token);
+        window.location = "@Url.Action("ImprimirEstadoCuenta", "Tomas")?tomaId=" + tomaId + "&downloadToken=" + token;
+    };
+
+    var fileDownloadCheckTimer;
+    function blockUIForDownload(token) {
+        BloquearProcesando();
+        fileDownloadCheckTimer = window.setInterval(function () {
+            var cookieValue = $.cookie("fileDownloadToken");
+            if (cookieValue == token)
+                finishDownload();
+        }, 1000);
+    }
+
+    function finishDownload() {
+        window.clearInterval(fileDownloadCheckTimer);
+        $.removeCookie('fileDownloadToken'); //clears this cookie value
+        $.unblockUI();
+    }
 
 </script>
     }

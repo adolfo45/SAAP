@@ -100,6 +100,10 @@ namespace ComiteAgua.Domain
                 .Include(p => p.ConceptoPago)
                  .Include(p => p.Recibo)
                  .Include(p => p.Convenio)
+                 .Include(p => p.Renta)
+                 .Include(p => p.Renta.TipoRenta)
+                 .Include(p => p.Constancia)
+                 .Include(p => p.Constancia.TiposConstancia)
                 .Where(i => DbFunctions.TruncateTime(i.FechaAlta) == DbFunctions.TruncateTime(fecha))
                 .ToList();
 

@@ -1647,16 +1647,19 @@ namespace ComiteAgua.Controllers.Tomas
             return RedirectToAction("CargarServicio", new { servicioId = servicio.ServicioId });
 
         }
-        public ActionResult ImprimirCorte(CorteViewModel model)
+      
+        public ActionResult ImprimirCorte(string fecha, string downloadToken)
         {
-            var corte = this.ObtenerCorteViewModel(model.FechaConsulta);
-           
+            DateTime fecha1 = Convert.ToDateTime(fecha);
+            var corte = this.ObtenerCorteViewModel(fecha1);
+
+            Response.AppendCookie(new HttpCookie("fileDownloadToken", downloadToken));
             return new ViewAsPdf(corte)
             {
-                FileName = string.Format("Corte_" + model.FechaConsulta.ToString("dd-MM-yyyy") + ".pdf")                
+                FileName = string.Format("Corte_" + fecha1.ToString("dd-MM-yyyy") + ".pdf")                
             };           
         }
-        public ActionResult ImprimirEstadoCuenta(int tomaId)
+        public ActionResult ImprimirEstadoCuenta(int tomaId, string downloadToken)
         {
             var periodosPagoDomain = new PeriodosPagoDomain(_context);
             var tarifasDomain = new TarifasDomain(_context);                          
@@ -1675,6 +1678,14 @@ namespace ComiteAgua.Controllers.Tomas
                     if (diferencia > 0)
                     {
                         var tarifa = tarifasDomain.ObtenerTarifa(categoriaId, mesAnoFin.Year);
+
+                        // valida que exista tarifa para ese año
+                        if (tarifa == null)
+                        {
+                            ShowToastMessage("Error", "No existe tarifa para ese año, revisa las tarifas para esa categoría.", ToastMessage.ToastType.Error);
+                            return RedirectToAction("Index","Home");
+                        }
+
                         var costoPorMes = tarifa.CostoTarifa / 12;
                         var totalRestoMes = costoPorMes * diferencia;
                         foreach (var item in estadoCuenta.Select(e => e.Toma.Categoria.Tarifa.Where(t => t.MesAno >= mesAnoFin.Year && t.MesAno <= DateTime.Now.Year)).FirstOrDefault())
@@ -1709,9 +1720,10 @@ namespace ComiteAgua.Controllers.Tomas
                 Tarifas = tarifas,
                 Folio = estadoCuenta.Select(t => t.Toma.Folio).FirstOrDefault().ToString()
             };
-
+            Response.AppendCookie(new HttpCookie("fileDownloadToken", downloadToken));
             return new ViewAsPdf(estadoCuentaVM)
             {
+                
                 FileName = string.Format("Estado Cuenta_" + estadoCuenta.Select(e => e.Toma.Folio).FirstOrDefault() + ".pdf")
             };
         }
@@ -1761,7 +1773,7 @@ namespace ComiteAgua.Controllers.Tomas
             }
             return null;
         }
-        public ActionResult DescargarPadron()
+        public ActionResult DescargarPadron(string downloadToken)
         {
             TomasDomain tomasDomain = new TomasDomain(_context);
             PadronExcel padronExcel = new PadronExcel();
@@ -1877,6 +1889,7 @@ namespace ComiteAgua.Controllers.Tomas
                 using (MemoryStream stream = new MemoryStream())
                 {
                     wb.SaveAs(stream);
+                    Response.AppendCookie(new HttpCookie("fileDownloadToken", downloadToken));
                     return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Padron.xlsx");
                 }
             }
@@ -2250,15 +2263,17 @@ namespace ComiteAgua.Controllers.Tomas
             foreach (var item in ingresos)
             {
                 PagosViewModel pagosViewModel = new PagosViewModel()
-                {
-                    //NoRecibo = item.Recibo.Select(r => r.NoRecibo).FirstOrDefault() == 0 ? (int?)null : item.Recibo.Select(r => r.NoRecibo).FirstOrDefault(),
-                    NoRecibo = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua || item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva ? item.Recibo.Select(r => r.NoRecibo).FirstOrDefault() :
+                {                 
+                    NoRecibo = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua || item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva ||
+                    item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Renta || item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia ? item.Recibo.Select(r => r.NoRecibo).FirstOrDefault() :
                                 item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count == 0 ? (!string.IsNullOrEmpty(item.Convenio.NoTarjeta) ? Convert.ToInt32(item.Convenio.NoTarjeta) : (int?)null) :
                                 item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count > 0 ? item.Recibo.Select(r => r.NoRecibo).FirstOrDefault() : (int?)null,
                     PagoId = item.PagoId,
-                    ConceptoPago = item.ConceptoPago.Nombre,
+                    ConceptoPago = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua || item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio ? item.ConceptoPago.Nombre :
+                                   item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Renta ? item.Renta.TipoRenta.Nombre : item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia ? item.Constancia.TiposConstancia.Nombre : string.Empty,
                     Total = item.Total.ToString("C"),
-                    TipoPago = (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua) || (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva) ? "Recibo" :
+                    TipoPago = (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua) || (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva) ||
+                    item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Renta || item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia ? "Recibo" :
                                 (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count == 0) ? "Tarjeta" :
                                 (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count > 0) ? "Recibo" : string.Empty,
                     Activo = item.Activo

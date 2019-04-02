@@ -10,13 +10,14 @@
     <div class="row">               
         <h6 class="text-center">Total Ingresos: @Model.TotalIngresos</h6>   
        
-        @using (Html.BeginForm("ImprimirCorte", "Tomas", FormMethod.Post, new { @class = "col-auto ml-auto" }))           
-        {
-            @Html.HiddenFor(x => x.FechaConsulta)           
-                <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                    <button type="submit" class="btn btn-secondary">Imprimir corte</button>
-                </div>               
-        }
+      
+            @Html.HiddenFor(x => x.FechaConsulta)    
+        <div class = "col-auto ml-auto">
+            <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                <button id="ImprimirButton" type="button" class="btn btn-secondary">Imprimir corte</button>
+            </div>
+        </div>
+       
 
         <br />
     </div>
@@ -107,4 +108,28 @@
     </div>
 </div>
 
-   
+<script>
+    $("#ImprimirButton")
+        .click(function () {
+            var token = new Date().getTime(); //use the current timestamp as the token value
+            var fechas = $("#Fecha").val();
+                    blockUIForDownload(token);
+            window.location = "@Url.Action("ImprimirCorte", "Tomas")?fecha=" + fechas + "&downloadToken=" + token ;
+        });
+
+    var fileDownloadCheckTimer;
+    function blockUIForDownload(token) {
+        BloquearProcesando();
+        fileDownloadCheckTimer = window.setInterval(function () {
+            var cookieValue = $.cookie("fileDownloadToken");
+            if (cookieValue == token)
+                finishDownload();
+        }, 1000);
+    }
+
+    function finishDownload() {
+        window.clearInterval(fileDownloadCheckTimer);
+        $.removeCookie('fileDownloadToken'); //clears this cookie value
+        $.unblockUI();
+    }
+</script>

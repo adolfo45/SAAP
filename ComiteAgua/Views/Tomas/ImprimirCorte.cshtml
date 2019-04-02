@@ -7,33 +7,40 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
+<head>
 
-        <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" href="~/Images/gota2.png" />
+    <title>Imprimir Corte</title>
 
-        <title>Imprimir Corte</title>      
+    <style>
+        table {
+            width: 100%;
+        }
 
-        <style>
-            table {
-                width: 100%;                               
-            }
+        th, td {
+            width: 80%;
+        }
 
-            th, td {
-                width: 80%;                  
-            }           
-            .amarillo {
-                background-color: gold;
-            }
-        </style>
+        .amarillo {
+            background-color: gold;
+        }
+    </style>
 
-    </head>
+</head>
     <body>
-    
+        <img src="\ComiteAgua\Images\EstadoCuenta\logo.png" width="150" height="100" style="position: absolute" />
+        <br />
+        <h2 style="text-align: center">
+            &nbsp;&nbsp;ORGANISMO INDEPENDIENTE DE AGUA POTABLE<br />
+            SAN BUENAVENTURA A.C<br />
+            PERIODO 2018-2021
+        </h2>
         <h2 style="text-align:center">Corte @Model.FechaConsulta.ToString("dd-MM-yyyy")</h2>
 
         <div>
             <div>
-                <h4>Total Ingresos: @Model.TotalIngresos</h4>                                                                     
+                <h4>Total Ingresos: @Model.TotalIngresos</h4>
             </div>
             <div>
                 <h4 class="text-left">Total Gastos: @Model.TotalGastos</h4>
@@ -43,61 +50,61 @@
             </div>
         </div>
 
-        <div>                     
+        <div>
 
-                @if (Model.Pagos.Count > 0)
-                {
+            @if (Model.Pagos.Count > 0)
+            {
 
-                    <h3 style="text-align:center">Ingresos</h3>
+                <h3 style="text-align:center">Ingresos</h3>
 
-                    <table border=1 cellspacing=0 cellpadding=2 bordercolor="000000">
-                        <thead>
+                <table border=1 cellspacing=0 cellpadding=2 bordercolor="000000">
+                    <thead>
                         <tr>
                             <th style="width: 20%">No</th>
                             <th>Concepto</th>
                             <th>Total</th>
                         </tr>
-                        </thead>
-                        <tbody>
+                    </thead>
+                    <tbody>
 
-                            @foreach (var item in Model.Pagos)
-                            {
-                                <tr class="@(!item.Activo ? "amarillo" : "")">
-                                    <td style="width: 20%">@(item.TipoPago + "-" + item.NoRecibo.ToString()) @(!item.Activo ? "(Cancelado)" : "")</td>
-                                    <td>@item.ConceptoPago</td>
-                                    <td style="text-align: center">@item.Total</td>
-                                </tr>
-                            }
-
-                        </tbody>
-                    </table>
-                }                                                
-
-                @if (Model.Gastos.Count > 0)
-                {
-
-                    <h3 style="text-align:center">Gastos</h3>
-
-                    <table border=1 cellspacing=0 cellpadding=2 bordercolor="000000">
-                        <thead>
-                            <tr>
-                                <th>Concepto</th>
-                                <th>Total</th>
+                        @foreach (var item in Model.Pagos)
+                        {
+                            <tr class="@(!item.Activo ? "amarillo" : "")">
+                                <td style="width: 20%">@(item.TipoPago + "-" + item.NoRecibo.ToString()) @(!item.Activo ? "(Cancelado)" : "")</td>
+                                <td>@item.ConceptoPago</td>
+                                <td style="text-align: center">@item.Total</td>
                             </tr>
-                        </thead>
-                        <tbody>
+                        }
 
-                            @foreach (var item in Model.Gastos)
-                            {
-                                <tr>
-                                    <td>@item.Concepto</td>
-                                    <td style="text-align:center">@item.Total</td>
-                                </tr>
-                            }
+                    </tbody>
+                </table>
+            }
 
-                        </tbody>
-                    </table>
-                }                           
+            @if (Model.Gastos.Count > 0)
+            {
+
+                <h3 style="text-align:center">Gastos</h3>
+
+                <table border=1 cellspacing=0 cellpadding=2 bordercolor="000000">
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in Model.Gastos)
+                        {
+                            <tr>
+                                <td>@item.Concepto</td>
+                                <td style="text-align:center">@item.Total</td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            }
 
         </div>
 

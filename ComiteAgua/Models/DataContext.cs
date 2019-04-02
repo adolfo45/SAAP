@@ -14,9 +14,29 @@ namespace ComiteAgua.Models
     using ComiteAgua.Models.Sensores;
     using ComiteAgua.Models.Servicios;
     using ComiteAgua.Models.Rentas;
+    using System.Configuration;
+    using AdsertiVS2017ClassLibrary;
+    using ComiteAgua.Domain.Seguridad;
 
     public class DataContext : DbContext
     {
+               
+        #region * Constructor generado por Comité Agua *
+        public DataContext() : base("name=ComiteAgua")
+        {
+            
+        }
+        #endregion
+
+        #region * Enumeraciones declaradas por Comité Agua *
+
+        #endregion
+
+        #region * Variables declaradas por Comité Agua *
+
+        #endregion
+
+        #region * Propiedades declaradas por Comité Agua * 
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<EstadoCivil> EstadoCivil { get; set; }
         public DbSet<PersonaFisica> PersonaFisica { get; set; }
@@ -31,7 +51,7 @@ namespace ComiteAgua.Models
         public DbSet<Categoria> Categoria { get; set; }
         public DbSet<Tarifa> Tarifa { get; set; }
         public DbSet<Direccion> Direccion { get; set; }
-        public DbSet<ConceptoPago> ConceptoPago { get; set; }       
+        public DbSet<ConceptoPago> ConceptoPago { get; set; }
         public DbSet<Pago> Pago { get; set; }
         public DbSet<PeriodoPago> PeriodoPago { get; set; }
         public DbSet<ConceptoConvenio> ConceptoConvenio { get; set; }
@@ -65,10 +85,13 @@ namespace ComiteAgua.Models
         public DbSet<TiposConstancia> TiposConstancia { get; set; }
         public DbSet<Renta> Renta { get; set; }
         public DbSet<TipoRenta> TipoRenta { get; set; }
-        public DataContext()
-            : base("name=DataContext")
-        {
-        }
+        #endregion
+
+        #region * Acciones generados por Comité Agua *
+
+        #endregion
+
+        #region * Métodos creados por Comité Agua *
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -137,12 +160,12 @@ namespace ComiteAgua.Models
             #region * EstadoCivil *
 
             modelBuilder.Entity<EstadoCivil>().ToTable("EstadosCiviles", "Global")
-              .HasKey(a => a.EstadoCivilId);           
+              .HasKey(a => a.EstadoCivilId);
 
             modelBuilder.Entity<EstadoCivil>().Property(x => x.Nombre)
                .HasColumnName("EstadoCivil")
                .HasMaxLength(50)
-               .IsRequired();          
+               .IsRequired();
 
             #endregion
 
@@ -214,11 +237,11 @@ namespace ComiteAgua.Models
 
             modelBuilder.Entity<PersonaMoral>().Property(x => x.CorreoElectronico)
                       .HasMaxLength(50)
-                      .IsOptional();                      
+                      .IsOptional();
 
             modelBuilder.Entity<PersonaMoral>()
                 .HasRequired(pf => pf.Persona)
-                .WithOptional(p => p.PersonaMoral);           
+                .WithOptional(p => p.PersonaMoral);
 
             #endregion
 
@@ -230,7 +253,7 @@ namespace ComiteAgua.Models
             modelBuilder.Entity<PersonalidadJuridica>().Property(x => x.Nombre)
                .HasColumnName("PersonalidadJuridica")
                .HasMaxLength(50)
-               .IsRequired();           
+               .IsRequired();
 
             #endregion
 
@@ -266,7 +289,7 @@ namespace ComiteAgua.Models
             modelBuilder.Entity<Sucursal>().Property(x => x.Nombre)
                .HasColumnName("Sucursal")
                .HasMaxLength(50)
-               .IsRequired();          
+               .IsRequired();
 
             #endregion
 
@@ -302,12 +325,12 @@ namespace ComiteAgua.Models
             modelBuilder.Entity<Toma>().ToTable("Tomas", "Comite")
              .HasKey(a => a.TomaId);
 
-            modelBuilder.Entity<Toma>().Property(x => x.Folio)            
+            modelBuilder.Entity<Toma>().Property(x => x.Folio)
             .IsRequired();
 
             modelBuilder.Entity<Toma>().Property(x => x.Observaciones)
            .HasMaxLength(255)
-           .IsOptional();          
+           .IsOptional();
 
             #endregion
 
@@ -321,7 +344,7 @@ namespace ComiteAgua.Models
               .HasMaxLength(100)
               .IsRequired();
 
-            modelBuilder.Entity<Categoria>().Property(x => x.Abreviatura)            
+            modelBuilder.Entity<Categoria>().Property(x => x.Abreviatura)
              .HasMaxLength(50)
              .IsRequired();
 
@@ -355,7 +378,7 @@ namespace ComiteAgua.Models
                       .HasMaxLength(100)
                       .IsOptional();
 
-            modelBuilder.Entity<Direccion>().Property(x => x.CalleId)          
+            modelBuilder.Entity<Direccion>().Property(x => x.CalleId)
            .IsOptional();
 
             modelBuilder.Entity<Direccion>().Property(x => x.TipoCalleId)
@@ -386,7 +409,7 @@ namespace ComiteAgua.Models
             modelBuilder.Entity<Calles>().Property(x => x.Nombre)
             .HasColumnName("Calle")
             .HasMaxLength(255)
-            .IsRequired();                 
+            .IsRequired();
 
             #endregion
 
@@ -488,7 +511,7 @@ namespace ComiteAgua.Models
 
             modelBuilder.Entity<Convenio>().Property(x => x.RutaArchivo)
            .HasMaxLength(400)
-           .IsRequired();           
+           .IsRequired();
 
             modelBuilder.Entity<Convenio>().Property(cpm => cpm.FechaTermino)
              .HasColumnType("date");
@@ -663,7 +686,7 @@ namespace ComiteAgua.Models
             modelBuilder.Entity<Notificacion>()
                .HasRequired(p => p.UsuarioAlta)
                .WithMany(u => u.NotificacionesAlta)
-               .HasForeignKey(p => p.UsuarioAltaId);               
+               .HasForeignKey(p => p.UsuarioAltaId);
 
             modelBuilder.Entity<Notificacion>()
                 .HasOptional(p => p.UsuarioCambio)
@@ -679,7 +702,7 @@ namespace ComiteAgua.Models
            .HasMaxLength(255)
            .IsOptional();
 
-            modelBuilder.Entity<Notificacion>().Property(x => x.OpcionNotificacionId)          
+            modelBuilder.Entity<Notificacion>().Property(x => x.OpcionNotificacionId)
            .IsOptional();
 
             #endregion
@@ -775,7 +798,7 @@ namespace ComiteAgua.Models
             modelBuilder.Entity<Recibo>()
                 .HasOptional(p => p.UsuarioCambio)
                 .WithMany(u => u.ReciboCambio)
-                .HasForeignKey(p => p.UsuarioCambioId);           
+                .HasForeignKey(p => p.UsuarioCambioId);
 
             modelBuilder.Entity<Recibo>().Property(x => x.Observaciones)
                 .HasMaxLength(255)
@@ -1008,7 +1031,19 @@ namespace ComiteAgua.Models
             #endregion
 
         } // protected override void OnModelCreating(DbModelBuilder modelBuilder)
-
+        public string LlenarTexto()
+        {
+            var seguridadDomain = new SeguridadDomain();
+            string encriptar = AdsertiFunciones.EncriptarTexto(ConfigurationManager.ConnectionStrings["ComiteAgua"].ConnectionString);
+            var text = seguridadDomain.LlenarTexto(encriptar);
+            return text;
+        }//public string LlenarTexto()
+        public string LimpiarTexto()
+        {
+            var seguridadDomain = new SeguridadDomain();            
+            var text = seguridadDomain.LimpiarTexto(ConfigurationManager.ConnectionStrings["ComiteAgua"].ConnectionString);            
+            return text;
+        }//public string LimpiarTexto()
+        #endregion
     } //  public class DataContext : DbContext
-
 } // namespace ComiteAgua.Models

@@ -16,7 +16,7 @@ namespace ComiteAgua.Filters.Security
         {            
             if (!UserSession.ExistUserInSession() || filterContext.HttpContext.Session["UsuarioId"] == null)
             {
-                filterContext.Result = new RedirectResult("/Account");                
+                filterContext.Result = new RedirectResult("~/Account");                
             }
 
             base.OnActionExecuting(filterContext);
