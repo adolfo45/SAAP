@@ -56,22 +56,51 @@
 <br />
 
 <div id="ConsultaNoAdeudoTable"></div>
+<form id="formCosto">
+    @Html.Hidden("tomaId", Model.TomaId)
 
+    <div class="modal fade" id="CostoModal" tabindex="-1" role="dialog" aria-labelledby="costoModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="costoModalLabel">Costo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group row">
+                        <label for="costoTextBox-name" class="col-form-label col-md-2">Costo:</label>
+                        <div class="col-md-10">
+                            @Html.TextBoxFor(d => d.Costo, new { @class = "form-control validaCosto moneda" })
+                            @Html.ValidationMessageFor(m => m.Costo, null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="CancelarButton" type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button id="GuardarButton" type="button" class="btn btn-primay">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 @section scripts
 {
     <script>
 
-        $(document).ready(function () {  
+        $(document).ready(function () {
             
             //variables globales
             var folioFiltro;
             var propietarioFiltro;
             var calleFiltro;
-            
-            $("#BuscarButton").click(function () {               
 
+            $("#BuscarButton").click(function () {
+                BloquearProcesando();
                 ObtenerValoresFiltros();
-
                 if (folioFiltro.length == 0 && propietarioFiltro.length == 0 && calleFiltro.length == 0)
                 {
                     toastr.warning(
@@ -82,9 +111,10 @@
                             progressBar: true,
                             positionClass: "toast-bottom-full-width"
                         });
+                    $.unblockUI();
                     return;
-                }//if (folioFiltro.length == 0 && propietarioFiltro.length == 0 && calleFiltro.length == 0)    
-                
+                }//if (folioFiltro.length == 0 && propietarioFiltro.length == 0 && calleFiltro.length == 0)
+
                 $.ajax({
                     type: 'get',
                     cache: false,
@@ -96,21 +126,22 @@
                         calle: calleFiltro
                     },
                     success: function (data) {
-                        $("#ConsultaNoAdeudoTable").html(data);     
+                        $("#ConsultaNoAdeudoTable").html(data);
                         $('#tomas').DataTable({
                             "filter": false
                         });
                         div = document.getElementById('tomas_length');
                         div.style.display = 'none';
+                        $.unblockUI();
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         alert('Error - ' + errorThrown);
-                    }                   
+                    }
                 });//$.ajax({
                 $("#LimpiarButton").click(function () {
                     LimpiarFiltros();
                 });//$("#LimpiarButton").click(function () {
-            });//$("#BuscarButton").click(function () {     
+            });//$("#BuscarButton").click(function () {
             function ObtenerValoresFiltros() {
                 folioFiltro = $("#FolioFiltro").val().trim();
                 propietarioFiltro = $("#PropietarioFiltro").val().trim();
@@ -119,14 +150,50 @@
             function LimpiarFiltros() {
                 $("#FolioFiltro").val("");
                 $("#PropietarioFiltro").val("");
-                $("#CalleFiltro").val("");   
+                $("#CalleFiltro").val("");
                 //$("#ConsultaNoAdeudoTable").html("");
                 var table = $('#tomas').DataTable();
                 table
                     .clear()
                     .draw();
-            }//function LimpiarFiltros() {           
-        });  
+            }//function LimpiarFiltros() {
+            $.validator.addMethod("validaCosto", function () {
+                return $("#Costo").val().trim().length > 0;
+            }, "El costo es requerido.");//$.validator.addMethod("validaCosto", function () {
+            $("#GuardarButton").click(function () {
+                var isvalid = $("#formCosto").valid();
+                if (isvalid) {
+                    var token = new Date().getTime();
+                    blockUIForDownload(token);
+                    var tomaId = document.getElementById('tomaId').value;
+                    var costo = document.getElementById('Costo').value;
+                    window.location = "@Url.Action("DescargarConstanciaNoAdeudo", "Constancias")?tomaId=" + tomaId + "&costo=" + costo + "&downloadToken=" + token;
+                    $('#CostoModal').modal('hide');
+                    document.getElementById('Costo').value = "";
+                    $("#ImprimirReciboButton").removeClass('disabled');
+                }           
+            });//$("#GuardarButton").click(function () {
+            $("#CancelarButton").click(function () {
+                document.getElementById('Costo').value = "";
+            });
+            var fileDownloadCheckTimer;
+            function blockUIForDownload(token) {
+                BloquearProcesando();
+                fileDownloadCheckTimer = window.setInterval(function () {
+                    var cookieValue = $.cookie("fileDownloadToken");
+                    if (cookieValue == token)
+                        finishDownload();
+                }, 1000);
+            }
+
+            function finishDownload() {
+                window.clearInterval(fileDownloadCheckTimer);
+                $.removeCookie('fileDownloadToken'); //clears this cookie value
+                $.unblockUI();
+            }
+        });
+
+
     </script>
 }
 

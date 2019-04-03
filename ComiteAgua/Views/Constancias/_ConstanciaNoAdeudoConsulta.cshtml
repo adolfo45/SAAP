@@ -6,6 +6,7 @@
         color: gray;
     }
 </style>
+
 @if (Model.Count > 0)
     {
         <table id="tomas" class="table table-hover table-bordered table-sm">
@@ -29,8 +30,9 @@
                     <td>@item.Calle</td>
                     <td>@item.Colonia</td>
                     <td>@item.UltimoPeriodoPago</td>
-                    <td class="text-center"><a href='@Url.Action("DescargarConstanciaNoAdeudo", "Constancias", new { tomaId = item.TomaId})' title="Descargar constancia" id="DescargarConstanciaButton"><i class="fas fa-file-download verde"></i></a></td>                 
-                    <td class="text-center"><a href="@Url.Action("ImprimirReciboConstanciaNoAdeudo", "Constancias", new { tomaId = item.TomaId})" id="ImprimirReciboButton" title="Imprimir recibo" class='@(item.ReciboImpreso ? "disabled" : string.Empty )'><i class="fas fa-qrcode"></i></a></td>
+                    @*<td class="text-center"><a href='@Url.Action("DescargarConstanciaNoAdeudo", "Constancias", new { tomaId = item.TomaId})' title="Descargar constancia" id="DescargarConstanciaButton"><i class="fas fa-file-download verde"></i></a></td>*@  
+                    <td class="text-center"><a href="javascript:DescargarConstancia(@item.TomaId)" title="Descargar constancia"><i class="fas fa-file-download verde"></i></a></td>
+                    <td class="text-center"><a href="javascript:ImprimirReciboButton(@item.TomaId)" id="ImprimirReciboButton" title="Imprimir recibo" class="@(item.ReciboImpreso ? "disabled" : string.Empty )"><i class="fas fa-qrcode"></i></a></td>
                 </tr>
                 }
             </tbody>
@@ -47,10 +49,16 @@
     }
 
         <script>
-            $("#DescargarConstanciaButton").click(function () {
-                $("#ImprimirReciboButton").removeClass('disabled');
-            });//$("#DescargarConstanciaButton").click(function () {
-           
-
-            $("button[disabled=disabled]").removeClass('btn-primary').addClass('grisClaro');
+            $(document).ready(function () {              
+                $("button[disabled=disabled]").removeClass('btn-primary').addClass('grisClaro');
+            });           
+            function ImprimirReciboButton(tomaId) { 
+                BloquearProcesando();
+                window.location = "@Url.Action("ImprimirReciboConstanciaNoAdeudo", "Constancias")?tomaId=" + tomaId;
+            };
+            function DescargarConstancia(tomaId) {
+                $('#CostoModal').modal('show'); 
+                document.getElementById('tomaId').value = tomaId;
+            };
+            
         </script>

@@ -29,6 +29,7 @@ namespace ComiteAgua.ViewModels.Constancias
         public string PropietarioFiltro { get; set; }
         [Display(Name = "Calle")]
         public string CalleFiltro { get; set; }
+        public string Costo { get; set; }
         public string Accion { get; set; }
         public string UrlRetorno { get; set; }
         public List<TomasViewModel> Tomas {get;set;}

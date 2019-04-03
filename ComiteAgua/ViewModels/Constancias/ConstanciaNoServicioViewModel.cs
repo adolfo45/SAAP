@@ -44,6 +44,10 @@ namespace ComiteAgua.ViewModels.Constancias
         public string NoExt { get; set; }
         [Display(Name = "Fecha")]
         public string Fecha { get; set; }
+        [Display(Name = "Costo")]
+        [Required(ErrorMessage = "El {0} es requerido.")]
+        public string Costo { get; set; }
+        public string DownloadToken { get; set; }
         public string Accion { get; set; }
         public string UrlRetorno { get; set; }        
         public string Titulo

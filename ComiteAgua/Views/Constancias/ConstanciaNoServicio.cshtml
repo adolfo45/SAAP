@@ -12,10 +12,9 @@
     </ol>
 </nav>
 
-@using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-{
-   
+<form id="constanciaForm" method="post">
     @Html.HiddenFor(m => m.ConstanciaId)
+    @Html.Hidden("downloadToken", Model.DownloadToken)
     <div class="col-md-6 mr-auto ml-auto">
         <div class="card">
             <div class="card-header text-center">
@@ -68,31 +67,67 @@
                         @Html.TextBoxFor(m => m.NoExt, new { @class = "form-control form-control-sm" })
                     </div>
                 </div>
+                @*Costo*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Costo, new { @for = "Costo", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m => m.Costo, new { @class = "form-control form-control-sm moneda" })
+                        @Html.ValidationMessageFor(m => m.Costo, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
             </div>
             <div class="card-footer">
                 <div class="row">
                     <div class="col-md-3 offset-md-2 text-center">
-                        <button id="DescargarButton" type="submit" formaction="DescargarConstanciaNoServicio" class="btn btn-success">Descargar</button>
+                        <button id="DescargarButton" type="button" class="btn btn-success">Descargar</button>
                     </div>
                     <div class="col-md-3 offset-md-2 text-center">
-                        <button id="ImprimirButton" type="submit" formaction='@Url.Action("ImprimirReciboConstanciaNoServicio", new { propietario = Model.Propietario})' class="btn btn-primary" disabled>Imprimir recibo</button>
+                        <button id="ImprimirButton" type="button" class="btn btn-primary" disabled>Imprimir recibo</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-}
+</form>
 
 @section scripts
 {
-    <script>
+<script>
         $(document).ready(function () {
-            $(".form-horizontal").submit(function (event) {
-                if ($(".form-horizontal").valid()) {
-                    $("#ImprimirButton").prop('disabled', false);
-                }
+
+
+                $("button[disabled=disabled]").removeClass('btn-primary').addClass('grisClaro');
             });
-            $("button[disabled=disabled]").removeClass('btn-primary').addClass('grisClaro');
+    $("#ImprimirButton").click(function () {
+        BloquearProcesando();
+            var propietario = document.getElementById('Propietario').value;
+            window.location = "@Url.Action("ImprimirReciboConstanciaNoServicio", "Constancias")?propietario=" + propietario;
         });
-    </script>
+         $("#DescargarButton").click(function () {
+                if ($("#constanciaForm").valid()) {
+                    var token = new Date().getTime();
+                    blockUIForDownload(token)
+                    $("#ImprimirButton").prop('disabled', false);
+                    document.getElementById('downloadToken').value = token;
+
+                    window.location = "@Url.Action("DescargarConstanciaNoServicio", "Constancias")?" + $("#constanciaForm").serialize();
+                    }
+                });
+
+            var fileDownloadCheckTimer;
+        function blockUIForDownload(token) {
+            BloquearProcesando();
+            fileDownloadCheckTimer = window.setInterval(function () {
+                var cookieValue = $.cookie("fileDownloadToken");
+                if (cookieValue == token)
+                    finishDownload();
+            }, 1000);
+        }
+
+        function finishDownload() {
+            window.clearInterval(fileDownloadCheckTimer);
+            $.removeCookie('fileDownloadToken'); //clears this cookie value
+            $.unblockUI();
+        }
+</script>
 }

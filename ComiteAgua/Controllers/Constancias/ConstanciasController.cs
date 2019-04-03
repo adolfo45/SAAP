@@ -73,7 +73,7 @@ namespace ComiteAgua.Controllers.Constancias
                     Colonia = t.Direccion != null ? (t.Direccion.ColoniaId > 0 ? t.Direccion.Colonias.Nombre : string.Empty) : string.Empty,
                     UltimoPeriodoPago = t.PeriodoPago.Select(p => p.MesAnoInicio).LastOrDefault() != null ? 
                                         Convert.ToDateTime(t.PeriodoPago.Select(p => p.MesAnoInicio).LastOrDefault()).ToString("MMM-yyyy", new CultureInfo("es-ES")) : t.PeriodoPago.Select(p => p.UltimoPeriodoPago).LastOrDefault(),
-                    ReciboImpreso = t.Constancia.Select(c => c.ReciboImpreso).LastOrDefault()
+                    ReciboImpreso = t.Constancia.Count > 0 ? t.Constancia.Select(c => c.ReciboImpreso).LastOrDefault() : true
                 })
                 .OrderBy(t => t.Folio)
                 .ToList();            
@@ -95,8 +95,8 @@ namespace ComiteAgua.Controllers.Constancias
             };
 
             return View(constanciaNoServicioVM);
-        }       
-        public ActionResult DescargarConstanciaNoAdeudo(int tomaId)
+        }   
+        public ActionResult DescargarConstanciaNoAdeudo(int tomaId, string costo, string downloadToken)
         {
             var constanciasDomain = new ConstanciasDomain(_context);
             var tomasDomain = new TomasDomain(_context);
@@ -123,8 +123,8 @@ namespace ComiteAgua.Controllers.Constancias
             {
                 ConceptoPagoId = (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia,
                 TomaId = tomaId,
-                SubTotal = constanciasDomain.Costo,
-                Total = constanciasDomain.Costo,
+                SubTotal = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(costo)),
+                Total = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(costo)),
                 FechaAlta = DateTime.Now,
                 UsuarioAltaId = usuarioAltaId,
                 Activo = true,
@@ -215,6 +215,7 @@ namespace ComiteAgua.Controllers.Constancias
                 if (archivo.Exists)
                 {
                     Response.ClearContent();
+                    Response.AppendCookie(new HttpCookie("fileDownloadToken", downloadToken));
                     Response.AddHeader("Content-Disposition", "attachment; filename=" + archivo.Name);
                     Response.AddHeader("Content-Length", archivo.Length.ToString());
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
@@ -224,7 +225,7 @@ namespace ComiteAgua.Controllers.Constancias
             }
             ViewBag.ReciboId = recibo.ReciboId;
             return null;
-        }
+        }   
         public ActionResult DescargarConstanciaNoServicio(ConstanciaNoServicioViewModel model)
         {
             var direccionesDomain = new DireccionesDomain(_context);
@@ -262,7 +263,7 @@ namespace ComiteAgua.Controllers.Constancias
             var pago = new Pago()
             {
                 ConceptoPagoId = (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia,                
-                SubTotal = constanciasDomain.Costo,
+                SubTotal = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.Costo)),
                 Total = constanciasDomain.Costo,
                 FechaAlta = DateTime.Now,
                 UsuarioAltaId = usuarioId,
@@ -353,6 +354,7 @@ namespace ComiteAgua.Controllers.Constancias
                 if (archivo.Exists)
                 {
                     Response.ClearContent();
+                    Response.AppendCookie(new HttpCookie("fileDownloadToken", model.DownloadToken));
                     Response.AddHeader("Content-Disposition", "attachment; filename=" + archivo.Name);
                     Response.AddHeader("Content-Length", archivo.Length.ToString());
                     Response.ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
@@ -362,7 +364,7 @@ namespace ComiteAgua.Controllers.Constancias
             }
             
             return null;
-        }
+        }   
         public ActionResult ImprimirReciboConstanciaNoAdeudo(int tomaId)
         {
             var constanciasDomain = new ConstanciasDomain(_context);
