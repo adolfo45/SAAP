@@ -1,0 +1,54 @@
+﻿@model ComiteAgua.ViewModels.Tomas.ReconexionTomaViewModel
+@{
+    ViewBag.Title = "Reconexión de Toma";
+}
+
+<br />
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Regresar</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Reconexión de Toma</a></li>
+    </ol>
+</nav>
+
+@using (Html.BeginForm("GuardarReconexionToma", "Tomas", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.TomaId)
+
+    <div class="col-md-9 mr-auto ml-auto">
+        <div class="card">
+            <div class="card-header text-center">
+                Reconexión de toma
+            </div>
+            <div class="card-body">
+                @*COSTO*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Costo, new { @for = "Costo", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.Costo, new { @class = "form-control moneda" })
+                        @Html.ValidationMessageFor(m => m.Costo, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+                @*OBSERVACIONES*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Observaciones, new { @for = "Observaciones", @class = "col-md-2 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextAreaFor(d => d.Observaciones, new { @class = "form-control mayusculas" })
+                        @Html.ValidationMessageFor(m => m.Observaciones, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                @*Button*@
+                <div class="row">
+                    <div class="mr-auto ml-auto">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

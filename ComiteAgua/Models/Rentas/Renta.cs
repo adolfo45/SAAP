@@ -1,6 +1,7 @@
 ﻿using ComiteAgua.Models.Seguridad;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -34,6 +35,7 @@ namespace ComiteAgua.Models.Rentas
         public string NoInt { get; set; }
         public string NoExt { get; set; }
         public decimal Costo { get; set; }
+        public string Observaciones { get; set; }
         public DateTime FechaAlta { get; set; }
         public int UsuarioAltaId { get; set; }
         public Usuario UsuarioAlta { get; set; }

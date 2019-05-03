@@ -27,7 +27,9 @@ namespace ComiteAgua.Domain
             Convenio,
             TomaNueva,
             Constancia,
-            Renta
+            Renta,
+            CambioPropietario,
+            ReconexionToma
         } // ConceptosPagoDomainEnum
 
         #endregion

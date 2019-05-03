@@ -56,6 +56,7 @@
 <br />
 
 <div id="ConsultaNoAdeudoTable"></div>
+<!--MODAL CAPTURA COSTO-->
 <form id="formCosto">
     @Html.Hidden("tomaId", Model.TomaId)
 
@@ -71,7 +72,7 @@
                 <div class="modal-body">
 
                     <div class="form-group row">
-                        <label for="costoTextBox-name" class="col-form-label col-md-2">Costo:</label>
+                        <label for="Costo" class="col-form-label col-md-2">Costo:</label>
                         <div class="col-md-10">
                             @Html.TextBoxFor(d => d.Costo, new { @class = "form-control validaCosto moneda" })
                             @Html.ValidationMessageFor(m => m.Costo, null, new { @class = "badge badge-pill badge-danger" })

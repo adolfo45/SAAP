@@ -223,7 +223,7 @@ namespace ComiteAgua.Controllers.Constancias
                     Response.End();
                 }
             }
-            ViewBag.ReciboId = recibo.ReciboId;
+            
             return null;
         }   
         public ActionResult DescargarConstanciaNoServicio(ConstanciaNoServicioViewModel model)

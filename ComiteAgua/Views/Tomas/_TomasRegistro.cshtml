@@ -4,42 +4,33 @@
 
 }
 
-@using (Html.BeginForm("GuardarToma", "Tomas", FormMethod.Post, new { role = "form" }))
-{
-
+@*@using (Html.BeginForm("GuardarToma", "Tomas", FormMethod.Post, new { role = "form" }))
+{*@
+<form id="TomaForm">
     @Html.HiddenFor(m => m.TomaId)
     @Html.HiddenFor(m => m.PropietarioId)
     @Html.HiddenFor(m => m.DireccionId)
     @Html.HiddenFor(m => m.Activa)
 
-    // Folio
+    @*Folio*@
     <div class="form-group row">
         @Html.LabelFor(x => x.Folio, new { @for = "Folio", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
-            @Html.TextBoxFor(d => d.Folio, new { @class = "form-control" })
+            @Html.TextBoxFor(d => d.Folio, new { @class = "form-control", @type="number" })
             @Html.ValidationMessageFor(m => m.Folio, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
 
-    // Categoria
+    @*Categoria*@
     <div class="form-group row">
         @Html.LabelFor(x => x.CategoriaId, new { @for = "CategoriaId", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
             @Html.DropDownListFor(m => m.CategoriaId, new SelectList(Model.Categorias, "CategoriaId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
             @Html.ValidationMessageFor(m => m.CategoriaId, null, new { @class = "badge badge-pill badge-danger" })
         </div>
-    </div>   
+    </div>
 
-    // Liquidacion
-    @*<div class="form-group row">
-        @Html.LabelFor(x => x.LiquidacionId, new { @for = "LiquidacionId", @class = "col-md-2 col-form-label ml-auto" })
-        <div class="col-sm-6 mr-auto">
-            @Html.DropDownListFor(m => m.LiquidacionId, new SelectList(Model.LiquidacionesToma, "LiquidacionTomaId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.LiquidacionId, null, new { @class = "badge badge-pill badge-danger" })
-        </div>
-    </div>*@
-
-    // Observaciones
+    @*Observaciones*@
     <div class="form-group row">
         @Html.LabelFor(x => x.Observaciones, new { @for = "Observaciones", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
@@ -48,19 +39,53 @@
         </div>
     </div>
 
-    // Pasiva
+    @*Pasiva*@
     <div class="form-group row">
         @Html.LabelFor(x => x.Pasiva, new { @for = "Pasiva", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
-            @Html.CheckBoxFor(d => d.Pasiva)        
+            @Html.CheckBoxFor(d => d.Pasiva)
         </div>
     </div>
 
-    // Button
+    @*Button*@
     <div class="row">
         <div class="mr-auto ml-auto">
-            <button type="submit" class="btn btn-success">Guardar</button>
+            <button id="GuardarButton" type="button" class="btn btn-success">Guardar</button>
         </div>
     </div>
+</form>
+@*}*@
 
-}
+    <script>
+        $("#GuardarButton").click(function () {
+            if ($("#TomaForm").valid()) {
+                // Valida folio
+                var tomaId = document.getElementById('TomaId').value;
+                var folio = document.getElementById('Folio').value;
+                var token = new Date().getTime();
+                $.ajax({
+                    url: "@Url.Action("ValidarFolio", "Tomas")?tomaId=" + tomaId + "&folio=" + folio + "&downloadToken=" + token,
+                    success: function (result) {
+                        if (result.existe) {
+                            blockUIForDownload(token);
+                            toastr.warning(
+                                "El folio ya se encuentra en existencia",
+                                "Alerta",
+                                {
+                                    closeButton: true,
+                                    progressBar: true,
+                                    positionClass: "toast-bottom-full-width"
+                                });
+                            document.getElementById("Folio").focus();
+                        } else {
+                            BloquearProcesando();
+                            window.location = "@Url.Action("GuardarToma", "Tomas")?" + $("#TomaForm").serialize();
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Error al validar el folio", "Tomas", { closeButton: true, progressBar: true, positionClass: "toast-bottom-full-width" });
+                    }
+                });//$.ajax({      
+            }
+        });//$("#GuardarCambioPropietarioButton").click(function () {
+    </script>

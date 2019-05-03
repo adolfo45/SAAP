@@ -66,6 +66,8 @@ namespace ComiteAgua.Models.Seguridad
         public List<Renta> RentaCambio { get; set; }
         public List<TipoRenta> TipoRentaAlta { get; set; }
         public List<TipoRenta> TipoRentaCambio { get; set; }
+        public List<CambioPropietario> CambioPropietarioAlta { get; set; }
+        public List<CambioPropietario> CambioPropietarioCambio { get; set; }
 
         #endregion
 

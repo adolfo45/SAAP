@@ -38,8 +38,9 @@ namespace ComiteAgua.Models
         public DateTime FechaAlta { get; set; }
         public int UsuarioAltaId { get; set; }        
         public DateTime? FechaCambio { get; set; }
-        public int? UsuarioCambioId { get; set; }            
+        public int? UsuarioCambioId { get; set; }
 
+        public List<CambioPropietario> CambioPropietario { get; set; }
         #endregion
 
         #region * Eventos generados por Comité Agua *
@@ -51,5 +52,4 @@ namespace ComiteAgua.Models
         #endregion
 
     } // public class PersonaFisica
-
 } // namespace ComiteAgua.Models

@@ -48,13 +48,13 @@
                 <tbody>
 
                     @foreach (var item in Model.Pagos)
-                {
+                    {
                         <tr class="@(!item.Activo ? "amarillo" : "")">
-                            <td>@(item.TipoPago+"-"+item.NoRecibo.ToString()) @(!item.Activo ? "(Cancelado)" : "")</td>
+                            <td>@(item.TipoPago + "-" + item.NoRecibo.ToString()) @(!item.Activo ? "(Cancelado)" : "")</td>
                             <td>@item.ConceptoPago</td>
                             <td>@item.Total</td>
                         </tr>
-                }
+                    }
 
                 </tbody>
             </table>

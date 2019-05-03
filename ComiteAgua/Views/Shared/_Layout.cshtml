@@ -157,7 +157,6 @@
 
     <script>
         function InIEvent() {
-            var token = new Date().getTime(); //use the current timestamp as the token value
             $('.mp-pusher').css('padding-bottom', $('.row-footer').css('height'));
             $('.enteros').autoNumeric('init', { mDec: '0', vMin: '0', vMax: '99999999' });
             $('.decimales').autoNumeric('init', { vMin: '0', vMax: '99999999.99' });
@@ -171,6 +170,7 @@
 
             $("#DescargarPadronButton")
                 .click(function () {
+                    var token = new Date().getTime(); //token para descargar archivo
                     blockUIForDownload(token);
                      window.location = "@Url.Action("DescargarPadron", "Tomas")?downloadToken=" + token;
                 });
@@ -186,13 +186,12 @@
                 if (cookieValue == token)
                     finishDownload();
             }, 1000);
-        }
-
+        }//function blockUIForDownload(token) {
         function finishDownload() {
             window.clearInterval(fileDownloadCheckTimer);
             $.removeCookie('fileDownloadToken'); //clears this cookie value
             $.unblockUI();
-        }
+        }//function finishDownload() {
 
     </script>
 

@@ -69,7 +69,7 @@ namespace ComiteAgua.Controllers.Tomas
 
         // GET: Tomas
         [Route("tomas/tabs")]
-        public ActionResult Tabs(int propietarioId = 0)
+        public ActionResult Tabs(int propietarioId = 0, bool cambioPropietario = false)
         {           
             TabsViewModel viewModel = new TabsViewModel();
             var propietariosDomain = new PropietariosDomain(_context);
@@ -86,9 +86,9 @@ namespace ComiteAgua.Controllers.Tomas
             // obtienen catalogos
             var estadosCiviles = estadosCivilesDomain.ObtenerEstadosCiviles();
             var categorias = categoriasDomain.ObtenerCategorias();
-
+          
             // si el propietario ya esxiste carga informacion
-            if (propietarioId > 0) {
+            if (propietarioId > 0 && !cambioPropietario) {
                 // Obtiene al propietario
                 var propietario = propietariosDomain.ObtenerPropietario(propietarioId);
                 // Obtiene el pago de toma nueva
@@ -97,7 +97,10 @@ namespace ComiteAgua.Controllers.Tomas
                 var convenioTomaNueva = conveniosDomain.ObtenerConvenioTomaNueva(propietario.Toma.Select(t => t.TomaId).FirstOrDefault());
                 // obtiene ultimo periodo pago
                 var ultimoPeriodoPago = periodosPagoDomain.ObtenerPeriodoPago(propietario.Toma.Select(t => t.TomaId).FirstOrDefault());
-
+                if (cambioPropietario)
+                {
+                    //ViewBag.ReciboId = reciboId;
+                }
                 viewModel = new TabsViewModel()
                 {
                     TabPeriodoPagos = string.Empty,
@@ -115,6 +118,7 @@ namespace ComiteAgua.Controllers.Tomas
                     TabDireccionHabilitado = propietario.Toma.Select(x => x.TomaId).FirstOrDefault() == 0 ? "disabled" : string.Empty,
                     TabPagosHabilitado = propietario.Toma.Select(x => x.DireccionId).FirstOrDefault() == null ? "disabled" : string.Empty,
                     Accion = Accion.Editar,
+                    CambioPropietario = cambioPropietario,
                     PropietariosPersonaFisica = new PropietariosPersonaFisicaViewModel()
                     {
                         PropietarioId = propietario.PropietarioId,
@@ -133,7 +137,7 @@ namespace ComiteAgua.Controllers.Tomas
                         {
                             TomaId = propietario.Toma.Select(x => x.TomaId).FirstOrDefault(),
                             CategoriaId = propietario.Toma.Select(x => x.CategoriaId).FirstOrDefault(),
-                            Folio = propietario.Toma.Select(x => x.Folio).FirstOrDefault(),
+                            Folio = propietario.Toma.Count > 0 ? propietario.Toma.Select(x => x.Folio).FirstOrDefault() : (int?)null,
                             Observaciones = propietario.Toma.Select(x => x.Observaciones).FirstOrDefault(),
                             Categorias = categorias,
                             LiquidacionId = Convert.ToInt32(propietario.Toma.Select(x => x.LiquidacionTomaId).FirstOrDefault()),
@@ -203,30 +207,53 @@ namespace ComiteAgua.Controllers.Tomas
             }
             else
             {
-                viewModel = new TabsViewModel()
+                if (cambioPropietario)
                 {
-                    TabPropietarioActivo = "active",
-                    TabTomaActivo = "disabled",
-                    TabDireccionActivo = "disabled",
-                    TabPagosActivo = "disabled",
-                    Accion = Accion.Agregar,
-                    PropietariosPersonaFisica = new PropietariosPersonaFisicaViewModel()
+                    
+                    viewModel = new TabsViewModel()
                     {
-                        EstadosCiviles = estadosCiviles,
-                        Toma = new TomasViewModel()
+                        TabPropietarioActivo = "active",
+                        TabTomaActivo = "disabled",
+                        TabDireccionActivo = "disabled",
+                        TabPagosActivo = "disabled",
+                        Accion = Accion.Agregar,
+                        CambioPropietario = cambioPropietario,
+                        PropietariosPersonaFisica = new PropietariosPersonaFisicaViewModel()
                         {
-                            Categorias = categorias,
-                            LiquidacionesToma = liquidacionesTomaDomain.ObtenerLiquidacionesToma(),
-                            Direccion = new DireccionesViewModel()
-                            {                              
-                                Calles = direccionesDomain.ObtenerCalles().ToList(),
-                                Colonias = direccionesDomain.ObtenerColonias().ToList(),
-                                TiposCalle = direccionesDomain.ObtenerTiposCalle().ToList()                               
-                            },
+                            PropietarioId = propietarioId,
+                            EstadosCiviles = estadosCiviles,  
+                            CambioPropietario = cambioPropietario,
                         }
-                        
-                    }
-                };
+                    };
+                }
+                else
+                {
+                   
+                    viewModel = new TabsViewModel()
+                    {
+                        TabPropietarioActivo = "active",
+                        TabTomaActivo = "disabled",
+                        TabDireccionActivo = "disabled",
+                        TabPagosActivo = "disabled",
+                        Accion = Accion.Agregar,
+                        PropietariosPersonaFisica = new PropietariosPersonaFisicaViewModel()
+                        {
+                            EstadosCiviles = estadosCiviles,
+                            Toma = new TomasViewModel()
+                            {
+                                Categorias = categorias,
+                                LiquidacionesToma = liquidacionesTomaDomain.ObtenerLiquidacionesToma(),
+                                Direccion = new DireccionesViewModel()
+                                {
+                                    Calles = direccionesDomain.ObtenerCalles().ToList(),
+                                    Colonias = direccionesDomain.ObtenerColonias().ToList(),
+                                    TiposCalle = direccionesDomain.ObtenerTiposCalle().ToList()
+                                },
+                            }
+
+                        }
+                    };
+                }    
             }           
 
             return View(viewModel);
@@ -793,8 +820,138 @@ namespace ComiteAgua.Controllers.Tomas
             {
                 return HttpNotFound();
             }
-
             var propietariosDomain = new PropietariosDomain(_context);
+            var cambiosPropietarioDomain = new CambiosPropietarioDomain(_context);
+            var pagosDomain = new PagosDomain(_context);
+            var recibosDomain = new RecibosDomain(_context);
+            var usuariosDomain = new UsuariosDomain(_context);
+            
+            //Si es cambio de propietario
+            if (model.CambioPropietario)
+            {
+                var personaFisica = propietariosDomain.ObtenerPropietario(model.PropietarioId);
+                var cambioPropietario = new CambioPropietario()
+                {
+                    PersonaId = personaFisica.Persona.PersonaFisica.PersonaId,
+                    Nombre = AdsertiFunciones.FormatearTexto(personaFisica.Persona.PersonaFisica.Nombre),
+                    ApellidoPaterno = AdsertiFunciones.FormatearTexto(personaFisica.Persona.PersonaFisica.ApellidoPaterno),
+                    ApellidoMaterno = AdsertiFunciones.FormatearTexto(personaFisica.Persona.PersonaFisica.ApellidoMaterno),
+                    FechaNacimiento = !string.IsNullOrEmpty(personaFisica.Persona.PersonaFisica.FechaNacimiento.ToString()) ? Convert.ToDateTime(personaFisica.Persona.PersonaFisica.FechaNacimiento) : (DateTime?)null,
+                    EstadoCivilId = personaFisica.Persona.PersonaFisica.EstadoCivilId,
+                    Telefono = personaFisica.Persona.PersonaFisica.Telefono,
+                    CorreoElectronico = personaFisica.Persona.PersonaFisica.CorreoElectronico,
+                    Rfc = string.IsNullOrEmpty(personaFisica.Persona.PersonaFisica.Rfc) ? string.Empty : AdsertiFunciones.FormatearTexto(personaFisica.Persona.PersonaFisica.Rfc),
+                    UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
+                    FechaAlta = DateTime.Now
+                };
+                cambiosPropietarioDomain.Agregar(cambioPropietario);
+                //Guarda Pago Cambio Propietario
+                var pago = new Pago()
+                {
+                    ConceptoPagoId = (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.CambioPropietario,
+                    TomaId = personaFisica.Toma.Select(t => t.TomaId).FirstOrDefault(),
+                    SubTotal = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.CostoCambioPropietario)),
+                    Total = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.CostoCambioPropietario)),
+                    FechaAlta = DateTime.Now,
+                    UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
+                    Activo = true
+                };
+                pagosDomain.Guardar(pago);
+                //Guarda recibo
+                var noRecibo = recibosDomain.ObtenerNoRecibo() + 1;
+                var usuarioPersona = usuariosDomain.ObtenerUsuarioPersona(Convert.ToInt32(Session["UsuarioId"].ToString()));
+                var tesorero = usuariosDomain.ObtenerUsuarioPorRol((int)RolesDomain.RolesEnum.Tesorero);
+                string informacionRecibo = string.Format("RECIBO DE PAGO NO: {1}{0}" +
+                                                         "FECHA: {2}{0}" +
+                                                         "CLAVE DE CONTROL: {3}{0}" +
+                                                         "CANTIDAD PAGADA: {4}{0}" +
+                                                         "CAJERO(A): {5}{0}",
+                                                         Environment.NewLine, noRecibo,
+                                                         DateTime.Now.ToString("dd/MM/yyyy"),
+                                                         personaFisica.Toma.Select(t => t.Folio).FirstOrDefault(),
+                                                         pago.Total.ToString("C"),
+                                                         usuarioPersona.Persona.Nombre + " " + usuarioPersona.Persona.ApellidoPaterno + " " + usuarioPersona.Persona.ApellidoMaterno);
+                //Genera codigoQR
+                var QQRurl = this.GenerarCodigoQR(informacionRecibo);
+
+                var recibo = new Recibo()
+                {
+                    PagoId = pago.PagoId,
+                    Fecha = DateTime.Now,
+                    CodigoQRurl = QQRurl,
+                    NoRecibo = noRecibo,
+                    //Observaciones = !string.IsNullOrEmpty(model.Observaciones) ? AdsertiFunciones.FormatearTexto(model.Observaciones) : string.Empty,
+                    Adicional = "CAMBIO PROPIETARIO ",
+                    CantidadLetra = this.Convertir(pago.Total.ToString()),
+                    FechaAlta = DateTime.Now,
+                    UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
+                    RenglonAdicional1 = "Nuevo propietario: " + AdsertiFunciones.FormatearTexto(model.Nombre) + " " + AdsertiFunciones.FormatearTexto(model.ApellidoPaterno) + " " + AdsertiFunciones.FormatearTexto(model.ApellidoMaterno),
+                    RenglonAdicional2 = "Anterior propietario: " + cambioPropietario.Nombre + " " + cambioPropietario.ApellidoPaterno + " " + cambioPropietario.ApellidoMaterno,
+                    //RenglonAdicional3 = !string.IsNullOrEmpty(model.RenglonAdicional3) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional3) : string.Empty,
+                };
+                recibosDomain.Gurdar(recibo);
+                
+                //Descarga archivo
+                var tomasVM = new TomasViewModel()
+                {
+                    TomaId = personaFisica.Toma.Select(t => t.TomaId).FirstOrDefault(),
+                    Folio = personaFisica.Toma.Select(t => t.Folio).FirstOrDefault(),
+                    Tesorero = tesorero != null ? "C. " + tesorero.Persona.Nombre + " " + tesorero.Persona.ApellidoPaterno + " " + tesorero.Persona.ApellidoMaterno : "(TESORERO DESHABILITADO)",
+                    Propietario = "C. " + AdsertiFunciones.FormatearTexto(model.Nombre) + " " +
+                                      AdsertiFunciones.FormatearTexto(model.ApellidoPaterno) + " " +
+                                      AdsertiFunciones.FormatearTexto(model.ApellidoMaterno),
+                    Calle = personaFisica.Toma.Select(d => d.Direccion) != null ? ((personaFisica.Toma.Select(d => d.Direccion.TipoCalleId).FirstOrDefault() > 0 ? personaFisica.Toma.Select(d => d.Direccion.TiposCalle.Nombre).FirstOrDefault() : string.Empty) + ' ' + (personaFisica.Toma.Select(d => d.Direccion.CalleId).FirstOrDefault() > 0 ? personaFisica.Toma.Select(d => d.Direccion.Calles.Nombre).FirstOrDefault() : string.Empty) +
+                                        (!string.IsNullOrEmpty(personaFisica.Toma.Select(d => d.Direccion.NumInt).FirstOrDefault()) ? " INT " + personaFisica.Toma.Select(d => d.Direccion.NumInt).FirstOrDefault() : string.Empty) +
+                                        (!string.IsNullOrEmpty(personaFisica.Toma.Select(d => d.Direccion.NumExt).FirstOrDefault()) ? " EXT " + personaFisica.Toma.Select(d => d.Direccion.NumExt).FirstOrDefault() : string.Empty)) : String.Empty,
+                    Colonia = personaFisica.Toma.Select(d => d.Direccion) != null ? (personaFisica.Toma.Select(d => d.Direccion.ColoniaId).FirstOrDefault() > 0 ? personaFisica.Toma.Select(d => d.Direccion.Colonias.Nombre).FirstOrDefault() : string.Empty) : string.Empty,
+                    
+                };
+                // generar archivo word
+                var fechaLetra = this.ConvertirFecha(DateTime.Now.Day.ToString()).ToUpper() + " DÍAS DEL MES DE " +                            
+                             DateTime.Now.ToString("MMMMMMMM").ToUpper() + " DE " +
+                             DateTime.Now.Year;
+                var cantidadLetra = this.ConvertirMinusculas(pago.Total.ToString()).ToLower() + " M.N";
+                string rutaFormato = System.Web.HttpContext.Current.Server.MapPath("~/Print/ContratoCambioPropietario.docx");
+                string rutaArchivo = @"/UploadFiles/ContratoCambioPropietario/";
+                string nombreArchivo = "Contrato cambio propietario.docx";
+
+                using (DocX document = DocX.Load(rutaFormato))
+                {
+                    document.ReplaceText("{Tesorero}", tomasVM.Tesorero, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    document.ReplaceText("{Propietario}", tomasVM.Propietario, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    document.ReplaceText("{Direccion}", tomasVM.Calle + ", COL. " + tomasVM.Colonia + ", " + "SAN BUENAVENTURA", false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    document.ReplaceText("{Precio}", model.CostoCambioPropietario + " " + cantidadLetra, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    document.ReplaceText("{Fecha}", fechaLetra, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+                    //Si no existe el directorio se crea
+                    if (!Directory.Exists(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo)))
+                    {
+                        Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo));
+                    } // if (!Directory.Exists(ruta))
+                    document.SaveAs(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo) + nombreArchivo);
+                }
+
+                var urlArchivo = System.Web.HttpContext.Current.Server.MapPath(rutaArchivo) + nombreArchivo;
+
+                // fin archivo word
+                if (!string.IsNullOrEmpty(urlArchivo))
+                {
+                    FileInfo archivo = new FileInfo(urlArchivo);
+
+                    if (archivo.Exists)
+                    {
+                        Response.ClearContent();
+                        Response.AppendCookie(new HttpCookie("fileDownloadToken", model.DownloadToken));
+                        Response.AppendCookie(new HttpCookie("reciboId", recibo.ReciboId.ToString()));
+                        Response.AddHeader("Content-Disposition", "attachment; filename=" + archivo.Name);
+                        Response.AddHeader("Content-Length", archivo.Length.ToString());
+                        Response.ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                        Response.TransmitFile(archivo.FullName);
+                        Response.End();
+                    }
+                }
+                
+            }//if (model.CambioPropietario)
 
             var propietario = new Propietario()
             {
@@ -826,11 +983,17 @@ namespace ComiteAgua.Controllers.Tomas
                 PropietarioId = model.PropietarioId > 0 ? Convert.ToInt32(model.PropietarioId) : 0,
                 PersonaId = model.PersonaId 
             };           
-
             propietariosDomain.Guardar(propietario);
-         
-            return RedirectToAction("Tabs", "Tomas", new { propietarioId = propietario.PropietarioId });
-
+            if (model.CambioPropietario)
+            {
+                return null;
+            }
+            else
+            {
+                ShowToastMessage("Éxito", "Guardado exitosamente", ToastMessage.ToastType.Success);
+                return RedirectToAction("Tabs", "Tomas", new { propietarioId = propietario.PropietarioId, cambioPropietario = false });
+            }
+            
         }       
         public ActionResult GuardarToma(TomasViewModel model)
         {
@@ -841,10 +1004,11 @@ namespace ComiteAgua.Controllers.Tomas
 
             var tomasDomain = new TomasDomain(_context);
 
-            if(tomasDomain.ValidarTomaExistente(model.Folio, model.TomaId))
+            if(tomasDomain.ValidarTomaExistente(Convert.ToInt32(model.Folio), model.TomaId))
             {
                 ShowToastMessage("Alerta", "El folio ya se encuentra en existencia", ToastMessage.ToastType.Warning);
                 return RedirectToAction("Tabs", "Tomas", new { propietarioId = model.PropietarioId });
+                
             }
 
             var toma = new Toma()
@@ -852,7 +1016,7 @@ namespace ComiteAgua.Controllers.Tomas
                 TomaId = model.TomaId,
                 CategoriaId = model.CategoriaId,
                 PropietarioId = model.PropietarioId,
-                Folio = model.Folio,
+                Folio = Convert.ToInt32(model.Folio),
                 Observaciones = !string.IsNullOrEmpty(model.Observaciones) ? AdsertiFunciones.FormatearTexto(model.Observaciones) : string.Empty,
                 UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
                 FechaAlta = DateTime.Now,               
@@ -864,6 +1028,7 @@ namespace ComiteAgua.Controllers.Tomas
 
             tomasDomain.Guardar(toma);
 
+            ShowToastMessage("Éxito", "Guardado exitosamente", ToastMessage.ToastType.Success);
             return RedirectToAction("Tabs", "Tomas", new { propietarioId = toma.PropietarioId });
 
         }
@@ -902,8 +1067,8 @@ namespace ComiteAgua.Controllers.Tomas
                     Activa = true
                 };
                 tomasDomain.EditarDireccionToma(toma);
-            }                        
-
+            }
+            ShowToastMessage("Éxito", "Guardado exitosamente", ToastMessage.ToastType.Success);
             return RedirectToAction("Tabs", "Tomas", new { propietarioId = model.PropietarioId });
 
         }
@@ -939,7 +1104,7 @@ namespace ComiteAgua.Controllers.Tomas
             conveniosDomain.Guardar(convenio);
             tomasDomain.EditarActiva(model.TomaId, true, Convert.ToInt32(Session["UsuarioId"].ToString()));
 
-            //return RedirectToAction("Tabs", "Tomas", new { propietarioId = model.PropietarioId });
+            ShowToastMessage("Éxito", "Guardado exitosamente", ToastMessage.ToastType.Success);
             return RedirectToAction("Index", "Home");
 
         }
@@ -1086,7 +1251,6 @@ namespace ComiteAgua.Controllers.Tomas
             }
             else
             {               
-
                 var pago = new Pago()
                 {
                     ConceptoPagoId = (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio,
@@ -1107,7 +1271,7 @@ namespace ComiteAgua.Controllers.Tomas
 
                 return RedirectToAction("Index", "Home");
             }
-            return HttpNotFound();            
+               
         }
         public ActionResult GuardarPagoConvenioRecibo(PagosViewModel model)
         {
@@ -1647,7 +1811,69 @@ namespace ComiteAgua.Controllers.Tomas
             return RedirectToAction("CargarServicio", new { servicioId = servicio.ServicioId });
 
         }
-      
+        [ValidateAntiForgeryToken]
+        public ActionResult GuardarReconexionToma(ReconexionTomaViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("ReconexionToma", model);
+            }
+
+            var pagosDomain = new PagosDomain(_context);
+            var recibosDomain = new RecibosDomain(_context);
+            var usuariosDomain = new UsuariosDomain(_context);
+            var tomasDomain = new TomasDomain(_context);
+
+            //Guarda Pago
+            var pago = new Pago()
+            {
+                ConceptoPagoId = (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.ReconexionToma,
+                TomaId = model.TomaId,
+                SubTotal = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.Costo)),
+                Total = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.Costo)),
+                FechaAlta = DateTime.Now,
+                UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
+                Activo = true
+            };
+            pagosDomain.Guardar(pago);
+            //Guarda recibo
+            var noRecibo = recibosDomain.ObtenerNoRecibo() + 1;
+            var usuarioPersona = usuariosDomain.ObtenerUsuarioPersona(Convert.ToInt32(Session["UsuarioId"].ToString()));
+            var toma = tomasDomain.ObtenerToma(model.TomaId);
+            string informacionRecibo = string.Format("RECIBO DE PAGO NO: {1}{0}" +
+                                                     "FECHA: {2}{0}" +
+                                                     "CLAVE DE CONTROL: {3}{0}" +
+                                                     "CANTIDAD PAGADA: {4}{0}" +
+                                                     "CAJERO(A): {5}{0}",
+                                                     Environment.NewLine, noRecibo,
+                                                     DateTime.Now.ToString("dd/MM/yyyy"),
+                                                     toma.Folio,
+                                                     pago.Total.ToString("C"),
+                                                     usuarioPersona.Persona.Nombre + " " + usuarioPersona.Persona.ApellidoPaterno + " " + usuarioPersona.Persona.ApellidoMaterno);
+            //Genera codigoQR
+            var QQRurl = this.GenerarCodigoQR(informacionRecibo);
+
+            var recibo = new Recibo()
+            {
+                PagoId = pago.PagoId,
+                Fecha = DateTime.Now,
+                CodigoQRurl = QQRurl,
+                NoRecibo = noRecibo,
+                //Observaciones = !string.IsNullOrEmpty(model.Observaciones) ? AdsertiFunciones.FormatearTexto(model.Observaciones) : string.Empty,
+                Adicional = "RECONEXIÓN DE TOMA",
+                CantidadLetra = this.Convertir(pago.Total.ToString()),
+                FechaAlta = DateTime.Now,
+                UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
+                RenglonAdicional1 = AdsertiFunciones.FormatearTexto(model.Observaciones),
+                //RenglonAdicional2 = "Anterior propietario: " + cambioPropietario.Nombre + " " + cambioPropietario.ApellidoPaterno + " " + cambioPropietario.ApellidoMaterno,
+                //RenglonAdicional3 = !string.IsNullOrEmpty(model.RenglonAdicional3) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional3) : string.Empty,
+            };
+            recibosDomain.Gurdar(recibo);
+
+            Response.Redirect("~/Print/ReciboSistema.aspx?reciboId=" + recibo.ReciboId);
+
+            return null;
+        }
         public ActionResult ImprimirCorte(string fecha, string downloadToken)
         {
             DateTime fecha1 = Convert.ToDateTime(fecha);
@@ -1820,10 +2046,11 @@ namespace ComiteAgua.Controllers.Tomas
                     Propietario = item.Propietario.Persona.PersonaFisica.Nombre + " " +
                                   item.Propietario.Persona.PersonaFisica.ApellidoPaterno + " " +
                                   item.Propietario.Persona.PersonaFisica.ApellidoMaterno,
-                    Calle = (item.Direccion.TipoCalleId > 0 ? item.Direccion.TiposCalle.Nombre : string.Empty) + " " + (item.Direccion.CalleId > 0 ? item.Direccion.Calles.Nombre : string.Empty),
-                    NumInt = item.Direccion.NumInt,
-                    NumExt = item.Direccion.NumExt,
-                    Colonia = (item.Direccion.ColoniaId > 0 ? item.Direccion.Colonias.Nombre : string.Empty),
+                    Calle = item.Direccion != null ? (item.Direccion.TipoCalleId > 0 ? item.Direccion.TiposCalle.Nombre : string.Empty) + " " + (item.Direccion.CalleId > 0 ? item.Direccion.Calles.Nombre : string.Empty) : string.Empty,
+                    NumInt = item.Direccion != null ? item.Direccion.NumInt : string.Empty,
+                    NumExt = item.Direccion != null ? item.Direccion.NumExt : string.Empty,
+                    Colonia = item.Direccion != null ? (item.Direccion.ColoniaId > 0 ? item.Direccion.Colonias.Nombre : string.Empty) : string.Empty,
+
                     Tarifa = item.Categoria.Nombre,
                     Periodo = !string.IsNullOrEmpty(item.PeriodoPago.Select(p => p.MesAnoFin).LastOrDefault().ToString()) ? Convert.ToDateTime(item.PeriodoPago.Select(p => p.MesAnoFin).LastOrDefault()).ToString("MMM-yyyy") : item.PeriodoPago.Select(p => p.UltimoPeriodoPago).LastOrDefault(),
                     Adeudo = newtotal != null ? Convert.ToDecimal(newtotal).ToString("C") : string.Empty
@@ -2148,7 +2375,22 @@ namespace ComiteAgua.Controllers.Tomas
 
             return HttpNotFound();
         }
-
+        public ActionResult ReconexionToma(int tomaId)
+        {
+            var reconexionTomaViewModel = new ReconexionTomaViewModel()
+            {
+                TomaId = tomaId,
+                Accion = Accion.Agregar
+            };
+            return View(reconexionTomaViewModel);
+        }
+        public JsonResult ValidarFolio(int tomaId, int folio, string downloadToken)
+        {
+            var tomasDomain = new TomasDomain(_context);
+            var existeFolio = tomasDomain.ValidarTomaExistente(folio, tomaId);
+            Response.AppendCookie(new HttpCookie("fileDownloadToken", downloadToken));
+            return Json(new { existe = existeFolio }, JsonRequestBehavior.AllowGet);
+        }
         #endregion
 
         #region * Métodos creados por Comité Agua *
@@ -2158,6 +2400,33 @@ namespace ComiteAgua.Controllers.Tomas
             _context.Dispose();
 
         } // protected override void Dispose(bool disposing)               
+        public string ConvertirFecha(string num)
+        {
+            string res, dec = "";
+            Int64 entero;
+            int decimales;
+            double nro;
+
+            try
+
+            {
+                nro = Convert.ToDouble(num);
+            }
+            catch
+            {
+                return "";
+            }
+
+            entero = Convert.ToInt64(Math.Truncate(nro));
+            decimales = Convert.ToInt32(Math.Round((nro - entero) * 100, 2));
+            if (decimales > 0)
+            {
+                dec = " CON " + decimales.ToString() + "/100";
+            }
+
+            res = toText(Convert.ToDouble(entero)) + dec;
+            return res;
+        }//public string ConvertirFecha(string num)
         public string EnviarNotificacionServicios(string deviceId, string message)
         {
             string SERVER_API_KEY = "AIzaSyBNwF00EO9NtjQi5s42JoEk0Hs3jYPS10I";
@@ -2264,18 +2533,12 @@ namespace ComiteAgua.Controllers.Tomas
             {
                 PagosViewModel pagosViewModel = new PagosViewModel()
                 {                 
-                    NoRecibo = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua || item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva ||
-                    item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Renta || item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia ? item.Recibo.Select(r => r.NoRecibo).FirstOrDefault() :
-                                item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count == 0 ? (!string.IsNullOrEmpty(item.Convenio.NoTarjeta) ? Convert.ToInt32(item.Convenio.NoTarjeta) : (int?)null) :
-                                item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count > 0 ? item.Recibo.Select(r => r.NoRecibo).FirstOrDefault() : (int?)null,
+                    NoRecibo = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count == 0 ? (!string.IsNullOrEmpty(item.Convenio.NoTarjeta) ? Convert.ToInt32(item.Convenio.NoTarjeta) : (int?)null) :
+                                item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count > 0 ? item.Recibo.Select(r => r.NoRecibo).FirstOrDefault() : item.Recibo.Select(r => r.NoRecibo).FirstOrDefault(),
                     PagoId = item.PagoId,
-                    ConceptoPago = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua || item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio ? item.ConceptoPago.Nombre :
-                                   item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Renta ? item.Renta.TipoRenta.Nombre : item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia ? item.Constancia.TiposConstancia.Nombre : string.Empty,
+                    ConceptoPago = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Renta ? item.Renta.TipoRenta.Nombre : item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia ? item.Constancia.TiposConstancia.Nombre : item.ConceptoPago.Nombre,
                     Total = item.Total.ToString("C"),
-                    TipoPago = (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua) || (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva) ||
-                    item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Renta || item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia ? "Recibo" :
-                                (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count == 0) ? "Tarjeta" :
-                                (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count > 0) ? "Recibo" : string.Empty,
+                    TipoPago = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count == 0 ? "Tarjeta" : "Recibo",
                     Activo = item.Activo
                 };
 
@@ -2325,6 +2588,33 @@ namespace ComiteAgua.Controllers.Tomas
 
             res = toText(Convert.ToDouble(entero)) + dec;
             return res + " PESOS 00/100 M.N";
+        }
+        protected string ConvertirMinusculas(string num)
+        {
+            string res, dec = "";
+            Int64 entero;
+            int decimales;
+            double nro;
+
+            try
+
+            {
+                nro = Convert.ToDouble(num);
+            }
+            catch
+            {
+                return "";
+            }
+
+            entero = Convert.ToInt64(Math.Truncate(nro));
+            decimales = Convert.ToInt32(Math.Round((nro - entero) * 100, 2));
+            if (decimales > 0)
+            {
+                dec = " con " + decimales.ToString() + "/100";
+            }
+
+            res = toText(Convert.ToDouble(entero)) + dec;
+            return res + " pesos 00/100";
         }
         private string toText(double value)
         {

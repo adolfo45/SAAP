@@ -47,6 +47,8 @@ namespace ComiteAgua.ViewModels.Rentas
         [Display(Name = "Total")]
         [Required(ErrorMessage = "El {0} es requerido.")]
         public string Costo { get; set; }
+        [MaxLength(47)]
+        public string Observaciones { get; set; }
         public string FechaAlta { get; set; }
         public string UsuarioAltaId { get; set; }
         public string FechaCambio { get; set; }

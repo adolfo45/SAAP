@@ -35,6 +35,7 @@ namespace ComiteAgua.ViewModels.Tomas
         public string TabDireccionHabilitado { get; set; }
         public string TabTomaHabilitado { get; set; }
         public string TabPeriodoPagos { get; set; }
+        public bool CambioPropietario { get; set; }
         public PropietariosPersonaFisicaViewModel PropietariosPersonaFisica { get; set; }
         public string Accion { get; set; }
         public string Titulo

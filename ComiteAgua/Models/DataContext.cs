@@ -22,9 +22,9 @@ namespace ComiteAgua.Models
     {
                
         #region * Constructor generado por Comité Agua *
-        public DataContext() : base("name=ComiteAgua")
-        {
-            
+        public DataContext()
+        {                 
+            Database.Connection.ConnectionString = AdsertiFunciones.DesencriptarTexto(ConfigurationManager.ConnectionStrings["ComiteAgua"].ConnectionString);
         }
         #endregion
 
@@ -85,6 +85,7 @@ namespace ComiteAgua.Models
         public DbSet<TiposConstancia> TiposConstancia { get; set; }
         public DbSet<Renta> Renta { get; set; }
         public DbSet<TipoRenta> TipoRenta { get; set; }
+        public DbSet<CambioPropietario> CambioPropietario { get; set; }
         #endregion
 
         #region * Acciones generados por Comité Agua *
@@ -999,7 +1000,9 @@ namespace ComiteAgua.Models
             modelBuilder.Entity<Renta>().Property(x => x.NoInt)
                 .HasMaxLength(10)
                 .IsOptional();
-
+            modelBuilder.Entity<Renta>().Property(x => x.Observaciones)
+               .HasMaxLength(47)
+               .IsOptional();
             modelBuilder.Entity<Renta>().Property(x => x.NoExt)
                .HasMaxLength(10)
                .IsOptional();
@@ -1030,6 +1033,49 @@ namespace ComiteAgua.Models
 
             #endregion
 
+            #region * CambioPropietario *
+            modelBuilder.Entity<CambioPropietario>().ToTable("CambiosPropietario", "Comite")
+             .HasKey(a => a.CambioPropietarioId);
+
+            modelBuilder.Entity<CambioPropietario>().Property(pf => pf.PersonaId)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+
+            modelBuilder.Entity<CambioPropietario>().Property(x => x.Nombre)
+                      .HasMaxLength(1000)
+                      .IsRequired();
+
+            modelBuilder.Entity<CambioPropietario>().Property(x => x.ApellidoPaterno)
+                      .HasMaxLength(100)
+                      .IsOptional();
+
+            modelBuilder.Entity<CambioPropietario>().Property(x => x.ApellidoMaterno)
+                      .HasMaxLength(100)
+                      .IsOptional();
+
+            modelBuilder.Entity<CambioPropietario>().Property(x => x.CorreoElectronico)
+                      .HasMaxLength(50)
+                      .IsOptional();
+
+            modelBuilder.Entity<CambioPropietario>().Property(x => x.Rfc)
+                      .HasMaxLength(50)
+                      .IsOptional();
+
+            modelBuilder.Entity<CambioPropietario>().Property(x => x.EstadoCivilId)
+                      .IsOptional();
+
+            modelBuilder.Entity<CambioPropietario>().Property(x => x.Telefono)
+                      .HasMaxLength(15)
+                      .IsOptional();
+            modelBuilder.Entity<CambioPropietario>()
+             .HasRequired(p => p.UsuarioAlta)
+             .WithMany(u => u.CambioPropietarioAlta)
+             .HasForeignKey(p => p.UsuarioAltaId);
+
+            modelBuilder.Entity<CambioPropietario>()
+                .HasOptional(p => p.UsuarioCambio)
+                .WithMany(u => u.CambioPropietarioCambio)
+                .HasForeignKey(p => p.UsuarioCambioId);
+            #endregion
         } // protected override void OnModelCreating(DbModelBuilder modelBuilder)
         public string LlenarTexto()
         {

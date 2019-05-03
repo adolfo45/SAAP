@@ -1,22 +1,22 @@
-﻿@using ComiteAgua.Classes.Security;
+﻿
 @{
     ViewBag.Title = "Tomas";
 }
 <link href="~/Content/AnexGrid.css" rel="stylesheet" />
 
 <style>
-        .rojo {
-            color: red;
-        }
+    .rojo {
+        color: red;
+    }
 
-        .naranja {
-            color: orange
-        }
+    .naranja {
+        color: orange
+    }
 
-        .verde {
-            color: green
-        }
-    </style>
+    .verde {
+        color: green
+    }
+</style>
 
 <h2 class="text-center">Tomas</h2>
 
@@ -24,7 +24,7 @@
 
 @section scripts
     {
-<script>
+    <script>
             var data = {
                 class: 'table-hover table-bordered table-condensed',
                 columnas: [
@@ -88,6 +88,12 @@
                                             },
                                             { href: '@Url.Action("ImprimirEstadoCuenta", "Tomas")?tomaId=' + obj.TomaId,
                                             contenido: 'Estado Cuenta'
+                                            },
+                                             { href: '@Url.Action("Tabs", "Tomas")?propietarioId=' + obj.PropietarioId + "&cambioPropietario=" + true,
+                                                contenido: 'Cambio Propietario'
+                                            },
+                                            { href: '@Url.Action("ReconexionToma", "Tomas")?tomaId=' + obj.TomaId,
+                                                contenido: 'Reconexión de toma'
                                             }
                                         ]
                                     });
@@ -118,9 +124,14 @@
                                                 contenido: 'Agregar Servicio'
                                             },
                                             {
-                                                @*href: '@Url.Action("ImprimirEstadoCuenta", "Tomas")?tomaId=' + obj.TomaId,*@
                                                 href: 'javascript:block(' + obj.TomaId + ');',
                                                 contenido: 'Estado Cuenta'
+                                            },
+                                            { href: '@Url.Action("Tabs", "Tomas")?propietarioId=' + obj.PropietarioId + "&cambioPropietario=" + true,
+                                                contenido: 'Cambio Propietario'
+                                            },
+                                            { href: '@Url.Action("ReconexionToma", "Tomas")?tomaId=' + obj.TomaId,
+                                                contenido: 'Reconexión de toma'
                                             }
                                         ]
                                     });
@@ -175,8 +186,9 @@
             };
 
     $(document).ready(function () {
-        var grid = $("#list").anexGrid(data);      
-    });
+        var grid = $("#list").anexGrid(data);
+        });
+
     var token = new Date().getTime(); //use the current timestamp as the token value
     function block(tomaId) {
         blockUIForDownload(token);
@@ -198,7 +210,6 @@
         $.removeCookie('fileDownloadToken'); //clears this cookie value
         $.unblockUI();
     }
-
-</script>
-    }
+    </script>
+}
 

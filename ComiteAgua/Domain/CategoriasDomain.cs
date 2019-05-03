@@ -71,7 +71,9 @@ namespace ComiteAgua.Domain
         }
         public List<Categoria> ObtenerCategorias()
         {
-            var result = _context.Categoria.ToList();
+            var result = _context.Categoria
+                .OrderBy(c => c.Nombre)
+                .ToList();
 
             return result;
         }

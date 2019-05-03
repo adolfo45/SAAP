@@ -4,23 +4,24 @@
 
 }
 
-@using (Html.BeginForm("GuardarPropietario", "Tomas", FormMethod.Post, new { role = "form" }))
-{
-
+@*@using (Html.BeginForm("GuardarPropietario", "Tomas", FormMethod.Post, new { role = "form" })){*@
+<form id="PropietarioForm">
     @Html.HiddenFor(m => m.PersonaId)
     @Html.HiddenFor(m => m.PropietarioId)
+    @Html.HiddenFor(m => m.CambioPropietario)
+    @Html.Hidden("downloadToken", Model.DownloadToken)
 
-    // Nombre
-    <div class="form-group row">       
+    @*Nombre*@
+    <div class="form-group row">
         @Html.LabelFor(x => x.Nombre, new { @for = "Nombre", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
             @Html.TextBoxFor(d => d.Nombre, new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.Nombre, null, new { @class= "badge badge-pill badge-danger" })
+            @Html.ValidationMessageFor(m => m.Nombre, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
 
-    // Apellido Paterno
-    <div class="form-group row">        
+    @*Apellido Paterno*@
+    <div class="form-group row">
         @Html.LabelFor(x => x.ApellidoPaterno, new { @for = "ApellidoPaterno", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
             @Html.TextBoxFor(d => d.ApellidoPaterno, new { @class = "form-control" })
@@ -28,8 +29,8 @@
         </div>
     </div>
 
-    // Apellido Materno
-    <div class="form-group row">        
+    @*Apellido Materno*@
+    <div class="form-group row">
         @Html.LabelFor(x => x.ApellidoMaterno, new { @for = "ApellidoMaterno", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
             @Html.TextBoxFor(d => d.ApellidoMaterno, new { @class = "form-control" })
@@ -37,8 +38,8 @@
         </div>
     </div>
 
-    // Fecha Nacimiento
-    <div class="form-group row">        
+    @*Fecha Nacimiento*@
+    <div class="form-group row">
         @Html.LabelFor(x => x.FechaNacimiento, new { @for = "FechaNacimiento", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
             @Html.TextBoxFor(d => d.FechaNacimiento, new { @class = "form-control validaFechaNacimiento", @type = "date" })
@@ -46,8 +47,8 @@
         </div>
     </div>
 
-    // Estado Civil
-    <div class="form-group row">       
+    @*Estado Civil*@
+    <div class="form-group row">
         @Html.LabelFor(x => x.EstadoCivilId, new { @for = "EstadoCivilId", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
             @Html.DropDownListFor(m => m.EstadoCivilId, new SelectList(Model.EstadosCiviles, "EstadoCivilId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
@@ -55,8 +56,8 @@
         </div>
     </div>
 
-    // Teléfono
-    <div class="form-group row">        
+    @*Teléfono*@
+    <div class="form-group row">
         @Html.LabelFor(x => x.Telefono, new { @for = "Telefono", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
             @Html.TextBoxFor(d => d.Telefono, new { @class = "form-control" })
@@ -64,8 +65,8 @@
         </div>
     </div>
 
-    // Correo Electrónico
-    <div class="form-group row">        
+    @*Correo Electrónico*@
+    <div class="form-group row">
         @Html.LabelFor(x => x.CorreoElectronico, new { @for = "CorreoElectronico", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
             @Html.TextBoxFor(d => d.CorreoElectronico, new { @class = "form-control minusculas" })
@@ -73,7 +74,7 @@
         </div>
     </div>
 
-    // RFC
+    @*RFC*@
     <div class="form-group row">
         @Html.LabelFor(x => x.Rfc, new { @for = "Rfc", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
@@ -81,12 +82,89 @@
             @Html.ValidationMessageFor(m => m.Rfc, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
+    @if (Model.CambioPropietario)
+    {
+        @*COSTO*@
+        <div class="form-group row">
+            @Html.LabelFor(x => x.CostoCambioPropietario, new { @for = "CostoCambioPropietario", @class = "col-md-2 col-form-label ml-auto" })
+            <div class="col-sm-6 mr-auto">
+                @Html.TextBoxFor(d => d.CostoCambioPropietario, new { @class = "form-control validaCosto moneda" })
+                @Html.ValidationMessageFor(m => m.CostoCambioPropietario, null, new { @class = "badge badge-pill badge-danger" })
+            </div>
+        </div>
+    }
+
 
     @*Button*@
     <div class="row">
-        <div class="mr-auto ml-auto">
-            <button type="submit" class="btn btn-success">Guardar</button>
-        </div>
-    </div>
-}
+        @if (Model.CambioPropietario)
+        {
 
+            <div class="col-md-3 offset-md-2 text-center">
+                <button id="GuardarCambioPropietarioButton" type="button" class="btn btn-success">Guardar</button>
+            </div>
+            <div class="col-md-2 offset-md-2 text-center">
+                <button id="ImprimirButton" type="button" class="btn btn-primary" disabled>Imprimir recibo</button>
+            </div>
+
+        }
+        else
+        {
+            <div class="mr-auto ml-auto">
+                <button id="GuardarEditarPropietarioButton" type="button" class="btn btn-success">Guardar</button>
+            </div>
+        }
+    </div>
+</form>
+@*}*@
+<script>
+    var reciboIdValue;
+    $(document).ready(function () {
+        
+        $("button[disabled=disabled]").removeClass('btn-primary').addClass('grisClaro');
+        $.validator.addMethod("validaCosto", function () {
+            return $("#CostoCambioPropietario").val().trim().length > 0;
+        }, "El costo es requerido.");//$.validator.addMethod("validaCosto", function () {
+        
+    });
+    $("#ImprimirButton").click(function () {
+        BloquearProcesando();
+        href = "~/Print/ReciboSistema.aspx?reciboId=" + reciboIdValue + "";
+        window.location = "@Url.Action("../Print/ReciboSistema.aspx")?reciboId=" + reciboIdValue;
+    });//$("#ImprimirButton").click(function () {
+    $("#GuardarCambioPropietarioButton").click(function () {
+        if ($("#PropietarioForm").valid()) {
+            var token = new Date().getTime();
+            blockUIForDownload(token)
+            blockForDownload();
+            $("#ImprimirButton").prop('disabled', false);
+            document.getElementById('downloadToken').value = token;
+
+            window.location = "@Url.Action("GuardarPropietario", "Tomas")?" + $("#PropietarioForm").serialize();
+        }
+    });//$("#GuardarCambioPropietarioButton").click(function () {
+    $("#GuardarEditarPropietarioButton").click(function () {
+        if ($("#PropietarioForm").valid()) {
+            window.location = "@Url.Action("GuardarPropietario", "Tomas")?" + $("#PropietarioForm").serialize();
+        }
+    });//$("#GuardarEditarPropietarioButton").click(function () {
+    var DownloadCheckTimer;
+    function blockForDownload() {
+        DownloadCheckTimer = window.setInterval(function () {
+            reciboIdValue = $.cookie("reciboId");
+            if (reciboIdValue != "" )
+                finish();
+        }, 1000);
+    }//function blockForDownload() {
+    function finish() {
+        window.clearInterval(DownloadCheckTimer);
+        toastr.success(
+            "Guardado exitosamente",
+            "Éxito",
+            {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-bottom-full-width"
+            });
+    }//function finish() {
+</script>

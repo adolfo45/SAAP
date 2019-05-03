@@ -83,6 +83,7 @@ namespace ComiteAgua.Print
                 this.FechaTextBox.InnerText = recibo.FechaAlta.ToString("dd/MM/yyyy");
                 this.NoReciboTextBox.InnerText = recibo.NoRecibo.ToString();
                 this.AdicionalTextBox.InnerText = recibo.Adicional;
+                this.RenglonAdicional1.InnerText = recibo.RenglonAdicional1;
                 this.TotalTextBox.InnerText = recibo.Pago.Total.ToString("C");
                 this.SubTotalTextBox.InnerText = recibo.Pago.SubTotal.ToString("C");
                 this.CantidadLetraTextBox.InnerText = recibo.CantidadLetra;

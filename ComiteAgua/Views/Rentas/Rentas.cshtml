@@ -96,6 +96,14 @@
                         @Html.ValidationMessageFor(m => m.Costo, null, new { @class = "badge badge-pill badge-danger" })
                     </div>
                 </div>
+                <!--Observaciones-->
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Observaciones, new { @for = "Observaciones", @class = "col-md-3 offset-md-1 col-form-label" })
+                    <div class="col-sm-6">
+                        @Html.TextAreaFor(m => m.Observaciones, new { @class = "form-control form-control-sm mayusculas" })
+                        @Html.ValidationMessageFor(m => m.Observaciones, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
             </div>
             <div class="card-footer">
                 <div class="row">

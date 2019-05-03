@@ -50,7 +50,7 @@ namespace ComiteAgua.ViewModels.Tomas
 
         [Display(Name = "Folio")]
         [Required(ErrorMessage = "El {0} es requerido.")]
-        public int Folio { get; set; }
+        public int? Folio { get; set; }
 
         [Display(Name = "Observaciones")]
         [StringLength(255, ErrorMessage = "La {0} debe ser máximo de {1} caractéres.")]
@@ -75,6 +75,7 @@ namespace ComiteAgua.ViewModels.Tomas
         public bool ConvenioVencido { get; set; }
         public bool Notificacion { get; set; }
         public bool ReciboImpreso { get; set; }
+        public string Tesorero { get; set; }
 
         public List<Categoria> Categorias { get; set; }
         public DireccionesViewModel Direccion { get; set; }

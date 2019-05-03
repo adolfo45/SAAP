@@ -16,9 +16,11 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using ComiteAgua.Models.Recibos;
 using ComiteAgua.Domain.Seguridad;
+using ComiteAgua.Filters.Security;
 
 namespace ComiteAgua.Controllers.Rentas
 {
+    [Authenticate]
     public class RentasController : MessageControllerBase
     {
 
@@ -84,7 +86,8 @@ namespace ComiteAgua.Controllers.Rentas
                 NoExt = viewModel.NoExt,
                 Costo = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(viewModel.Costo)),
                 FechaAlta = fecha,
-                UsuarioAltaId = usuarioId                
+                UsuarioAltaId = usuarioId,
+                Observaciones = AdsertiFunciones.FormatearTexto(viewModel.Observaciones)
             };
             rentasDomain.Guardar(renta);
 
@@ -128,7 +131,7 @@ namespace ComiteAgua.Controllers.Rentas
                 CantidadLetra = this.Convertir(pago.Total.ToString()),
                 FechaAlta = DateTime.Now,
                 UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
-                //RenglonAdicional1 = !string.IsNullOrEmpty(model.RenglonAdicional1) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional1) : string.Empty,
+                RenglonAdicional1 = AdsertiFunciones.FormatearTexto(renta.Observaciones),
                 //RenglonAdicional2 = !string.IsNullOrEmpty(model.RenglonAdicional2) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional2) : string.Empty,
                 //RenglonAdicional3 = !string.IsNullOrEmpty(model.RenglonAdicional3) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional3) : string.Empty,
             };

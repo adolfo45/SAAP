@@ -256,6 +256,7 @@
     <Compile Include="Domain\ArchivosGastoDomain.cs" />
     <Compile Include="Domain\AsuntosDescripcionDomain.cs" />
     <Compile Include="Domain\AsuntosDomain.cs" />
+    <Compile Include="Domain\CambiosPropietarioDomain.cs" />
     <Compile Include="Domain\CategoriasDomain.cs" />
     <Compile Include="Domain\ConceptosConvenioDomain.cs" />
     <Compile Include="Domain\ConceptosPagoDomain.cs" />
@@ -341,10 +342,23 @@
     <Compile Include="Migrations\201903131736108_Relacion_RentaPago.Designer.cs">
       <DependentUpon>201903131736108_Relacion_RentaPago.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201904032235573_AgregoTablaCambioPropietario.cs" />
+    <Compile Include="Migrations\201904032235573_AgregoTablaCambioPropietario.Designer.cs">
+      <DependentUpon>201904032235573_AgregoTablaCambioPropietario.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904032242346_RelacionUsuario.cs" />
+    <Compile Include="Migrations\201904032242346_RelacionUsuario.Designer.cs">
+      <DependentUpon>201904032242346_RelacionUsuario.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201904042138412_AgregoCampoRenta.cs" />
+    <Compile Include="Migrations\201904042138412_AgregoCampoRenta.Designer.cs">
+      <DependentUpon>201904042138412_AgregoCampoRenta.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ArchivoGasto.cs" />
     <Compile Include="Models\Asunto.cs" />
     <Compile Include="Models\AsuntoDescripcion.cs" />
+    <Compile Include="Models\CambioPropietario.cs" />
     <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\ConceptoConvenio.cs" />
     <Compile Include="Models\ConceptoPago.cs" />
@@ -428,6 +442,7 @@
     <Compile Include="ViewModels\Tomas\PagosViewModel.cs" />
     <Compile Include="ViewModels\Tomas\PropietariosPersonaFisicaViewModel.cs" />
     <Compile Include="ViewModels\Tomas\RecibosViewModel.cs" />
+    <Compile Include="ViewModels\Tomas\ReconexionTomaViewModel.cs" />
     <Compile Include="ViewModels\Tomas\ServiciosViewModel.cs" />
     <Compile Include="ViewModels\Tomas\TabsViewModel.cs" />
     <Compile Include="ViewModels\Tomas\TomasViewModel.cs" />
@@ -497,6 +512,7 @@
     <Content Include="Views\Constancias\_ConstanciaNoAdeudoConsulta.cshtml" />
     <Content Include="Views\Constancias\ConstanciaNoServicio.cshtml" />
     <Content Include="Views\Rentas\Rentas.cshtml" />
+    <Content Include="Views\Tomas\ReconexionToma.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -508,6 +524,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="UploadFiles\CodigosQR\" />
     <Folder Include="UploadFiles\ConstanciasNoAdeudo\" />
+    <Folder Include="UploadFiles\ContratoCambioPropietario\" />
     <Folder Include="UploadFiles\Convenios\" />
     <Folder Include="UploadFiles\Gastos\" />
     <Folder Include="UploadFiles\Servicios\" />
@@ -548,6 +565,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903131736108_Relacion_RentaPago.resx">
       <DependentUpon>201903131736108_Relacion_RentaPago.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904032235573_AgregoTablaCambioPropietario.resx">
+      <DependentUpon>201904032235573_AgregoTablaCambioPropietario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904032242346_RelacionUsuario.resx">
+      <DependentUpon>201904032242346_RelacionUsuario.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904042138412_AgregoCampoRenta.resx">
+      <DependentUpon>201904042138412_AgregoCampoRenta.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

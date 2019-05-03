@@ -81,7 +81,8 @@ namespace ComiteAgua.Domain.Seguridad
         {
             var result = _context.Usuario
                 .Include(u => u.Persona)
-                .Where(u => u.UsuarioId == usuarioId).FirstOrDefault();
+                .Where(u => u.UsuarioId == usuarioId &&
+                            u.Activo).FirstOrDefault();
 
             return result;
         }// public Usuario ObtenerUsuarioPersona(int usuarioId)
@@ -110,7 +111,15 @@ namespace ComiteAgua.Domain.Seguridad
 
             return usuario;
         } // public Usuario ObtenerUsuario(int usuarioId)   
-
+        public Usuario ObtenerUsuarioPorRol(int rolId)
+        {
+            var usuario = _context.Usuario
+                .Include(u => u.Persona)
+                .Include(u => u.UsuarioRol)
+                .Where(u => u.UsuarioRol.Select(r => r.RolId).Contains(rolId)
+                        && u.Activo).FirstOrDefault();
+            return usuario;
+        }
         public bool ValidarUsuario(int usuarioId, string usuarios)
         {
             var usuario = _context.Usuario.Where(u => u.UserName == usuarios &&

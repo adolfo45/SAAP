@@ -48,6 +48,9 @@ namespace ComiteAgua.Domain
             var result = _context.Propietario
                 .Include(x => x.Toma)
                 .Include(x => x.Toma.Select(d => d.Direccion))
+                .Include(x => x.Toma.Select(d => d.Direccion.Calles))
+                .Include(x => x.Toma.Select(d => d.Direccion.TiposCalle))
+                .Include(x => x.Toma.Select(d => d.Direccion.Colonias))
                 .Include(x => x.Persona)
                 .Include(x => x.Persona.PersonaFisica)                  
                 .Where(x => x.PropietarioId == propietarioId).SingleOrDefault();
@@ -55,7 +58,6 @@ namespace ComiteAgua.Domain
             return result;
 
         } // public Propietario ObtenerPropietario(int propietarioId)
-
         public void Guardar(Propietario model)
         {
             if (model.PropietarioId > 0)
@@ -80,7 +82,6 @@ namespace ComiteAgua.Domain
 
             _context.SaveChanges();
         } // public void Guardar(Propietario model)
-
         public AnexGRIDResponde Listar(AnexGRID agrid)
         {            
             try
