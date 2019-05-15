@@ -9,7 +9,8 @@
     <title>@ViewBag.Title - Comité Agua</title>
     <link rel="shortcut icon" href="~/Images/gota2.png" />
 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <link href="~/Content/font-awesome.css" rel="stylesheet" />
+
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Content/ionicons.min.css" rel="stylesheet" />
     <link href="~/Content/Site.css" rel="stylesheet" />
@@ -17,9 +18,9 @@
     <link href="~/Content/toastr.css" rel="stylesheet" />
 
     <link href="~/Content/dataTables.bootstrap4.min.css" rel="stylesheet" />
-   
+
     <script src="~/Scripts/jquery_3.3.1.js"></script>
-    
+
 </head>
 <body>
 
@@ -36,7 +37,7 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Gastos
+                        <i class="fa fa-usd" aria-hidden="true"></i> Gastos
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="@Url.Action("GastosComite", "Tomas")">Agregar</a>
@@ -48,7 +49,7 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-wrench"></i> Servicios
+                        <i class="fa fa-wrench" aria-hidden="true"></i> Servicios
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="@Url.Action("ConsultarServicios", "Tomas")">Consultar</a>
@@ -56,7 +57,7 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="DescargarPadronButton" href="#" title="Descargar Padron"><span class="ion-ios-arrow-thin-down"></span> Padron<span class="sr-only">(current)</span></a>
+                    <a class="nav-link" id="DescargarPadronButton" href="#" title="Descargar Padron"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Padron<span class="sr-only">(current)</span></a>
                 </li>
                 @*<li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -71,11 +72,11 @@
                         <a class="nav-link" href="@Url.Action("ReportesNotificacion", "Notificaciones")" title="Reportes Notificación"><span class="glyphicon glyphicon-bell"></span> Reportes Notificación<span class="sr-only">(current)</span></a>
                     </li>*@
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("Recibos", "Tomas")" title="Reportes Notificación"><span class="glyphicon glyphicon-qrcode"></span> Recibos<span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="@Url.Action("Recibos", "Tomas")" title="Reportes Notificación"><i class="fa fa-qrcode" aria-hidden="true"></i> Recibos<span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Categorias
+                        <i class="fa fa-tags" aria-hidden="true"></i> Categorias
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="@Url.Action("EditAddCategoria", "Catalogos", new { urlRetorno = Url.Action("Index", "Home") })">Agregar</a>
@@ -84,7 +85,7 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Usuarios
+                        <i class="fa fa-user-o" aria-hidden="true"></i> Usuarios
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="@Url.Action("Usuarios", "Seguridad")">Consultar</a>
@@ -93,7 +94,7 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Descuentos
+                        <i class="fa fa-percent" aria-hidden="true"></i> Descuentos
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="@Url.Action("Descuentos", "Catalogos")">Consultar</a>
@@ -101,11 +102,11 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("Convenios", "Tomas")" title="Convenios"><i class="fas fa-users"></i> Convenios<span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="@Url.Action("Convenios", "Tomas")" title="Convenios"><i class="fa fa-users" aria-hidden="true"></i> Convenios<span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Constancias
+                        <i class="fa fa-file-word-o" aria-hidden="true"></i> Constancias
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="@Url.Action("ConstanciaNoAdeudoFiltros", "Constancias")">Constancia de no adeudo</a>
@@ -114,7 +115,7 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Rentas
+                        <i class="fa fa-handshake-o" aria-hidden="true"></i> Rentas
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="@Url.Action("Renta", "Rentas")">Renta Retroexcavadora</a>

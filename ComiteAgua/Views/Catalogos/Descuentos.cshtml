@@ -30,7 +30,7 @@
                     <td>@AdsertiFunciones.FormatearTexto(item.MesAno.ToString("MMM yyyy"))</td>
                     <td>@item.MontoPoncentaje%</td>
                     <th>
-                        <a href="@Url.Action("EditAddDescuento", "Catalogos" , new { descuentoId = item.DescuentoId, urlRetorno = (string)ViewContext.RouteData.Values["action"]})" title="Editar"><i class="fas fa-pencil-alt fa-1x"></i></a>
+                        <a href="@Url.Action("EditAddDescuento", "Catalogos" , new { descuentoId = item.DescuentoId, urlRetorno = (string)ViewContext.RouteData.Values["action"]})" title="Editar"><i class="fa fa-pencil fa-lg"></i></a>
                     </th>
                 </tr>
             }

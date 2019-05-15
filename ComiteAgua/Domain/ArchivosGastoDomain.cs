@@ -39,13 +39,12 @@ namespace ComiteAgua.Domain
 
         #region * Métodos creados por Comité Agua *
 
-        public void Gurdar(ArchivoGasto model)
+        public void Eliminar(ArchivoGasto model)
         {
-            _context.Entry(model).State = EntityState.Added;
+            _context.Entry(model).State = EntityState.Deleted;
 
             _context.SaveChanges();
         }
-
         public List<ArchivoGasto> ObtenerArchivosGastos(int gastoId)
         {
             var result = _context.ArchivoGasto
@@ -54,6 +53,12 @@ namespace ComiteAgua.Domain
 
             return result;
         }
+        public void Gurdar(ArchivoGasto model)
+        {
+            _context.Entry(model).State = EntityState.Added;
+
+            _context.SaveChanges();
+        }        
 
         #endregion
 

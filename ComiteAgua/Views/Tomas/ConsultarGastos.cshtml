@@ -16,25 +16,18 @@
 <div class="col-md-6 mr-auto ml-auto">
     <div class="card">
         <div class="card-body">
-            @*Fecha Inicio*@
+            @*Fecha*@
             <div class="form-group row">
-                @Html.Label("Fecha Inicio", new { @for = "Fecha", @class = "col-md-3 col-form-label ml-auto" })
+                @Html.Label("Fecha", new { @for = "Fecha", @class = "col-md-3 col-form-label ml-auto" })
                 <div class="col-sm-6 mr-auto">
                     <input id="Fecha" type="date" class="form-control" />
                 </div>
             </div>
-            @*Fecha Fin*@
-            <div class="form-group row">
-                @Html.Label("Fecha Fin", new { @for = "FechaFin", @class = "col-md-3 col-form-label ml-auto" })
-                <div class="col-sm-6 mr-auto">
-                    <input id="FechaFin" type="date" class="form-control" />
-                </div>
-            </div>
         </div>
-        <div class="card-footer text-center">                                                           
+        <div class="card-footer text-center">
             <div class="row justify-content-center">
                 <div class="col-4">
-                    <button id="BuscarButton" type="button" class="btn btn-success">Buscar</button>  
+                    <button id="BuscarButton" type="button" class="btn btn-success">Buscar</button>
                 </div>
                 <div class="col-4">
                     <button id="LimpiarButton" type="button" class="btn btn-primary">Limpiar</button>
@@ -48,17 +41,48 @@
 
 <div id="Gastos"></div>
 
+<!-- Modal -->
+<form id="formGasto">
+    <input type="hidden" id="gastoId" />
+    <div class="modal fade" id="eliminarModal" tabindex="-1" role="dialog" aria-labelledby="eliminarModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eliminarModalLabel">Eliminar</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label id="gasto" />
+                </div>
+                <div class="modal-footer">
+                    <button id="CerrarButton" type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button id="AceptarButton" type="button" class="btn btn-primary">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 @section scripts
 {
-
     <script>
         $(document).ready(function () {
 
             $("#BuscarButton").click(function () {
+                BloquearProcesando();
                 var fecha = $("#Fecha").val();
-                var fechaFin = $("#FechaFin").val();
 
-                if (fecha == "" || fechaFin == "") {
+                if (fecha == "") {
+                    toastr.warning(
+                        "Debe ingresar al menos un filtro",
+                        "Alerta",
+                        {
+                            closeButton: true,
+                            progressBar: true,
+                            positionClass: "toast-bottom-full-width"
+                        });
+                    $.unblockUI();
                     return;
                 }
 
@@ -66,24 +90,65 @@
                     type: 'get',
                     cache: false,
                     url: '@Url.Action("_ResultadoConsultarGastos", "Tomas")',
-                    data: { fecha: fecha, fechaFin: fechaFin },
+                    data: { fecha: fecha },
                     success: function (data) {
                         $("#Gastos").html(data)
+                        $('#gastosTable').DataTable({
+                            "filter": false
+                        });
+                        div = document.getElementById('gastosTable_length');
+                        div.style.display = 'none';
+                        $.unblockUI();
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         alert('Error - ' + errorThrown);
+                        $.unblockUI();
                     }
                 });
             });
 
             $("#LimpiarButton").click(function () {
                 $("#Fecha").val("");
-                $("#FechaFin").val("");    
-                $("#Gastos").html("")
+
+                var table = $('#gastosTable').DataTable();
+                table
+                    .clear()
+                    .draw();
             });
 
+            $("#AceptarButton").click(function () {
+                BloquearProcesando();
+                $.ajax({
+                    type: 'get',
+                    cache: false,
+                    url: '@Url.Action("EliminarGasto", "Tomas")',
+                    data: {
+                        gastoId: $("#gastoId").val(),
+                        fecha: $("#Fecha").val()
+                    },
+                    success: function (data) {
+                        $('#eliminarModal').modal('hide');
+                        $("#gastoId").val("");
+                        $("#Gastos").html(data);
+                        $('#gastosTable').DataTable({
+                            "filter": false
+                        });
+                        div = document.getElementById('gastosTable_length');
+                        div.style.display = 'none';
+                        $.unblockUI();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert('Error - ' + errorThrown);
+                        $.unblockUI();
+                    }
+                });
+            });
+
+            $("#CerrarButton").click(function () {
+                $('#eliminarModal').modal('hide');
+                $("#gastoId").val("");
+            });
         });
     </script>
-
 }
 

@@ -1,12 +1,13 @@
 ﻿@model List<ComiteAgua.ViewModels.Tomas.GastosViewModel>
 
-@if (Model.Count > 0) { 
-<table class="table">
-    <thead class="thead-dark">
+
+<table id="gastosTable" class="table table-hover table-bordered table-sm">
+    <thead class="thead-dark text-center">
         <tr>
             <th scope="col">Concepto</th>
             <th scope="col">Total</th>
             <th scope="col">Archivo</th>
+            <th scope="col">Eliminar</th>
         </tr>
     </thead>
     <tbody>
@@ -22,18 +23,19 @@
                         <a href="/UploadFiles/Gastos/@item.ArchivosGasto[x].Nombre" target="_blank">@(x == 0 ? item.ArchivosGasto[x].Nombre : ", " + item.ArchivosGasto[x].Nombre)</a>
                     }                                        
                 </td>
+                <td class="text-center">
+                    <a href="javascript:EliminarGasto(@item.GastoId,'@item.Concepto', '@item.Total')" title="Eliminar"><i class="fa fa-trash rojo fa-lg"></i></a>
+                </td>
             </tr>
         }
 
     </tbody>
 </table>
-}
-else
-{
-    <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
-        <strong>Alerta!</strong> No se encontraron registros.
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-}
+
+<script>   
+    function EliminarGasto(gastoId, concepto, total) {
+        $('#eliminarModal').modal('show');
+        document.getElementById('gasto').innerText = 'Confirmas que deseas eliminar el gasto "' + concepto + ' ' + total + '"';
+        document.getElementById('gastoId').value = gastoId;
+    };  
+</script>

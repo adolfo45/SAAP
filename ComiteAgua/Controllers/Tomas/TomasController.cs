@@ -287,13 +287,13 @@ namespace ComiteAgua.Controllers.Tomas
         {
             return PartialView(model);
         }
-        public ActionResult _ResultadoConsultarGastos(DateTime fecha, DateTime fechaFin)
+        public ActionResult _ResultadoConsultarGastos(DateTime fecha)
         {
             List<GastosViewModel> gastosLista = new List<GastosViewModel>();
             GastosDomain gastosDomain = new GastosDomain(_context);
             ArchivosGastoDomain archivosGastoDomain = new ArchivosGastoDomain(_context);            
 
-            var gastos = gastosDomain.ObtenerGastos(fecha, fechaFin);          
+            var gastos = gastosDomain.ObtenerGastos(fecha);          
 
             foreach (var item in gastos)
             {
@@ -744,6 +744,57 @@ namespace ComiteAgua.Controllers.Tomas
         {           
             return View();
         }
+        public ActionResult EliminarGasto(int gastoId, DateTime fecha)
+        {
+            GastosDomain gastosDomain = new GastosDomain(_context);            
+            List<GastosViewModel> gastosLista = new List<GastosViewModel>();           
+            ArchivosGastoDomain archivosGastoDomain = new ArchivosGastoDomain(_context);
+
+            var gasto = gastosDomain.ObtenerGasto(gastoId);
+            var archivoGasto = gasto.ArchivoGasto;
+            for(int item = 0; item <= gasto.ArchivoGasto.Count - 1; item++)
+            {
+                //Elimina Archivo
+                var file = Path.Combine(HttpContext.Server.MapPath("/UploadFiles/Gastos/"), archivoGasto[item].Nombre);
+                if (System.IO.File.Exists(file))
+                    System.IO.File.Delete(file);
+
+                archivosGastoDomain.Eliminar(archivoGasto[item]);
+            }            
+
+            gastosDomain.Eliminar(gastoId);            
+
+            var gastos = gastosDomain.ObtenerGastos(fecha);
+
+            foreach (var item in gastos)
+            {
+                List<ArchivosGastoViewModel> listaArchivo = new List<ArchivosGastoViewModel>();
+
+                var listaArchivos = archivosGastoDomain.ObtenerArchivosGastos(item.GastoId);
+
+                foreach (var archivo in listaArchivos)
+                {
+                    ArchivosGastoViewModel archivoGartoViewModel = new ArchivosGastoViewModel()
+                    {
+                        Nombre = archivo.Nombre
+                    };
+                    listaArchivo.Add(archivoGartoViewModel);
+                }
+
+                GastosViewModel gastosViewModel = new GastosViewModel()
+                {
+                    GastoId = item.GastoId,
+                    Concepto = item.Concepto,
+                    Total = item.Total.ToString("C"),
+                    ArchivosGasto = listaArchivo
+                };
+
+                gastosLista.Add(gastosViewModel);
+            }
+
+            return PartialView("_ResultadoConsultarGastos", gastosLista);
+
+        }
         public ActionResult QuitarArchivo(string nombre)
         {
             List<ArchivoClass> listaHttp = new List<ArchivoClass>();
@@ -774,7 +825,7 @@ namespace ComiteAgua.Controllers.Tomas
             {
                 SucursalId = model.SucursalId,
                 MultiComiteId = model.MultiComiteId,
-                Concepto = model.Concepto,
+                Concepto = AdsertiFunciones.FormatearTexto(model.Concepto),
                 Total = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.Total)),
                 FechaAlta = DateTime.Now,
                 UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString())
@@ -792,7 +843,7 @@ namespace ComiteAgua.Controllers.Tomas
 
                     if (!Directory.Exists(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo)))
                     {
-                        Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo));
+                        Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo));                        
                     } // if (!Directory.Exists(ruta))
 
                     item.File.SaveAs(Server.MapPath(rutaArchivo + archivo));
@@ -1948,8 +1999,7 @@ namespace ComiteAgua.Controllers.Tomas
             };
             Response.AppendCookie(new HttpCookie("fileDownloadToken", downloadToken));
             return new ViewAsPdf(estadoCuentaVM)
-            {
-                
+            {            
                 FileName = string.Format("Estado Cuenta_" + estadoCuenta.Select(e => e.Toma.Folio).FirstOrDefault() + ".pdf")
             };
         }

@@ -31,10 +31,10 @@
                     <td>@item.UserName</td>
                     <td>@string.Join(", ", item.UsuarioRol.Select(r => r.Rol.Nombre))</td>
                     <th>
-                        <a href="@Url.Action("AdministrarUsuarios", "Seguridad" , new { usuarioId = item.UsuarioId, urlRetorno = (string)ViewContext.RouteData.Values["action"]})" title="Editar"><i class="fas fa-pencil-alt fa-1x"></i></a>
+                        <a href="@Url.Action("AdministrarUsuarios", "Seguridad" , new { usuarioId = item.UsuarioId, urlRetorno = (string)ViewContext.RouteData.Values["action"]})" title="Editar"><i class="fa fa-pencil fa-lg"></i></a>
                     </th>
                     <th>
-                        <a href="@Url.Action("UsuarioBoquearDesbloquear", "Seguridad" , new { usuarioId = item.UsuarioId, bloquear = !item.Activo})" title="@(item.Activo ? "Bloquear" : "Desbloquear")"><i class="@(item.Activo ? "fas fa-unlock fa-1x verde" : "fas fa-lock fa-1x rojo")"></i></a>
+                        <a href="@Url.Action("UsuarioBoquearDesbloquear", "Seguridad" , new { usuarioId = item.UsuarioId, bloquear = !item.Activo})" title="@(item.Activo ? "Bloquear" : "Desbloquear")"><i class="@(item.Activo ? "fa fa-unlock fa-lg verde" : "fa fa-lock fa-lg rojo")"></i></a>
                     </th>
                 </tr>
             }

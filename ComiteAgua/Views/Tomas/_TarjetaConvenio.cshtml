@@ -24,7 +24,7 @@
                 <td class="text-center">
                     @if (!item.ReciboImpreso)
                     {
-                        <a href='@Url.Action("GenerarReciboPagadoConvenio", "Tomas", new { pagoId = item.PagoId})' title="Imprimir recibo"><i class="fas fa-qrcode"></i></a>
+                        <a href='@Url.Action("GenerarReciboPagadoConvenio", "Tomas", new { pagoId = item.PagoId})' title="Imprimir recibo"><i class="fa fa-qrcode fa-lg"></i></a>
                     }
                 </td>
             </tr>

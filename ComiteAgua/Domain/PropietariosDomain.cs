@@ -102,7 +102,7 @@ namespace ComiteAgua.Domain
                             .Include(x => x.Toma.Select(n => n.Notificacion))
                             .Include(x => x.Toma.Select(n => n.Notificacion.Select(t => t.TipoNotificacion)))
                             .Include(x => x.Toma.Select(n => n.Notificacion.Select(u => u.UsuarioNotifico.Persona)))
-                            .Where(x => x.PropietarioId > 0);
+                            .Where(x => x.PropietarioId > 0).Take(1000);
 
                 // Ordenar                 
                 if (agrid.columna == "Folio") query = agrid.columna_orden == "DESC"

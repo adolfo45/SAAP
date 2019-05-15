@@ -40,16 +40,15 @@ namespace ComiteAgua.Domain
         #endregion
 
         #region * Métodos creados por Comité Agua *
+        public void Eliminar(int gastoId)
+        {
+            var gasto = _context.Gasto
+                .Where(g => g.GastoId == gastoId).FirstOrDefault();
 
-        public List<Gasto> ObtenerGastos(DateTime fecha, DateTime fechaFin)
-        {                       
-            var result = _context.Gasto
-                .Where(i => DbFunctions.TruncateTime(i.FechaAlta) >= DbFunctions.TruncateTime(fecha) && DbFunctions.TruncateTime(i.FechaAlta) <= DbFunctions.TruncateTime(fechaFin))
-                .ToList();
+            _context.Entry(gasto).State = EntityState.Deleted;
 
-            return result;
-        }
-
+            _context.SaveChanges();
+        }        
         public List<Gasto> ObtenerGastos(DateTime fecha)
         {
             var result = _context.Gasto
@@ -58,14 +57,20 @@ namespace ComiteAgua.Domain
 
             return result;
         }
+        public Gasto ObtenerGasto(int gastoId)
+        {
+            var gasto = _context.Gasto
+                .Include(g => g.ArchivoGasto)
+                .Where(g => g.GastoId == gastoId).FirstOrDefault();
 
+            return gasto;
+        }
         public void Gurdar(Gasto model)
         {                         
                 _context.Entry(model).State = EntityState.Added;            
 
                 _context.SaveChanges();            
         }
-
         #endregion
 
     } // public class GastosDomain

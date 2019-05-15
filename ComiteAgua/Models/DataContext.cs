@@ -22,9 +22,9 @@ namespace ComiteAgua.Models
     {
                
         #region * Constructor generado por Comité Agua *
-        public DataContext()
+        public DataContext() : base("name=ComiteAgua")
         {                 
-            Database.Connection.ConnectionString = AdsertiFunciones.DesencriptarTexto(ConfigurationManager.ConnectionStrings["ComiteAgua"].ConnectionString);
+            //Database.Connection.ConnectionString = AdsertiFunciones.DesencriptarTexto(ConfigurationManager.ConnectionStrings["ComiteAgua"].ConnectionString);
         }
         #endregion
 

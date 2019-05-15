@@ -63,9 +63,9 @@
                 <td>@item.Categoria.Abreviatura</td>
                 <td>@item.MesAno</td>
                 <td>@item.CostoTarifa.ToString("C")</td>
-                <td><a href="@Url.Action("EditAddCategoria", "Catalogos", new { tarifaId = item.TarifaId, mesAnoFiltro = Model.MesAnoFiltro, urlRetorno = Url.Action("ConsultarCategoria", "Catalogos",new{ mesAnoFiltro = Model.MesAnoFiltro }) })" title="Editar"><span class="fas fa-pencil-alt fa-1x azul"></span></a></td>
-                <td><a href="@Url.Action("EditAddTarifa", "Catalogos", new { categoriaId = item.CategoriaId, mesAnoFiltro = Model.MesAnoFiltro, urlRetorno = Url.Action("ConsultarCategoria", "Catalogos",new{ mesAnoFiltro = Model.MesAnoFiltro }) })" title="Agregar Tarifa"><span class="fas fa-money-bill-alt fa-1x verde"></span></a></td>
-                <td><a href="@Url.Action("DetalleCategoria", "Catalogos", new { categoriaId = item.CategoriaId, mesAnoFiltro = Model.MesAnoFiltro, urlRetorno = Url.Action("ConsultarCategoria", "Catalogos",new{ mesAnoFiltro = Model.MesAnoFiltro }) })" title="Ver"><span class="far fa-eye fa-1x azul"></span></a></td>                
+                <td><a href="@Url.Action("EditAddCategoria", "Catalogos", new { tarifaId = item.TarifaId, mesAnoFiltro = Model.MesAnoFiltro, urlRetorno = Url.Action("ConsultarCategoria", "Catalogos",new{ mesAnoFiltro = Model.MesAnoFiltro }) })" title="Editar"><span class="fa fa-pencil fa-lg azul"></span></a></td>
+                <td><a href="@Url.Action("EditAddTarifa", "Catalogos", new { categoriaId = item.CategoriaId, mesAnoFiltro = Model.MesAnoFiltro, urlRetorno = Url.Action("ConsultarCategoria", "Catalogos",new{ mesAnoFiltro = Model.MesAnoFiltro }) })" title="Agregar Tarifa"><span class="fa fa-money fa-lg verde"></span></a></td>
+                <td><a href="@Url.Action("DetalleCategoria", "Catalogos", new { categoriaId = item.CategoriaId, mesAnoFiltro = Model.MesAnoFiltro, urlRetorno = Url.Action("ConsultarCategoria", "Catalogos",new{ mesAnoFiltro = Model.MesAnoFiltro }) })" title="Detalle"><span class="fa fa-share fa-lg azul"></span></a></td>                
             </tr>
         }
 

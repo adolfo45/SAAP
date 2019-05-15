@@ -76,8 +76,8 @@ namespace ComiteAgua.Controllers.Rentas
                 TipoRentaId = (int)TiposRentaDomain.TiposRentaEnum.MaquinaRetroexcavadora,
                 Nombre = AdsertiFunciones.FormatearTexto(viewModel.Nombre),
                 ApellidoPaterno = AdsertiFunciones.FormatearTexto(viewModel.ApellidoPaterno),
-                ApellidoMaterno = !string.IsNullOrEmpty(viewModel.ApellidoMaterno) ? 
-                                    AdsertiFunciones.FormatearTexto(viewModel.ApellidoMaterno) : 
+                ApellidoMaterno = !string.IsNullOrEmpty(viewModel.ApellidoMaterno) ?
+                                    AdsertiFunciones.FormatearTexto(viewModel.ApellidoMaterno) :
                                     string.Empty,
                 Calle = AdsertiFunciones.FormatearTexto(viewModel.Calle),
                 Colonia = AdsertiFunciones.FormatearTexto(viewModel.Colonia),
@@ -87,7 +87,7 @@ namespace ComiteAgua.Controllers.Rentas
                 Costo = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(viewModel.Costo)),
                 FechaAlta = fecha,
                 UsuarioAltaId = usuarioId,
-                Observaciones = AdsertiFunciones.FormatearTexto(viewModel.Observaciones)
+                Observaciones = !string.IsNullOrEmpty(viewModel.Observaciones) ? AdsertiFunciones.FormatearTexto(viewModel.Observaciones) : string.Empty
             };
             rentasDomain.Guardar(renta);
 

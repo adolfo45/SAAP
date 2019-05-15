@@ -81,8 +81,8 @@
                           item.Pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Renta ?
                                                       item.Pago.Renta.TipoRenta.Nombre : 
                                                       item.Pago.ConceptoPago.Nombre)</td>
-                    <td class="text-center"><a href="@Url.Action("CancelarRecibo","Tomas", new { reciboId = item.ReciboId, estado = item.Pago.Activo})" title="Cancelar"><span class='@(item.Pago.Activo ? "fas fa-check fa-1x verde" : "fas fa-times fa-1x rojo")'></span></a></td>
-                    <td class="text-center"><a href="~/Print/ReciboSistema.aspx?reciboId= + @item.ReciboId + &UrlOrigen= + @Model.UrlOrigen" title="Ver"><span class="far fa-eye fa-1x azul"></span></a></td>
+                    <td class="text-center"><a href="@Url.Action("CancelarRecibo","Tomas", new { reciboId = item.ReciboId, estado = item.Pago.Activo})" title="Cancelar"><span class='@(item.Pago.Activo ? "fa fa-check fa-lg verde" : "fa fa-times fa-lg rojo")'></span></a></td>
+                    <td class="text-center"><a href="~/Print/ReciboSistema.aspx?reciboId= + @item.ReciboId + &UrlOrigen= + @Model.UrlOrigen" title="Ver"><span class="fa fa-eye fa-lg azul"></span></a></td>
                 </tr>
             }
 

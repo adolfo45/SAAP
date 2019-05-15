@@ -36,7 +36,7 @@
                     <td class="text-center">@item.NoTarjeta</td>
                     <td>@item.ConceptoConvenio</td>
                     <td>@item.EstatusConvenio</td>
-                    <td class="text-center"><a href='@Url.Action("ConceptoPago", "Tomas", new { tomaId = item.TomaId, conceptoPagoId = (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio, convenioId = item.ConvenioId, urlRetorno = Url.Action("Convenios", "Tomas")})' title="Ver"><span class="far fa-eye fa-1x azul"></span></a></td>
+                    <td class="text-center"><a href='@Url.Action("ConceptoPago", "Tomas", new { tomaId = item.TomaId, conceptoPagoId = (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio, convenioId = item.ConvenioId, urlRetorno = Url.Action("Convenios", "Tomas")})' title="Ver"><span class="fa fa-eye fa-lg azul"></span></a></td>
                 </tr>
             }
 
