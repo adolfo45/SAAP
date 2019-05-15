@@ -31,8 +31,8 @@
                     <td>@item.Colonia</td>
                     <td>@item.UltimoPeriodoPago</td>
                     @*<td class="text-center"><a href='@Url.Action("DescargarConstanciaNoAdeudo", "Constancias", new { tomaId = item.TomaId})' title="Descargar constancia" id="DescargarConstanciaButton"><i class="fas fa-file-download verde"></i></a></td>*@  
-                    <td class="text-center"><a href="javascript:DescargarConstancia(@item.TomaId)" title="Descargar constancia"><i class="fas fa-file-download verde"></i></a></td>
-                    <td class="text-center"><a href="javascript:ImprimirReciboButton(@item.TomaId)" id="ImprimirReciboButton" title="Imprimir recibo" class="@(item.ReciboImpreso ? "disabled" : string.Empty )"><i class="fas fa-qrcode"></i></a></td>
+                    <td class="text-center"><a href="javascript:DescargarConstancia(@item.TomaId)" title="Descargar constancia"><i class="fa fa-download fa-lg verde"></i></a></td>
+                    <td class="text-center"><a href="javascript:ImprimirReciboButton(@item.TomaId)" id="ImprimirReciboButton" title="Imprimir recibo" class="@(item.ReciboImpreso ? "disabled" : string.Empty )"><i class="fa fa-qrcode fa-lg"></i></a></td>
                 </tr>
                 }
             </tbody>
