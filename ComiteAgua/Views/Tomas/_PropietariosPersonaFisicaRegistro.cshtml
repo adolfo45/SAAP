@@ -119,13 +119,11 @@
 @*}*@
 <script>
     var reciboIdValue;
-    $(document).ready(function () {
-        
+    $(document).ready(function () {   
         $("button[disabled=disabled]").removeClass('btn-primary').addClass('grisClaro');
         $.validator.addMethod("validaCosto", function () {
             return $("#CostoCambioPropietario").val().trim().length > 0;
-        }, "El costo es requerido.");//$.validator.addMethod("validaCosto", function () {
-        
+        }, "El costo es requerido.");//$.validator.addMethod("validaCosto", function () { 
     });
     $("#ImprimirButton").click(function () {
         BloquearProcesando();

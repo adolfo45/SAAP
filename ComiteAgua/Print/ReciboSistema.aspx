@@ -39,15 +39,11 @@
         <!--Tabla fecha-->
         <div style="padding-left: 880px; padding-top: 70px; position: absolute">
             <table style="width: 150%; font-size: 15px;">
-                <tr>                    
-                    <td style="visibility: hidden;">
-                        <label style="visibility: hidden;">-</label></td>
-                </tr>               
-                <tr>
+                <tr>                       
                     <td style="text-align: center;">
                         <label runat="server" id="NoReciboTextBox">xxx</label>
                     </td>
-                </tr>
+                </tr>               
                 <tr>
                     <td style="visibility: hidden;">
                         <label style="visibility: hidden;">-</label></td>
@@ -57,7 +53,11 @@
                         <label style="visibility: hidden;">-</label></td>
                 </tr>
                 <tr>
-                    <td style="text-align: center;">
+                    <td style="visibility: hidden;">
+                        <label style="visibility: hidden;">-</label></td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;padding-top:20px">
                         <label runat="server" id="FechaTextBox">xxx</label>
                     </td>
                 </tr>

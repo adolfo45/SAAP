@@ -7,13 +7,13 @@ namespace ComiteAgua.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class AgregoTablaConstancia1 : IMigrationMetadata
+    public sealed partial class IncrementoLongitudTablaRecibos : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AgregoTablaConstancia1));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(IncrementoLongitudTablaRecibos));
         
         string IMigrationMetadata.Id
         {
-            get { return "201902272314204_AgregoTablaConstancia1"; }
+            get { return "201905211704086_IncrementoLongitudTablaRecibos"; }
         }
         
         string IMigrationMetadata.Source

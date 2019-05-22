@@ -936,8 +936,8 @@ namespace ComiteAgua.Controllers.Tomas
                     CantidadLetra = this.Convertir(pago.Total.ToString()),
                     FechaAlta = DateTime.Now,
                     UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
-                    RenglonAdicional1 = "Nuevo propietario: " + AdsertiFunciones.FormatearTexto(model.Nombre) + " " + AdsertiFunciones.FormatearTexto(model.ApellidoPaterno) + " " + AdsertiFunciones.FormatearTexto(model.ApellidoMaterno),
-                    RenglonAdicional2 = "Anterior propietario: " + cambioPropietario.Nombre + " " + cambioPropietario.ApellidoPaterno + " " + cambioPropietario.ApellidoMaterno,
+                    RenglonAdicional1 = "Nuevo: " + AdsertiFunciones.FormatearTexto(model.Nombre) + " " + AdsertiFunciones.FormatearTexto(model.ApellidoPaterno) + " " + AdsertiFunciones.FormatearTexto(model.ApellidoMaterno),
+                    RenglonAdicional2 = "Anterior: " + cambioPropietario.Nombre + " " + cambioPropietario.ApellidoPaterno + " " + cambioPropietario.ApellidoMaterno,
                     //RenglonAdicional3 = !string.IsNullOrEmpty(model.RenglonAdicional3) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional3) : string.Empty,
                 };
                 recibosDomain.Gurdar(recibo);
@@ -964,7 +964,7 @@ namespace ComiteAgua.Controllers.Tomas
                 var cantidadLetra = this.ConvertirMinusculas(pago.Total.ToString()).ToLower() + " M.N";
                 string rutaFormato = System.Web.HttpContext.Current.Server.MapPath("~/Print/ContratoCambioPropietario.docx");
                 string rutaArchivo = @"/UploadFiles/ContratoCambioPropietario/";
-                string nombreArchivo = "Contrato cambio propietario.docx";
+                string nombreArchivo = "Contrato Cambio Propietario_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".docx";
 
                 using (DocX document = DocX.Load(rutaFormato))
                 {
@@ -1090,6 +1090,8 @@ namespace ComiteAgua.Controllers.Tomas
                 return this.Tabs(model.PropietarioId);
             }
 
+            var usuariosDomain = new UsuariosDomain(_context);
+            var propietariosDomain = new PropietariosDomain(_context);
             var direccionesDomain = new DireccionesDomain(_context);
             var tomasDomain = new TomasDomain(_context);
 
@@ -1118,6 +1120,69 @@ namespace ComiteAgua.Controllers.Tomas
                     Activa = true
                 };
                 tomasDomain.EditarDireccionToma(toma);
+            }
+
+            if (model.DireccionId == 0) {
+                //Descarga contrato toma Nueva
+                var personaFisica = propietariosDomain.ObtenerPropietario(model.PropietarioId);
+                var presidente = usuariosDomain.ObtenerUsuarioPorRol((int)RolesDomain.RolesEnum.Presidente);
+
+                var tomasVM = new TomasViewModel()
+                {
+                    TomaId = personaFisica.Toma.Select(t => t.TomaId).FirstOrDefault(),
+                    Folio = personaFisica.Toma.Select(t => t.Folio).FirstOrDefault(),
+                    Presidente = presidente != null ? "C. " + presidente.Persona.Nombre + " " + presidente.Persona.ApellidoPaterno + " " + presidente.Persona.ApellidoMaterno : "(PRESIDENTE DESHABILITADO)",
+                    Propietario = "C. " + AdsertiFunciones.FormatearTexto(personaFisica.Persona.PersonaFisica.Nombre) + " " +
+                                          AdsertiFunciones.FormatearTexto(personaFisica.Persona.PersonaFisica.ApellidoPaterno) + " " +
+                                          AdsertiFunciones.FormatearTexto(personaFisica.Persona.PersonaFisica.ApellidoMaterno),
+                    Calle = personaFisica.Toma.Select(d => d.Direccion) != null ? ((personaFisica.Toma.Select(d => d.Direccion.TipoCalleId).FirstOrDefault() > 0 ? personaFisica.Toma.Select(d => d.Direccion.TiposCalle.Nombre).FirstOrDefault() : string.Empty) + ' ' + (personaFisica.Toma.Select(d => d.Direccion.CalleId).FirstOrDefault() > 0 ? personaFisica.Toma.Select(d => d.Direccion.Calles.Nombre).FirstOrDefault() : string.Empty) +
+                                            (!string.IsNullOrEmpty(personaFisica.Toma.Select(d => d.Direccion.NumInt).FirstOrDefault()) ? " INT " + personaFisica.Toma.Select(d => d.Direccion.NumInt).FirstOrDefault() : string.Empty) +
+                                            (!string.IsNullOrEmpty(personaFisica.Toma.Select(d => d.Direccion.NumExt).FirstOrDefault()) ? " EXT " + personaFisica.Toma.Select(d => d.Direccion.NumExt).FirstOrDefault() : string.Empty)) : String.Empty,
+                    Colonia = personaFisica.Toma.Select(d => d.Direccion) != null ? (personaFisica.Toma.Select(d => d.Direccion.ColoniaId).FirstOrDefault() > 0 ? "COL. " + personaFisica.Toma.Select(d => d.Direccion.Colonias.Nombre).FirstOrDefault() : string.Empty) : string.Empty,
+                    Precio = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.Precio)).ToString("C")
+                };
+                var fechaLetra = this.ConvertirFecha(DateTime.Now.Day.ToString()).ToUpper() + " DÍAS DEL MES DE " +
+                                DateTime.Now.ToString("MMMMMMMM").ToUpper() + " DE " +
+                                DateTime.Now.Year;
+                var cantidadLetra = this.ConvertirMinusculas(AdsertiFunciones.FormatearNumero(model.Precio)).ToLower() + " M.N";
+                string rutaFormato = System.Web.HttpContext.Current.Server.MapPath("~/Print/ContratoTomaNueva.docx");
+                string rutaArchivo = @"/UploadFiles/ContratoTomaNueva/";
+                string nombreArchivo = "Contrato Toma Nueva_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".docx";
+
+                using (DocX document = DocX.Load(rutaFormato))
+                {
+                    document.ReplaceText("{Presidente}", tomasVM.Presidente, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    document.ReplaceText("{Propietario}", tomasVM.Propietario, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    document.ReplaceText("{Calle}", tomasVM.Calle, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    document.ReplaceText("{Colonia}", tomasVM.Colonia, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    document.ReplaceText("{Precio}", model.Precio + " (" + cantidadLetra + ")", false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    document.ReplaceText("{Fecha}", fechaLetra, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+                    //Si no existe el directorio se crea
+                    if (!Directory.Exists(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo)))
+                    {
+                        Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo));
+                    } // if (!Directory.Exists(ruta))
+                    document.SaveAs(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo) + nombreArchivo);
+                }
+
+                var urlArchivo = System.Web.HttpContext.Current.Server.MapPath(rutaArchivo) + nombreArchivo;
+
+                // fin archivo word
+                if (!string.IsNullOrEmpty(urlArchivo))
+                {
+                    FileInfo archivo = new FileInfo(urlArchivo);
+                    if (archivo.Exists)
+                    {
+                        Response.ClearContent();
+                        Response.AppendCookie(new HttpCookie("fileDownloadToken", model.DownloadTokenFileDireccion));                       
+                        Response.AddHeader("Content-Disposition", "attachment; filename=" + archivo.Name);
+                        Response.AddHeader("Content-Length", archivo.Length.ToString());
+                        Response.ContentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                        Response.TransmitFile(archivo.FullName);
+                        Response.End();
+                    }
+                }
             }
             ShowToastMessage("Éxito", "Guardado exitosamente", ToastMessage.ToastType.Success);
             return RedirectToAction("Tabs", "Tomas", new { propietarioId = model.PropietarioId });

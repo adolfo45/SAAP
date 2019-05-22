@@ -818,15 +818,15 @@ namespace ComiteAgua.Models
                 .IsOptional();
 
             modelBuilder.Entity<Recibo>().Property(x => x.RenglonAdicional1)
-                .HasMaxLength(50)
+                .HasMaxLength(250)
                 .IsOptional();
 
             modelBuilder.Entity<Recibo>().Property(x => x.RenglonAdicional2)
-               .HasMaxLength(50)
+               .HasMaxLength(250)
                .IsOptional();
 
             modelBuilder.Entity<Recibo>().Property(x => x.RenglonAdicional3)
-               .HasMaxLength(50)
+               .HasMaxLength(250)
                .IsOptional();
 
             #endregion

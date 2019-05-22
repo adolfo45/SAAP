@@ -94,7 +94,7 @@ namespace ComiteAgua.Domain
                             .Include(x => x.Toma.Select(d => d.Direccion))
                             .Include(x => x.Toma.Select(d => d.Direccion.Colonias))
                             .Include(x => x.Toma.Select(d => d.Direccion.TiposCalle))
-                             .Include(x => x.Toma.Select(d => d.Direccion.Calles))
+                            .Include(x => x.Toma.Select(d => d.Direccion.Calles))
                             .Include(x => x.Toma.Select(p => p.Pago))
                             .Include(x => x.Toma.Select(pp => pp.PeriodoPago))
                             .Include(x => x.Toma.Select(ca => ca.Categoria))

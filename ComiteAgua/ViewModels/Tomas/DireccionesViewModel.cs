@@ -66,6 +66,9 @@ namespace ComiteAgua.ViewModels.Tomas
         public int UsuarioAltaId { get; set; }
         public DateTime? FechaCambio { get; set; }
         public int? UsuarioCambioId { get; set; }
+        [Required(ErrorMessage = "El {0} es requerido.")]
+        public string Precio { get; set; }
+        public string DownloadTokenFileDireccion { get; set; }
 
         #endregion
 

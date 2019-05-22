@@ -221,7 +221,7 @@ namespace ComiteAgua.Domain
                 .Include(t => t.Convenio.Select(c => c.ConceptoConvenio))
                 .OrderBy(t => t.Folio);
 
-            return result.OrderBy(t => t.Propietario.Persona.PersonaFisica.Nombre).ToList();
+            return result.ToList();
         }
         public int ObtenerFolioToma(int tomaId)
         {

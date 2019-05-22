@@ -203,7 +203,7 @@
     <Content Include="Images\Fondo.jpg" />
     <Content Include="Images\fondoazul.jpg" />
     <Content Include="Images\gota2.png" />
-    <Content Include="Images\LogoGrande.png" />
+    <Content Include="Images\llaveChica.png" />
     <Content Include="Images\mundo.png" />
     <Content Include="Images\Recibo\Imprimir.png" />
     <Content Include="Images\Recibo\Regresar.png" />
@@ -230,6 +230,7 @@
     <Content Include="fonts\fontawesome-webfont.woff" />
     <Content Include="fonts\fontawesome-webfont.woff2" />
     <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="Print\ContratoTomaNueva.docx" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
@@ -305,61 +306,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201902272302581_AgregoTablaConstancia.cs" />
-    <Compile Include="Migrations\201902272302581_AgregoTablaConstancia.Designer.cs">
-      <DependentUpon>201902272302581_AgregoTablaConstancia.cs</DependentUpon>
+    <Compile Include="Migrations\201905211701036_LongitudCamposRecibo.cs" />
+    <Compile Include="Migrations\201905211701036_LongitudCamposRecibo.Designer.cs">
+      <DependentUpon>201905211701036_LongitudCamposRecibo.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201902272309046_EliminoTablaConstancia.cs" />
-    <Compile Include="Migrations\201902272309046_EliminoTablaConstancia.Designer.cs">
-      <DependentUpon>201902272309046_EliminoTablaConstancia.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902272314204_AgregoTablaConstancia1.cs" />
-    <Compile Include="Migrations\201902272314204_AgregoTablaConstancia1.Designer.cs">
-      <DependentUpon>201902272314204_AgregoTablaConstancia1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902272344118_AgregaronRelaciones.cs" />
-    <Compile Include="Migrations\201902272344118_AgregaronRelaciones.Designer.cs">
-      <DependentUpon>201902272344118_AgregaronRelaciones.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902280014267_AgregaronCorrecciones.cs" />
-    <Compile Include="Migrations\201902280014267_AgregaronCorrecciones.Designer.cs">
-      <DependentUpon>201902280014267_AgregaronCorrecciones.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902280021228_Detalles.cs" />
-    <Compile Include="Migrations\201902280021228_Detalles.Designer.cs">
-      <DependentUpon>201902280021228_Detalles.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201902281523521_AgregoTablaTiposConstancia.cs" />
-    <Compile Include="Migrations\201902281523521_AgregoTablaTiposConstancia.Designer.cs">
-      <DependentUpon>201902281523521_AgregoTablaTiposConstancia.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903011622024_AgregoCampoTablaConstancia.cs" />
-    <Compile Include="Migrations\201903011622024_AgregoCampoTablaConstancia.Designer.cs">
-      <DependentUpon>201903011622024_AgregoCampoTablaConstancia.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903061838055_TomaIdNullPagos.cs" />
-    <Compile Include="Migrations\201903061838055_TomaIdNullPagos.Designer.cs">
-      <DependentUpon>201903061838055_TomaIdNullPagos.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903131727564_tablasRentas.cs" />
-    <Compile Include="Migrations\201903131727564_tablasRentas.Designer.cs">
-      <DependentUpon>201903131727564_tablasRentas.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201903131736108_Relacion_RentaPago.cs" />
-    <Compile Include="Migrations\201903131736108_Relacion_RentaPago.Designer.cs">
-      <DependentUpon>201903131736108_Relacion_RentaPago.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904032235573_AgregoTablaCambioPropietario.cs" />
-    <Compile Include="Migrations\201904032235573_AgregoTablaCambioPropietario.Designer.cs">
-      <DependentUpon>201904032235573_AgregoTablaCambioPropietario.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904032242346_RelacionUsuario.cs" />
-    <Compile Include="Migrations\201904032242346_RelacionUsuario.Designer.cs">
-      <DependentUpon>201904032242346_RelacionUsuario.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201904042138412_AgregoCampoRenta.cs" />
-    <Compile Include="Migrations\201904042138412_AgregoCampoRenta.Designer.cs">
-      <DependentUpon>201904042138412_AgregoCampoRenta.cs</DependentUpon>
+    <Compile Include="Migrations\201905211704086_IncrementoLongitudTablaRecibos.cs" />
+    <Compile Include="Migrations\201905211704086_IncrementoLongitudTablaRecibos.Designer.cs">
+      <DependentUpon>201905211704086_IncrementoLongitudTablaRecibos.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ArchivoGasto.cs" />
@@ -540,47 +493,11 @@
     <Folder Include="Views\MessageControllerBase\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201902272302581_AgregoTablaConstancia.resx">
-      <DependentUpon>201902272302581_AgregoTablaConstancia.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905211701036_LongitudCamposRecibo.resx">
+      <DependentUpon>201905211701036_LongitudCamposRecibo.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902272309046_EliminoTablaConstancia.resx">
-      <DependentUpon>201902272309046_EliminoTablaConstancia.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902272314204_AgregoTablaConstancia1.resx">
-      <DependentUpon>201902272314204_AgregoTablaConstancia1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902272344118_AgregaronRelaciones.resx">
-      <DependentUpon>201902272344118_AgregaronRelaciones.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902280014267_AgregaronCorrecciones.resx">
-      <DependentUpon>201902280014267_AgregaronCorrecciones.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902280021228_Detalles.resx">
-      <DependentUpon>201902280021228_Detalles.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201902281523521_AgregoTablaTiposConstancia.resx">
-      <DependentUpon>201902281523521_AgregoTablaTiposConstancia.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903011622024_AgregoCampoTablaConstancia.resx">
-      <DependentUpon>201903011622024_AgregoCampoTablaConstancia.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903061838055_TomaIdNullPagos.resx">
-      <DependentUpon>201903061838055_TomaIdNullPagos.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903131727564_tablasRentas.resx">
-      <DependentUpon>201903131727564_tablasRentas.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201903131736108_Relacion_RentaPago.resx">
-      <DependentUpon>201903131736108_Relacion_RentaPago.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904032235573_AgregoTablaCambioPropietario.resx">
-      <DependentUpon>201904032235573_AgregoTablaCambioPropietario.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904032242346_RelacionUsuario.resx">
-      <DependentUpon>201904032242346_RelacionUsuario.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201904042138412_AgregoCampoRenta.resx">
-      <DependentUpon>201904042138412_AgregoCampoRenta.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201905211704086_IncrementoLongitudTablaRecibos.resx">
+      <DependentUpon>201905211704086_IncrementoLongitudTablaRecibos.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

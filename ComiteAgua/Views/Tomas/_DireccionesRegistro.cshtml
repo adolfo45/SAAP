@@ -4,14 +4,15 @@
 
 }
 
-@using (Html.BeginForm("GuardarDireccion", "Tomas", FormMethod.Post, new { role = "form" }))
-{
-
+@*@using (Html.BeginForm("GuardarDireccion", "Tomas", FormMethod.Post, new { role = "form" }))
+{*@
+<form id="DireccionForm">
     @Html.HiddenFor(m => m.PropietarioId)
     @Html.HiddenFor(m => m.TomaId)
     @Html.HiddenFor(m => m.DireccionId)
+    @Html.Hidden("downloadTokenFileDireccion", Model.DownloadTokenFileDireccion)
 
-    // Tipo Calle   
+    @*Tipo Calle*@
     <div class="form-group row">
         @Html.LabelFor(x => x.TipoCalleId, new { @for = "TipoCalleId", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
@@ -19,7 +20,7 @@
             @Html.ValidationMessageFor(m => m.TipoCalleId, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
-    //Calle
+    @*Calle*@
     <div class="form-group row">
         @Html.LabelFor(x => x.CalleId, new { @for = "CalleId", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
@@ -27,7 +28,7 @@
             @Html.ValidationMessageFor(m => m.CalleId, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
-    // Num Int
+    @*Num Int*@
     <div class="form-group row">
         @Html.LabelFor(x => x.NumInt, new { @for = "NumInt", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
@@ -35,7 +36,7 @@
             @Html.ValidationMessageFor(m => m.NumInt, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
-    // Num Ext
+    @*Num Ext*@
     <div class="form-group row">
         @Html.LabelFor(x => x.NumExt, new { @for = "NumExt", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
@@ -43,7 +44,7 @@
             @Html.ValidationMessageFor(m => m.NumExt, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
-    // Colonia   
+    @*Colonia*@
     <div class="form-group row">
         @Html.LabelFor(x => x.ColoniaId, new { @for = "ColoniaId", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
@@ -51,10 +52,31 @@
             @Html.ValidationMessageFor(m => m.ColoniaId, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
-    // Button
-    <div class="row">
-        <div class="mr-auto ml-auto">
-            <button type="submit" class="btn btn-success">Guardar</button>
+    @*Precio*@
+    <div class="form-group row">
+        @Html.LabelFor(x => x.Precio, new { @for = "Precio", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.Precio, new { @class = "form-control moneda" })
+            @Html.ValidationMessageFor(m => m.Precio, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
-}
+    @*Button*@
+    <div class="row">
+        <div class="mr-auto ml-auto">
+            <button id="GuardarDireccionButton" type="button" class="btn btn-success">Guardar</button>
+        </div>
+    </div>
+</form>
+    @*}*@
+
+    <script>
+        $("#GuardarDireccionButton").click(function () {
+            if ($("#DireccionForm").valid()) {
+                var token = new Date().getTime();
+                blockUIForDownload(token)
+                document.getElementById('downloadTokenFileDireccion').value = token;
+
+                window.location = "@Url.Action("GuardarDireccion", "Tomas")?" + $("#DireccionForm").serialize();
+            }
+        });//$("#GuardarDireccionButton").click(function () {
+    </script>

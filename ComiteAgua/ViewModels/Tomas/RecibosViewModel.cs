@@ -1,6 +1,7 @@
 ﻿using ComiteAgua.Models.Recibos;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -22,8 +23,11 @@ namespace ComiteAgua.ViewModels.Tomas
 
         #region * Propiedades declaradas por Comité Agua * 
 
+        [Display(Name = "No Recibo")]
         public int? NoReciboFiltro { get; set; }
+        [Display(Name = "Folio")]
         public int? FolioFiltro { get; set; }
+        [Display(Name = "Fecha")]
         public DateTime? FechaFiltro { get; set; }
         public int? ReciboId { get; set; }
         public List<Recibo> Recibos { get; set; }
