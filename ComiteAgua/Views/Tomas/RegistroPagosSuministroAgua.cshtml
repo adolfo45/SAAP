@@ -15,8 +15,9 @@
     </ol>
 </nav>
 
-@using (Html.BeginForm("GuardarPagoSuministroAgua", "Tomas", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-{
+@*@using (Html.BeginForm("GuardarPagoSuministroAgua", "Tomas", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{*@
+<form id="PagoForm">
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.TomaId)
     @Html.HiddenFor(m => m.ConvenioId)
@@ -40,25 +41,26 @@
                         </div>
                     </div>
                 }
-
-                @*Periodo inicio*@
-                <div class="form-group row">
-                    @Html.LabelFor(x => x.MesAnoInicio, new { @for = "MesAnoInicio", @class = "col-md-2 col-form-label ml-auto" })
-                    <div class="col-sm-6 mr-auto">
-                        @Html.TextBoxFor(d => d.MesAnoInicio, new { @class = "form-control", @type = "month" })
-                        @Html.ValidationMessageFor(m => m.MesAnoInicio, null, new { @class = "badge badge-pill badge-danger" })
+                @if (Model.ConceptoPagoId != (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
+                {
+                    @*Periodo inicio*@
+                    <div class="form-group row">
+                        @Html.LabelFor(x => x.MesAnoInicio, new { @for = "MesAnoInicio", @class = "col-md-2 col-form-label ml-auto" })
+                        <div class="col-sm-6 mr-auto">
+                            @Html.TextBoxFor(d => d.MesAnoInicio, new { @class = "form-control", @type = "month" })
+                            @Html.ValidationMessageFor(m => m.MesAnoInicio, null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
                     </div>
-                </div>
 
-                @*Periodo fin*@
-                <div class="form-group row">
-                    @Html.LabelFor(x => x.MesAnoFin, new { @for = "MesAnoFin", @class = "col-md-2 col-form-label ml-auto" })
-                    <div class="col-sm-6 mr-auto">
-                        @Html.TextBoxFor(d => d.MesAnoFin, new { @class = "form-control validaFechaFin", @type = "month" })
-                        @Html.ValidationMessageFor(m => m.MesAnoFin, null, new { @class = "badge badge-pill badge-danger" })
+                    @*Periodo fin*@
+                    <div class="form-group row">
+                        @Html.LabelFor(x => x.MesAnoFin, new { @for = "MesAnoFin", @class = "col-md-2 col-form-label ml-auto" })
+                        <div class="col-sm-6 mr-auto">
+                            @Html.TextBoxFor(d => d.MesAnoFin, new { @class = "form-control validaFechaFin", @type = "month" })
+                            @Html.ValidationMessageFor(m => m.MesAnoFin, null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
                     </div>
-                </div>
-
+               
                 @*Sub total*@
                 <div class="form-group row">
                     @Html.LabelFor(x => x.SubTotal, new { @for = "SubTotal", @class = "col-md-2 col-form-label ml-auto" })
@@ -67,13 +69,14 @@
                         @Html.ValidationMessageFor(m => m.SubTotal, null, new { @class = "badge badge-pill badge-danger" })
                     </div>
                 </div>
+                }
                 @if (Model.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
                 {
                     @*Precio Toma*@
                     <div class="form-group row">
                         @Html.LabelFor(x => x.PrecioToma, new { @for = "PrecioToma", @class = "col-md-2 col-form-label ml-auto" })
                         <div class="col-sm-6 mr-auto">
-                            @Html.TextBoxFor(d => d.PrecioToma, new { @class = "form-control moneda", @id = "PrecioTomaTextBox" })
+                            @Html.TextBoxFor(d => d.PrecioToma, new { @class = "form-control validaPrecioTomaNueva moneda", @id = "PrecioTomaTextBox" })
                             @Html.ValidationMessageFor(m => m.PrecioToma, null, new { @class = "badge badge-pill badge-danger" })
                         </div>
                     </div>
@@ -108,13 +111,13 @@
                 </div>
 
                 @*Folio Tarjeta*@
-                <div class="form-group row">
+                @*<div class="form-group row">
                     @Html.LabelFor(x => x.FolioTarjeta, "No Recibo", new { @for = "FolioTarjeta", @class = "col-md-2 col-form-label ml-auto" })
                     <div class="col-sm-6 mr-auto">
                         @Html.TextBoxFor(d => d.FolioTarjeta, new { @class = "form-control validaPago enteros" })
                         @Html.ValidationMessageFor(m => m.FolioTarjeta, null, new { @class = "badge badge-pill badge-danger" })
                     </div>
-                </div>
+                </div>*@
 
                 @*Observaciones*@
                 <div class="form-group row">
@@ -167,15 +170,15 @@
                 @*Button*@
                 <div class="row">
                     <div class="mr-auto ml-auto">
-                        <button type="submit" class="btn btn-success">Guardar</button>
+                        <button id="GuardarButton" type="button" class="btn btn-success">Guardar</button>
                     </div>
                 </div>
             </div>
 
         </div>
     </div>
-
-}
+</form>
+@*}*@
 
 
 @section scripts
@@ -186,16 +189,20 @@
         $(document).ready(function () {
 
             var descuentoPronto = null;
-
+            if (@(Model.ConceptoPagoId) == @((int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)) {
+                $.validator.addMethod("validaPrecioTomaNueva", function () {
+                    return $("#PrecioTomaTextBox").val().trim().length > 0;
+                }, "El Precio de la toma es requerido.");
+            }
             $.validator.addMethod("validaFechaFin", function () {
                 return !($("#MesAnoFin").val() < $("#MesAnoInicio").val());
             }, "El Periodo Fin no pude ser menor al Periodo Inicio.");
 
             $("#Descuento").change(function () {
 
-                var SubTotal = $("#SubTotal").val().replace(/[^0-9\.]/g, '');
+               
                 var descuento = $(this).val().replace(/[^0-9\.]/g, '');
-                var descuentoProntoPago = $("#DescuentoProntoPagoTextBox").val().replace(/[^0-9\.]/g, '');
+                
 
                 @if (Model.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
                 {
@@ -210,6 +217,8 @@
                 else
                 {
                     <Text>
+                var SubTotal = $("#SubTotal").val().replace(/[^0-9\.]/g, '');
+                var descuentoProntoPago = $("#DescuentoProntoPagoTextBox").val().replace(/[^0-9\.]/g, '');
                         $("#Total").val(SubTotal - descuento - descuentoProntoPago);
                         $.validator.addMethod("validaDescuent", function () {
                             return !(Number(descuento) > Number(SubTotal));
@@ -293,13 +302,12 @@
 
                 $("#Total").val(Number(precioToma) - descuento);
             });
-
-            $(".form-horizontal").submit(function (event) {
-                if ($(".form-horizontal").valid()) {
+            $("#GuardarButton").click(function () {
+                if ($("#PagoForm").valid()) {
                     BloquearProcesando();
+                    window.location = "@Url.Action("GuardarPagoSuministroAgua", "Tomas")?" + $("#PagoForm").serialize();
                 }
-            });
-
+            });//$("#GuardarButton").click(function () {
         });
         
     </script>

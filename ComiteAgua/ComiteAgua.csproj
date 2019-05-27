@@ -264,6 +264,7 @@
     <Compile Include="Domain\ArchivosGastoDomain.cs" />
     <Compile Include="Domain\AsuntosDescripcionDomain.cs" />
     <Compile Include="Domain\AsuntosDomain.cs" />
+    <Compile Include="Domain\CambioPropietarioPersonaMoralDomain.cs" />
     <Compile Include="Domain\CambiosPropietarioDomain.cs" />
     <Compile Include="Domain\CategoriasDomain.cs" />
     <Compile Include="Domain\ConceptosConvenioDomain.cs" />
@@ -296,6 +297,7 @@
     <Compile Include="Domain\ServiciosDomain.cs" />
     <Compile Include="Domain\TarifasDomain.cs" />
     <Compile Include="Domain\TipoConstanciaDomain.cs" />
+    <Compile Include="Domain\TipoPersonaDomain.cs" />
     <Compile Include="Domain\TomasDomain.cs" />
     <Compile Include="Domain\Transacciones Automaticas\TiposTransaccionesAutomaticasDomain.cs" />
     <Compile Include="Domain\Transacciones Automaticas\TransaccionesAutomaticasDomain.cs" />
@@ -314,11 +316,24 @@
     <Compile Include="Migrations\201905211704086_IncrementoLongitudTablaRecibos.Designer.cs">
       <DependentUpon>201905211704086_IncrementoLongitudTablaRecibos.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201905241439133_AddTableTiposPersona.cs" />
+    <Compile Include="Migrations\201905241439133_AddTableTiposPersona.Designer.cs">
+      <DependentUpon>201905241439133_AddTableTiposPersona.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905241448172_AddForeignKeyPersonas_TiposPersona.cs" />
+    <Compile Include="Migrations\201905241448172_AddForeignKeyPersonas_TiposPersona.Designer.cs">
+      <DependentUpon>201905241448172_AddForeignKeyPersonas_TiposPersona.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201905242334387_AddTableCambioPropietarioPersonaMoral.cs" />
+    <Compile Include="Migrations\201905242334387_AddTableCambioPropietarioPersonaMoral.Designer.cs">
+      <DependentUpon>201905242334387_AddTableCambioPropietarioPersonaMoral.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ArchivoGasto.cs" />
     <Compile Include="Models\Asunto.cs" />
     <Compile Include="Models\AsuntoDescripcion.cs" />
     <Compile Include="Models\CambioPropietario.cs" />
+    <Compile Include="Models\CambioPropietarioPersonaMoral.cs" />
     <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\ConceptoConvenio.cs" />
     <Compile Include="Models\ConceptoPago.cs" />
@@ -365,6 +380,7 @@
     <Compile Include="Models\Servicios\EvidenciaServicio.cs" />
     <Compile Include="Models\Tarifa.cs" />
     <Compile Include="Models\TiposConstancia.cs" />
+    <Compile Include="Models\TipoPersona.cs" />
     <Compile Include="Models\ToastMessage.cs" />
     <Compile Include="Models\Toastr.cs" />
     <Compile Include="Models\Toma.cs" />
@@ -400,6 +416,7 @@
     <Compile Include="ViewModels\Tomas\EstadoCuentaViewModel.cs" />
     <Compile Include="ViewModels\Tomas\GastosViewModel.cs" />
     <Compile Include="ViewModels\Tomas\PagosViewModel.cs" />
+    <Compile Include="ViewModels\Tomas\PropietarioPersonaMoralViewModel.cs" />
     <Compile Include="ViewModels\Tomas\PropietariosPersonaFisicaViewModel.cs" />
     <Compile Include="ViewModels\Tomas\RecibosViewModel.cs" />
     <Compile Include="ViewModels\Tomas\ReconexionTomaViewModel.cs" />
@@ -473,6 +490,7 @@
     <Content Include="Views\Constancias\ConstanciaNoServicio.cshtml" />
     <Content Include="Views\Rentas\Rentas.cshtml" />
     <Content Include="Views\Tomas\ReconexionToma.cshtml" />
+    <Content Include="Views\Tomas\_PropietariosPersonaMoralRegistro.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -498,6 +516,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201905211704086_IncrementoLongitudTablaRecibos.resx">
       <DependentUpon>201905211704086_IncrementoLongitudTablaRecibos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905241439133_AddTableTiposPersona.resx">
+      <DependentUpon>201905241439133_AddTableTiposPersona.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905241448172_AddForeignKeyPersonas_TiposPersona.resx">
+      <DependentUpon>201905241448172_AddForeignKeyPersonas_TiposPersona.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905242334387_AddTableCambioPropietarioPersonaMoral.resx">
+      <DependentUpon>201905242334387_AddTableCambioPropietarioPersonaMoral.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

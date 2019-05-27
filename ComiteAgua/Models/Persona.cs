@@ -33,7 +33,9 @@ namespace ComiteAgua.Models
         public DateTime FechaAlta { get; set; }
         public int UsuarioAltaId { get; set; }        
         public DateTime? FechaCambio { get; set; }
-        public int? UsuarioCambioId { get; set; }        
+        public int? UsuarioCambioId { get; set; }   
+        public int TipoPersonaId { get; set; }
+        public TipoPersona TipoPersona { get; set; }
 
         public PersonaFisica PersonaFisica { get; set; }
         public PersonaMoral PersonaMoral { get; set; }

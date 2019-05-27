@@ -1,10 +1,10 @@
 ﻿@model ComiteAgua.ViewModels.Tomas.PropietariosPersonaFisicaViewModel
 
-@{
-
-}
-
-@*@using (Html.BeginForm("GuardarPropietario", "Tomas", FormMethod.Post, new { role = "form" })){*@
+<div class="row">
+    <div class="col-md-12 text-right">    
+        <a href="#" id="PersonaMoralButton" class="btn btn-info active" role="button" aria-pressed="true" title="Eliminar">Cambiar a Moral</a>    
+    </div>
+</div>
 <form id="PropietarioForm">
     @Html.HiddenFor(m => m.PersonaId)
     @Html.HiddenFor(m => m.PropietarioId)
@@ -146,6 +146,12 @@
             window.location = "@Url.Action("GuardarPropietario", "Tomas")?" + $("#PropietarioForm").serialize();
         }
     });//$("#GuardarEditarPropietarioButton").click(function () {
+    $("#PersonaMoralButton").click(function () {
+        document.getElementById('propietarioMoral').style.display = 'block';
+        document.getElementById('propietarioMoral-tab').style.display = 'block';
+        document.getElementById('propietario').style.display = 'none';
+        document.getElementById('propietario-tab').style.display = 'none';       
+    });//$("#PersonaMoralButton").click(function () {
     var DownloadCheckTimer;
     function blockForDownload() {
         DownloadCheckTimer = window.setInterval(function () {

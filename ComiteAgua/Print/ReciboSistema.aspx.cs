@@ -150,9 +150,10 @@ namespace ComiteAgua.Print
 
 
             this.CanceladoText.Visible = !recibo.Pago.Activo;
-            this.UsuarioTextBox.InnerText = recibo.Pago.Toma.Propietario.Persona.PersonaFisica.Nombre + " " +
+            this.UsuarioTextBox.InnerText = recibo.Pago.Toma.Propietario.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica ?
+                                            recibo.Pago.Toma.Propietario.Persona.PersonaFisica.Nombre + " " +
                                             recibo.Pago.Toma.Propietario.Persona.PersonaFisica.ApellidoPaterno + " " +
-                                            recibo.Pago.Toma.Propietario.Persona.PersonaFisica.ApellidoMaterno;            
+                                            recibo.Pago.Toma.Propietario.Persona.PersonaFisica.ApellidoMaterno : recibo.Pago.Toma.Propietario.Persona.PersonaMoral.Nombre;
 
             this.DireccionTextBox.InnerText = recibo.Pago.Toma.DireccionId > 0 ? (recibo.Pago.Toma.Direccion.CalleId > 0 ? recibo.Pago.Toma.Direccion.TiposCalle.Nombre + " " + recibo.Pago.Toma.Direccion.Calles.Nombre : recibo.Pago.Toma.Direccion.Calle) + "" + (!string.IsNullOrEmpty(recibo.Pago.Toma.Direccion.NumExt) ? " EXT." + recibo.Pago.Toma.Direccion.NumExt : string.Empty) + "" +
                                                         (!string.IsNullOrEmpty(recibo.Pago.Toma.Direccion.NumInt) ? " INT." + recibo.Pago.Toma.Direccion.NumInt : string.Empty) : string.Empty;

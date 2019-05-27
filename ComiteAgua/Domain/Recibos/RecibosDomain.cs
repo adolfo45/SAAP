@@ -87,6 +87,7 @@ namespace ComiteAgua.Domain.Recibos
                 .Include(r => r.Pago.Toma.Direccion)
                 .Include(r => r.Pago.Toma.Propietario)
                 .Include(r => r.Pago.Toma.Propietario.Persona.PersonaFisica)
+                .Include(r => r.Pago.Toma.Propietario.Persona.PersonaMoral)
                 .Include(r => r.Pago.PeriodoPago)
                 .Include(r => r.Pago.Toma.Convenio)
                 .Include(r => r.Pago.ConceptoPago)               

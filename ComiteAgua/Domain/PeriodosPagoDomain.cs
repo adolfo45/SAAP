@@ -49,6 +49,7 @@ namespace ComiteAgua.Domain
                 .Include(pe => pe.Toma.Categoria.Tarifa)
                 .Include(pe => pe.Toma.Direccion)
                 .Include(pe => pe.Toma.Propietario.Persona.PersonaFisica)
+                .Include(pe => pe.Toma.Propietario.Persona.PersonaMoral)
                 .Include(pe => pe.Toma.Direccion.TiposCalle)
                 .Include(pe => pe.Toma.Direccion.Calles)
                 .Include(pe => pe.Toma.Direccion.Colonias)
@@ -78,14 +79,15 @@ namespace ComiteAgua.Domain
 
             return result.OrderByDescending(x => x.PeriodoPagoId).FirstOrDefault();
         } // public PeriodoPago ObtenerPeriodoPago(int tomaId = 0)        
-        public List<PeriodoPago> ObtenerPeriodosPago(int tomaId = 0)
+        public List<Pago> ObtenerPeriodosPago(int tomaId = 0)
         {
-            var result = _context.PeriodoPago
-                .Include(pp => pp.Pago)
-                .Include(pp => pp.Pago.ConceptoPago)
-                .Where(pp => pp.TomaId == tomaId);
+            var result = _context.Pago
+                .Include(pp => pp.PeriodoPago)
+                .Include(pp => pp.ConceptoPago)
+                .Where(pp => pp.TomaId == tomaId)
+                .OrderByDescending(pp => pp.PagoId).ToList();
 
-            return result.OrderByDescending(pp => pp.PeriodoPagoId).ToList();
+            return result;
         }
 
         public PeriodoPago ObtenerUltimoPeriodoPago(int tomaId)

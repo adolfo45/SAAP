@@ -64,9 +64,9 @@ namespace ComiteAgua.Controllers.Constancias
                 {
                     TomaId = t.TomaId,
                     Folio = t.Folio,
-                    Propietario = t.Propietario.Persona.PersonaFisica.Nombre + " " +
+                    Propietario = t.Propietario.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica ? t.Propietario.Persona.PersonaFisica.Nombre + " " +
                                   t.Propietario.Persona.PersonaFisica.ApellidoPaterno + " " +
-                                  t.Propietario.Persona.PersonaFisica.ApellidoMaterno,
+                                  t.Propietario.Persona.PersonaFisica.ApellidoMaterno : t.Propietario.Persona.PersonaMoral.Nombre,
                     Calle = t.Direccion != null ? ((t.Direccion.TipoCalleId > 0 ? t.Direccion.TiposCalle.Nombre : string.Empty) + ' ' + (t.Direccion.CalleId > 0 ? t.Direccion.Calles.Nombre : string.Empty) +
                                     (!string.IsNullOrEmpty(t.Direccion.NumInt) ? " INT " + t.Direccion.NumInt : string.Empty) +
                                     (!string.IsNullOrEmpty(t.Direccion.NumExt) ? " EXT " + t.Direccion.NumExt : string.Empty)) : String.Empty,
@@ -173,9 +173,9 @@ namespace ComiteAgua.Controllers.Constancias
             {
                 TomaId = toma.TomaId,
                 Folio = toma.Folio,
-                Propietario = toma.Propietario.Persona.PersonaFisica.Nombre + " " +
+                Propietario = toma.Propietario.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica ? toma.Propietario.Persona.PersonaFisica.Nombre + " " +
                                   toma.Propietario.Persona.PersonaFisica.ApellidoPaterno + " " +
-                                  toma.Propietario.Persona.PersonaFisica.ApellidoMaterno,
+                                  toma.Propietario.Persona.PersonaFisica.ApellidoMaterno : toma.Propietario.Persona.PersonaMoral.Nombre,
                 Calle = toma.Direccion != null ? ((toma.Direccion.TipoCalleId > 0 ? toma.Direccion.TiposCalle.Nombre : string.Empty) + ' ' + (toma.Direccion.CalleId > 0 ? toma.Direccion.Calles.Nombre : string.Empty) +
                                     (!string.IsNullOrEmpty(toma.Direccion.NumInt) ? " INT " + toma.Direccion.NumInt : string.Empty) +
                                     (!string.IsNullOrEmpty(toma.Direccion.NumExt) ? " EXT " + toma.Direccion.NumExt : string.Empty)) : String.Empty,

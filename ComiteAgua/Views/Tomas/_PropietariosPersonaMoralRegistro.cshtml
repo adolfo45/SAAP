@@ -1,0 +1,122 @@
+﻿@model ComiteAgua.ViewModels.Tomas.PropietarioPersonaMoralViewModel
+
+<div class="row">
+    <div class="col-md-12 text-right">
+        <a href="#" id="PersonaFisicaButton" class="btn btn-info active" role="button" aria-pressed="true" title="Eliminar">Cambiar a Fisica</a>
+    </div>
+</div>
+<form id="PropietarioMoralForm">
+    @Html.HiddenFor(m => m.PersonaId)
+    @Html.HiddenFor(m => m.PropietarioId)
+    @Html.HiddenFor(m => m.CambioPropietario)
+    @Html.Hidden("downloadTokenMoral", Model.DownloadTokenMoral)
+
+    @*Nombre*@
+    <div class="form-group row">
+        @Html.LabelFor(x => x.Nombre, new { @for = "Nombre", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.Nombre, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Nombre, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+    @*RFC*@
+    <div class="form-group row">
+        @Html.LabelFor(x => x.Rfc, new { @for = "Rfc", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.Rfc, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Rfc, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+    @*Correo Electrónico*@
+    <div class="form-group row">
+        @Html.LabelFor(x => x.CorreoElectronico, new { @for = "CorreoElectronico", @class = "col-md-2 col-form-label ml-auto" })
+        <div class="col-sm-6 mr-auto">
+            @Html.TextBoxFor(d => d.CorreoElectronico, new { @class = "form-control minusculas" })
+            @Html.ValidationMessageFor(m => m.CorreoElectronico, null, new { @class = "badge badge-pill badge-danger" })
+        </div>
+    </div>
+    @if (Model.CambioPropietario)
+    {
+        @*COSTO*@
+        <div class="form-group row">
+            @Html.LabelFor(x => x.CostoCambioPropietario, new { @for = "CostoCambioPropietario", @class = "col-md-2 col-form-label ml-auto" })
+            <div class="col-sm-6 mr-auto">
+                @Html.TextBoxFor(d => d.CostoCambioPropietario, new { @class = "form-control validaCostoMoral moneda", id = "costoCambioMoral" })
+                @Html.ValidationMessageFor(m => m.CostoCambioPropietario, null, new { @class = "badge badge-pill badge-danger" })
+            </div>
+        </div>
+    }
+    @*Button*@
+    <div class="row">
+        @if (Model.CambioPropietario)
+        {
+            <div class="col-md-3 offset-md-2 text-center">
+                <button id="GuardarCambioPropietarioMoralButton" type="button" class="btn btn-success">Guardar</button>
+            </div>
+            <div class="col-md-2 offset-md-2 text-center">
+                <button id="ImprimirMoralButton" type="button" class="btn btn-primary" disabled>Imprimir recibo</button>
+            </div>
+        }
+        else
+        {
+            <div class="mr-auto ml-auto">
+                <button id="GuardarEditarPropietarioMoralButton" type="button" class="btn btn-success">Guardar</button>
+            </div>
+        }
+    </div>
+</form>
+<script>
+    var reciboIdValue;
+    $(document).ready(function () {
+        $("button[disabled=disabled]").removeClass('btn-primary').addClass('grisClaro');
+        $.validator.addMethod("validaCostoMoral", function () {
+            return $("#costoCambioMoral").val().trim().length > 0;
+        }, "El costo es requerido.");//$.validator.addMethod("validaCosto", function () { 
+    });
+    $("#PersonaFisicaButton").click(function () {
+        document.getElementById('propietarioMoral').style.display = 'none';
+        document.getElementById('propietarioMoral-tab').style.display = 'none';
+        document.getElementById('propietario').style.display = 'block';
+        document.getElementById('propietario-tab').style.display = 'block';       
+    });//$("#PersonaMoralButton").click(function () {
+    $("#GuardarCambioPropietarioMoralButton").click(function () {
+        if ($("#PropietarioMoralForm").valid()) {
+            var token = new Date().getTime();
+            blockUIForDownload(token)
+            blockForDownload();
+            $("#ImprimirMoralButton").prop('disabled', false);
+            document.getElementById('downloadTokenMoral').value = token;
+
+            window.location = "@Url.Action("GuardarPropietarioMoral", "Tomas")?" + $("#PropietarioMoralForm").serialize();
+        }
+    });//$("#GuardarCambioPropietarioButton").click(function () {
+    $("#GuardarEditarPropietarioMoralButton").click(function () {
+        if ($("#PropietarioMoralForm").valid()) {
+            window.location = "@Url.Action("GuardarPropietarioMoral", "Tomas")?" + $("#PropietarioMoralForm").serialize();
+        }
+    });//$("#GuardarEditarPropietarioButton").click(function () {
+    $("#ImprimirMoralButton").click(function () {
+        BloquearProcesando();
+        //href = "~/Print/ReciboSistema.aspx?reciboId=" + reciboIdValue + "";
+        window.location = "@Url.Action("../Print/ReciboSistema.aspx")?reciboId=" + reciboIdValue;
+    });//$("#ImprimirButton").click(function () {
+    var DownloadCheckTimer;
+    function blockForDownload() {
+        DownloadCheckTimer = window.setInterval(function () {
+            reciboIdValue = $.cookie("reciboId");
+            if (reciboIdValue != "")
+                finish();
+        }, 1000);
+    }//function blockForDownload() {
+    function finish() {
+        window.clearInterval(DownloadCheckTimer);
+        toastr.success(
+            "Guardado exitosamente",
+            "Éxito",
+            {
+                closeButton: true,
+                progressBar: true,
+                positionClass: "toast-bottom-full-width"
+            });
+    }//function finish() {
+</script>

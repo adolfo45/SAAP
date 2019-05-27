@@ -10,6 +10,7 @@
     @Html.HiddenFor(m => m.PropietarioId)
     @Html.HiddenFor(m => m.TomaId)
     @Html.HiddenFor(m => m.DireccionId)
+    @Html.HiddenFor(m => m.TipoPersonaId)
     @Html.Hidden("downloadTokenFileDireccion", Model.DownloadTokenFileDireccion)
 
     @*Tipo Calle*@
@@ -52,14 +53,17 @@
             @Html.ValidationMessageFor(m => m.ColoniaId, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
-    @*Precio*@
-    <div class="form-group row">
-        @Html.LabelFor(x => x.Precio, new { @for = "Precio", @class = "col-md-2 col-form-label ml-auto" })
-        <div class="col-sm-6 mr-auto">
-            @Html.TextBoxFor(d => d.Precio, new { @class = "form-control moneda" })
-            @Html.ValidationMessageFor(m => m.Precio, null, new { @class = "badge badge-pill badge-danger" })
+    @if (Model.DireccionId == 0)
+    {
+        @*Precio*@
+        <div class="form-group row">
+            @Html.LabelFor(x => x.Precio, new { @for = "Precio", @class = "col-md-2 col-form-label ml-auto" })
+            <div class="col-sm-6 mr-auto">
+                @Html.TextBoxFor(d => d.Precio, new { @class = "form-control moneda", id = "precioToma" })
+                @Html.ValidationMessageFor(m => m.Precio, null, new { @class = "badge badge-pill badge-danger" })
+            </div>
         </div>
-    </div>
+    }
     @*Button*@
     <div class="row">
         <div class="mr-auto ml-auto">

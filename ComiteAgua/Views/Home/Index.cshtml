@@ -1,4 +1,4 @@
-﻿
+﻿@using ComiteAgua.Domain;
 @{
     ViewBag.Title = "Tomas";
 }
@@ -83,6 +83,9 @@
                                                     obj.TomaId,
                                                 contenido: 'Editar Convenio'
                                             },
+                                            { href: '@Url.Action("HistorialPagos", "Tomas")?tomaId=' + obj.TomaId,
+                                                contenido: 'Historial de Pagos'
+                                            },
                                             { href: '@Url.Action("RegistroServicio", "Tomas")?tomaId=' + obj.TomaId,
                                                 contenido: 'Agregar Servicio'
                                             },
@@ -98,43 +101,77 @@
                                         ]
                                     });
                                 } else {
-                                    return anexGrid_dropdown({
-                                        contenido: '<i class="glyphicon glyphicon-cog"></i>',
-                                        class: 'btn btn-primary btn-xs',
-                                        target: '_blank',
-                                        id: 'editar-' + obj.Nombre,
-                                        data: [
-                                            { href: '@Url.Action("ConceptoPago", "Tomas")?tomaId=' +
-                                                    obj.TomaId +
-                                                    '&conceptoPagoId=' +
-                                                    obj.ConceptoPagoId,
-                                                contenido: 'Pago'
-                                            },
-                                            { href: '@Url.Action("Tabs", "Tomas")?propietarioId=' + obj.PropietarioId,
-                                                contenido: 'Editar Toma'
-                                            },
-                                            { href: '@Url.Action("RegistroConvenioSuministroAgua", "Tomas")?tomaId=' +
-                                                    obj.TomaId + '&editar=' + false,
-                                                contenido: 'Agregar Convenio'
-                                            },
-                                            { href: '@Url.Action("HistorialPagos", "Tomas")?tomaId=' + obj.TomaId,
-                                                contenido: 'Historial de Pagos'
-                                            },
-                                            { href: '@Url.Action("RegistroServicio", "Tomas")?tomaId=' + obj.TomaId,
-                                                contenido: 'Agregar Servicio'
-                                            },
-                                            {
-                                                href: 'javascript:block(' + obj.TomaId + ');',
-                                                contenido: 'Estado Cuenta'
-                                            },
-                                            { href: '@Url.Action("Tabs", "Tomas")?propietarioId=' + obj.PropietarioId + "&cambioPropietario=" + true,
-                                                contenido: 'Cambio Propietario'
-                                            },
-                                            { href: '@Url.Action("ReconexionToma", "Tomas")?tomaId=' + obj.TomaId,
-                                                contenido: 'Reconexión de toma'
-                                            }
-                                        ]
-                                    });
+                                    if (obj.ConceptoPagoId == @((int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)) {
+                                        return anexGrid_dropdown({
+                                            contenido: '<i class="glyphicon glyphicon-cog"></i>',
+                                            class: 'btn btn-primary btn-xs',
+                                            target: '_blank',
+                                            id: 'editar-' + obj.Nombre,
+                                            data: [
+                                                {
+                                                    href: '@Url.Action("ConceptoPago", "Tomas")?tomaId=' +
+                                                        obj.TomaId +
+                                                        '&conceptoPagoId=' +
+                                                        obj.ConceptoPagoId,
+                                                    contenido: 'Pago Toma Nueva'
+                                                },
+                                                {
+                                                    href: '@Url.Action("Tabs", "Tomas")?propietarioId=' + obj.PropietarioId,
+                                                    contenido: 'Editar Toma Nueva'
+                                                }
+                                                @*{
+                                                    href: '@Url.Action("RegistroConvenioSuministroAgua", "Tomas")?tomaId=' +
+                                                        obj.TomaId + '&editar=' + false,
+                                                    contenido: 'Agregar Convenio Toma Nueva'
+                                                }*@
+                                            ]
+                                        });
+                                    } else {
+                                        return anexGrid_dropdown({
+                                            contenido: '<i class="glyphicon glyphicon-cog"></i>',
+                                            class: 'btn btn-primary btn-xs',
+                                            target: '_blank',
+                                            id: 'editar-' + obj.Nombre,
+                                            data: [
+                                                {
+                                                    href: '@Url.Action("ConceptoPago", "Tomas")?tomaId=' +
+                                                        obj.TomaId +
+                                                        '&conceptoPagoId=' +
+                                                        obj.ConceptoPagoId,
+                                                    contenido: 'Pago'
+                                                },
+                                                {
+                                                    href: '@Url.Action("Tabs", "Tomas")?propietarioId=' + obj.PropietarioId,
+                                                    contenido: 'Editar Toma'
+                                                },
+                                                {
+                                                    href: '@Url.Action("RegistroConvenioSuministroAgua", "Tomas")?tomaId=' +
+                                                        obj.TomaId + '&editar=' + false,
+                                                    contenido: 'Agregar Convenio'
+                                                },
+                                                {
+                                                    href: '@Url.Action("HistorialPagos", "Tomas")?tomaId=' + obj.TomaId,
+                                                    contenido: 'Historial de Pagos'
+                                                },
+                                                {
+                                                    href: '@Url.Action("RegistroServicio", "Tomas")?tomaId=' + obj.TomaId,
+                                                    contenido: 'Agregar Servicio'
+                                                },
+                                                {
+                                                    href: 'javascript:block(' + obj.TomaId + ');',
+                                                    contenido: 'Estado Cuenta'
+                                                },
+                                                {
+                                                    href: '@Url.Action("Tabs", "Tomas")?propietarioId=' + obj.PropietarioId + "&cambioPropietario=" + true,
+                                                    contenido: 'Cambio Propietario'
+                                                },
+                                                {
+                                                    href: '@Url.Action("ReconexionToma", "Tomas")?tomaId=' + obj.TomaId,
+                                                    contenido: 'Reconexión de toma'
+                                                }
+                                            ]
+                                        });
+                                    }
                                 }
                             } else {
                                 return anexGrid_dropdown({

@@ -98,6 +98,7 @@ namespace ComiteAgua.Domain
                 .Include(c => c.PeriodoPagoConvenio)
                 .Include(c => c.ConceptoConvenio)
                 .Include(c => c.Toma.Propietario.Persona.PersonaFisica)
+                .Include(c => c.Toma.Propietario.Persona.PersonaMoral)
                 .Include(c => c.Toma.Direccion)
                 .Include(c => c.Toma.Direccion.TiposCalle)
                 .Include(c => c.Toma.Direccion.Calles)
@@ -160,6 +161,10 @@ namespace ComiteAgua.Domain
                     per_per => per_per.Persona.PersonaId,
                     pf => pf.PersonaId,
                     (per_per, pf) => new { per_per.Persona, per_per.Propietario, per_per.Toma, per_per.Convenio, per_per.EstatusConvenio, per_per.ConceptoConvenio, PersonaFisica = pf })
+                .Join(_context.PersonaMoral,
+                    perm_perm => perm_perm.Persona.PersonaId,
+                    pfm => pfm.PersonaId,
+                    (perm_perm, pfm) => new { perm_perm.Persona, perm_perm.Propietario, perm_perm.Toma, perm_perm.Convenio, perm_perm.EstatusConvenio, perm_perm.ConceptoConvenio, PersonaFisica = perm_perm.PersonaFisica, PersonaMoral = pfm })
                     .Select(c => new ConveniosViewModel
                     {
                         ConvenioId = c.Convenio.ConvenioId,
@@ -168,7 +173,7 @@ namespace ComiteAgua.Domain
                         TomaId = c.Toma.TomaId,
                         Folio = c.Toma.Folio,
                         NoTarjeta = c.Convenio.NoTarjeta,
-                        NombreCompleto = c.PersonaFisica.Nombre + " " + c.PersonaFisica.ApellidoPaterno + " " + c.PersonaFisica.ApellidoMaterno
+                        NombreCompleto = c.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica ? c.PersonaFisica.Nombre + " " + c.PersonaFisica.ApellidoPaterno + " " + c.PersonaFisica.ApellidoMaterno : c.PersonaMoral.Nombre
                     })
                     .OrderBy(x => x.Folio);
 

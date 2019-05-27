@@ -30,7 +30,7 @@ namespace ComiteAgua.ViewModels.Tomas
         public string Propietario { get; set; }
 
         [Display(Name = "Concepto")]
-        [Required(ErrorMessage = "El {0} es requerido.")]
+        //[Required(ErrorMessage = "El {0} es requerido.")]
         public int ConceptoConvenioId { get; set; }
         public string ConceptoConvenio { get; set; }
         public int TomaId { get; set; }

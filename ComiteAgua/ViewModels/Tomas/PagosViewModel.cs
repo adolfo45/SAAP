@@ -51,6 +51,9 @@ namespace ComiteAgua.ViewModels.Tomas
         public string Total { get; set; }        
         public bool ReciboImpreso { get; set; }
         public string UrlRetorno { get; set; }
+        [Display(Name = "Fecha Pago")]
+        [Required(ErrorMessage = "La {0} es requerida.")]
+        public string FechaAltaFormato { get; set; }
         public DateTime FechaAlta { get; set; }
         public int UsuarioAltaId { get; set; }
         public DateTime? FechaCambio { get; set; }

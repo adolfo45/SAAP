@@ -69,6 +69,7 @@ namespace ComiteAgua.ViewModels.Tomas
         [Required(ErrorMessage = "El {0} es requerido.")]
         public string Precio { get; set; }
         public string DownloadTokenFileDireccion { get; set; }
+        public int TipoPersonaId { get; set; }
 
         #endregion
 

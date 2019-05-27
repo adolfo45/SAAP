@@ -191,6 +191,7 @@ namespace ComiteAgua.Domain
             var result = _context.Toma
                 .Include(t => t.Propietario)
                 .Include(t => t.Propietario.Persona.PersonaFisica)
+                .Include(t => t.Propietario.Persona.PersonaMoral)
                 .Include(t => t.PeriodoPago)
                 .Include(t => t.Pago)
                 .Include(t => t.Direccion)
@@ -210,6 +211,7 @@ namespace ComiteAgua.Domain
             var result = _context.Toma
                 .Include(t => t.PeriodoPago)
                 .Include(t => t.Propietario.Persona.PersonaFisica)
+                .Include(t => t.Propietario.Persona.PersonaMoral)
                 .Include(t => t.Direccion)
                 .Include(t => t.Direccion.TiposCalle)
                 .Include(t => t.Direccion.Calles)

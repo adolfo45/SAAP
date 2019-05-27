@@ -86,6 +86,7 @@ namespace ComiteAgua.Models
         public DbSet<Renta> Renta { get; set; }
         public DbSet<TipoRenta> TipoRenta { get; set; }
         public DbSet<CambioPropietario> CambioPropietario { get; set; }
+        public DbSet<PersonaMoral> PersonaMoral { get; set; }
         #endregion
 
         #region * Acciones generados por Comité Agua *
@@ -226,11 +227,7 @@ namespace ComiteAgua.Models
 
             modelBuilder.Entity<PersonaFisica>().Property(x => x.Nombre)
                       .HasMaxLength(50)
-                      .IsRequired();
-
-            modelBuilder.Entity<PersonaMoral>().Property(x => x.PaginaWeb)
-                      .HasMaxLength(150)
-                      .IsOptional();
+                      .IsRequired();           
 
             modelBuilder.Entity<PersonaMoral>().Property(x => x.Rfc)
                       .HasMaxLength(50)
@@ -1074,6 +1071,52 @@ namespace ComiteAgua.Models
             modelBuilder.Entity<CambioPropietario>()
                 .HasOptional(p => p.UsuarioCambio)
                 .WithMany(u => u.CambioPropietarioCambio)
+                .HasForeignKey(p => p.UsuarioCambioId);
+            #endregion
+
+            #region * TiposPersona *
+            modelBuilder.Entity<TipoPersona>().ToTable("TiposPersona", "Comite")
+             .HasKey(a => a.TipoPersonaId);
+
+            modelBuilder.Entity<TipoPersona>().Property(x => x.Nombre)
+              .HasColumnName("TipoPersona")
+              .HasMaxLength(50)
+              .IsRequired();
+
+            modelBuilder.Entity<TipoPersona>()
+             .HasRequired(p => p.UsuarioAlta)
+             .WithMany(u => u.TipoPersonaAlta)
+             .HasForeignKey(p => p.UsuarioAltaId);
+
+            modelBuilder.Entity<TipoPersona>()
+                .HasOptional(p => p.UsuarioCambio)
+                .WithMany(u => u.TipoPersonaCambio)
+                .HasForeignKey(p => p.UsuarioCambioId);
+            #endregion
+
+            #region * CambioPropietarioPersonaMoral *
+            modelBuilder.Entity<CambioPropietarioPersonaMoral>().ToTable("CambiosPropietarioPersonaMoral", "Comite")
+             .HasKey(a => a.CambioPropietarioPersonaMoralId);
+
+            modelBuilder.Entity<CambioPropietarioPersonaMoral>().Property(x => x.Nombre)
+                      .HasMaxLength(255)
+                      .IsRequired();
+
+            modelBuilder.Entity<CambioPropietarioPersonaMoral>().Property(x => x.Rfc)
+                      .HasMaxLength(50)
+                      .IsOptional();
+
+            modelBuilder.Entity<CambioPropietarioPersonaMoral>().Property(x => x.CorreoElectronico)
+                      .HasMaxLength(50)
+                      .IsOptional();
+            modelBuilder.Entity<CambioPropietarioPersonaMoral>()
+            .HasRequired(p => p.UsuarioAlta)
+            .WithMany(u => u.CambioPropietarioMoralAlta)
+            .HasForeignKey(p => p.UsuarioAltaId);
+
+            modelBuilder.Entity<CambioPropietarioPersonaMoral>()
+                .HasOptional(p => p.UsuarioCambio)
+                .WithMany(u => u.CambioPropietarioMoralCambio)
                 .HasForeignKey(p => p.UsuarioCambioId);
             #endregion
         } // protected override void OnModelCreating(DbModelBuilder modelBuilder)

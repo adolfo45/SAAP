@@ -54,13 +54,13 @@
                         <div class="card-body">
 
                             @*Concepto Convenio*@
-                            <div class="form-group row">
+                            @*<div class="form-group row">
                                 @Html.LabelFor(x => x.ConceptoConvenioId, new { @for = "ConceptoConvenioId", @class = "col-md-2 col-form-label ml-auto" })
                                 <div class="col-sm-6 mr-auto">
                                     @Html.DropDownListFor(m => m.ConceptoConvenioId, new SelectList(Model.ConceptosConvenio, "ConceptoConvenioId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
                                     @Html.ValidationMessageFor(m => m.ConceptoConvenioId, null, new { @class = "badge badge-pill badge-danger" })
                                 </div>
-                            </div>
+                            </div>*@
 
                             @*Periodo Inicio*@
                             <div class="form-group row">

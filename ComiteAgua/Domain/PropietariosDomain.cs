@@ -52,7 +52,9 @@ namespace ComiteAgua.Domain
                 .Include(x => x.Toma.Select(d => d.Direccion.TiposCalle))
                 .Include(x => x.Toma.Select(d => d.Direccion.Colonias))
                 .Include(x => x.Persona)
-                .Include(x => x.Persona.PersonaFisica)                  
+                .Include(x => x.Persona.PersonaFisica)
+                .Include(x => x.Persona.PersonaMoral)
+                .Include(x => x.Persona.TipoPersona)
                 .Where(x => x.PropietarioId == propietarioId).SingleOrDefault();
 
             return result;
@@ -60,7 +62,7 @@ namespace ComiteAgua.Domain
         } // public Propietario ObtenerPropietario(int propietarioId)
         public void Guardar(Propietario model)
         {
-            if (model.PropietarioId > 0)
+            if (model.PropietarioId > 0 && model.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica)
             {
                 var bd = _context.PersonaFisica.Where(p => p.Persona.Propietario.Any(x => x.PropietarioId == model.PropietarioId)).FirstOrDefault();
 
@@ -72,6 +74,15 @@ namespace ComiteAgua.Domain
                 bd.Telefono = model.Persona.PersonaFisica.Telefono;
                 bd.CorreoElectronico = model.Persona.PersonaFisica.CorreoElectronico;
                 bd.Rfc = model.Persona.PersonaFisica.Rfc;
+                bd.FechaCambio = DateTime.Now;
+                bd.UsuarioCambioId = model.UsuarioAltaId;
+            }else if (model.PropietarioId > 0 && model.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaMoral)
+            {
+                var bd = _context.PersonaMoral.Where(p => p.Persona.Propietario.Any(x => x.PropietarioId == model.PropietarioId)).FirstOrDefault();
+
+                bd.Nombre = model.Persona.PersonaMoral.Nombre;               
+                bd.CorreoElectronico = model.Persona.PersonaMoral.CorreoElectronico;
+                bd.Rfc = model.Persona.PersonaMoral.Rfc;
                 bd.FechaCambio = DateTime.Now;
                 bd.UsuarioCambioId = model.UsuarioAltaId;
             }
@@ -90,6 +101,7 @@ namespace ComiteAgua.Domain
 
                 var query = _context.Propietario
                             .Include(x => x.Persona.PersonaFisica)
+                            .Include(x => x.Persona.PersonaMoral)
                             .Include(x => x.Toma)
                             .Include(x => x.Toma.Select(d => d.Direccion))
                             .Include(x => x.Toma.Select(d => d.Direccion.Colonias))
@@ -188,14 +200,17 @@ namespace ComiteAgua.Domain
                         {
                             Folio = e.Toma.Select(x => x.Folio).FirstOrDefault(),
                             PropietarioId = e.PropietarioId,
-                            Propietario = e.Persona.PersonaFisica.Nombre + ' ' + e.Persona.PersonaFisica.ApellidoPaterno + ' ' + e.Persona.PersonaFisica.ApellidoMaterno,
+                            Propietario = e.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica ?
+                                          e.Persona.PersonaFisica.Nombre + ' ' + e.Persona.PersonaFisica.ApellidoPaterno + ' ' + e.Persona.PersonaFisica.ApellidoMaterno : 
+                                          e.Persona.PersonaMoral.Nombre,
                             Calle = e.Toma.Select(d => d.Direccion).FirstOrDefault() != null ? ((e.Toma.Select(d => d.Direccion.TipoCalleId).FirstOrDefault() > 0 ? e.Toma.Select(d => d.Direccion.TiposCalle.Nombre).FirstOrDefault() : string.Empty) + ' ' + (e.Toma.Select(d => d.Direccion.CalleId).FirstOrDefault() > 0 ? e.Toma.Select(d => d.Direccion.Calles.Nombre).FirstOrDefault() : string.Empty) +
                                     (!string.IsNullOrEmpty(e.Toma.Select(d => d.Direccion.NumInt).FirstOrDefault()) ? " INT " + e.Toma.Select(d => d.Direccion.NumInt).FirstOrDefault() : string.Empty ) + 
                                     (!string.IsNullOrEmpty(e.Toma.Select(d => d.Direccion.NumExt).FirstOrDefault()) ? " EXT " + e.Toma.Select(d => d.Direccion.NumExt).FirstOrDefault() : string.Empty)) : String.Empty,
                             Colonia = e.Toma.Select(d => d.Direccion).FirstOrDefault() != null ? (e.Toma.Select(d => d.Direccion.ColoniaId).FirstOrDefault() > 0 ? e.Toma.Select(d => d.Direccion.Colonias.Nombre).FirstOrDefault() : string.Empty) : string.Empty,
                             Categoria = e.Toma.Select(d => d.Categoria.Abreviatura),
                             PeriodoPago = e.Toma.Select(d => d.PeriodoPago.Select(p => p.MesAnoFin).LastOrDefault()).LastOrDefault() != null ? Convert.ToDateTime(e.Toma.Select(d => d.PeriodoPago.Select(u => u.MesAnoFin).LastOrDefault()).LastOrDefault()).ToString("MMM-yyyy", new CultureInfo("es-ES")) :  e.Toma.Select(d => d.PeriodoPago.Select(u => u.UltimoPeriodoPago).LastOrDefault()).LastOrDefault(),                            
-                            ConceptoPagoId = e.Toma.Select(c => c.Convenio.Select(co => co.EstatusConvenioId).LastOrDefault()).FirstOrDefault() == (int)EstatusConvenioDomain.EstatusConvenioEnum.Activo ? Convert.ToInt32(ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio) : 
+                            ConceptoPagoId = e.Toma.Select(c => c.Convenio.Select(co => co.EstatusConvenioId).LastOrDefault()).FirstOrDefault() == (int)EstatusConvenioDomain.EstatusConvenioEnum.Activo ||
+                                            e.Toma.Select(c => c.Convenio.Select(co => co.EstatusConvenioId).LastOrDefault()).FirstOrDefault() == (int)EstatusConvenioDomain.EstatusConvenioEnum.Cancelado ? Convert.ToInt32(ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio) : 
                                              e.Toma.Select(l => l.LiquidacionTomaId).FirstOrDefault() == (int)LiquidacionesTomaDomain.LiquidacionesTomaEnum.TomaNueva ? Convert.ToInt32(ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva) : Convert.ToInt32(ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua),
                             TomaId = e.Toma.Select(x => x.TomaId),
                             Activa = e.Toma.Select(t => t.Activa).FirstOrDefault() == true ? 1 : 0,

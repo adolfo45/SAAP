@@ -58,6 +58,7 @@ namespace ComiteAgua.Domain
                 .Include(t => t.Propietario)
                 .Include(t => t.Propietario.Persona)
                 .Include(t => t.Propietario.Persona.PersonaFisica)
+                .Include(t => t.Propietario.Persona.PersonaMoral)
                 .Include(t => t.PeriodoPago)
                 .Include(t => t.Direccion)
                 .Include(t => t.Direccion.TiposCalle)

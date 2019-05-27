@@ -68,6 +68,10 @@ namespace ComiteAgua.Models.Seguridad
         public List<TipoRenta> TipoRentaCambio { get; set; }
         public List<CambioPropietario> CambioPropietarioAlta { get; set; }
         public List<CambioPropietario> CambioPropietarioCambio { get; set; }
+        public List<TipoPersona> TipoPersonaAlta { get; set; }
+        public List<TipoPersona> TipoPersonaCambio { get; set; }
+        public List<CambioPropietarioPersonaMoral> CambioPropietarioMoralAlta { get; set; }
+        public List<CambioPropietarioPersonaMoral> CambioPropietarioMoralCambio{ get; set; }
 
         #endregion
 
