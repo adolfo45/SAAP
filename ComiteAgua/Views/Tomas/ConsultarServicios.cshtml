@@ -78,7 +78,8 @@
                                             @foreach (var evidencias in item.EvidenciaServicio)
                                             {
                                                 @evidencias.Observaciones
-                                                <a href="/ComiteAguaWebApi/Uploads/Servicios/@evidencias.UrlImagen" target="_blank">@evidencias.UrlImagen,</a>
+                                                @*<a href="http://192.168.1.74/ComiteAguaWebApi/Uploads/Servicios/@evidencias.UrlImagen" target="_blank">@evidencias.UrlImagen,</a>*@ 
+                                                <a href="http://localhost/ComiteAguaWebApi/Uploads/Servicios/@evidencias.UrlImagen" target="_blank">@evidencias.UrlImagen,</a>
                                             }
                                         </td>                                       
                                         <td style="font-size:x-large">
@@ -131,7 +132,7 @@
                                         @foreach (var evidencias in item.EvidenciaServicio)
                                         {
                                                 @evidencias.Observaciones
-                                                <a href="/ComiteAguaWebApi/Uploads/Servicios/@evidencias.UrlImagen" target="_blank">@evidencias.UrlImagen,</a>                                           
+                                                <a href="http://192.168.1.74/ComiteAguaWebApi/Uploads/Servicios/@evidencias.UrlImagen" target="_blank">@evidencias.UrlImagen,</a>                                           
                                         }
                                     </td>
                                     @*<td style="font-size:x-large">
@@ -199,7 +200,7 @@
                                             @foreach (var evidencias in item.EvidenciaServicio)
                                             {
                                                 @evidencias.Observaciones
-                                                <a href="/ComiteAguaWebApi/Uploads/Servicios/@evidencias.UrlImagen" target="_blank">@evidencias.UrlImagen,</a>
+                                                <a href="http://192.168.1.74/ComiteAguaWebApi/Uploads/Servicios/@evidencias.UrlImagen" target="_blank">@evidencias.UrlImagen,</a>
                                             }
                                         </td>
                                         @*<td style="font-size:x-large">

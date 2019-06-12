@@ -79,9 +79,11 @@
                     <td>@(item.Pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia ?
                                                       item.Pago.Constancia.TiposConstancia.Nombre :
                           item.Pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Renta ?
-                                                      item.Pago.Renta.TipoRenta.Nombre : 
+                                                      item.Pago.Renta.TipoRenta.Nombre :
+                          item.Pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Otro ?
+                                                       item.Pago.Recibo.Select(r => r.Concepto).FirstOrDefault():
                                                       item.Pago.ConceptoPago.Nombre)</td>
-                    <td class="text-center"><a href="@Url.Action("CancelarRecibo","Tomas", new { reciboId = item.ReciboId, estado = item.Pago.Activo})" title="Cancelar"><span class='@(item.Pago.Activo ? "fa fa-check fa-lg verde" : "fa fa-times fa-lg rojo")'></span></a></td>
+                    <td class="text-center"><a href="@Url.Action("CancelarRecibo","Tomas", new { reciboId = item.ReciboId, tomaId = item.Pago.TomaId})" title="Cancelar"><span class='@(item.Pago.Activo ? "fa fa-check fa-lg verde" : "fa fa-times fa-lg rojo")'></span></a></td>
                     <td class="text-center"><a href="~/Print/ReciboSistema.aspx?reciboId= + @item.ReciboId + &UrlOrigen= + @Model.UrlOrigen" title="Ver"><span class="fa fa-eye fa-lg azul"></span></a></td>
                 </tr>
             }

@@ -168,9 +168,26 @@ namespace ComiteAgua.Domain
             var propietario = _context.Propietario
                 .Include(t => t.Persona)
                 .Include(t => t.Persona.PersonaFisica)
+                .Include(t => t.Persona.PersonaMoral)
+                .Include(t => t.Persona.PersonaMoral.CambioPropietarioPersonaMoral)
+                .Include(t => t.Persona.PersonaFisica.CambioPropietario)
                 .Where(t => t.PropietarioId == propietarioId).FirstOrDefault();
 
-            _context.Entry(propietario.Persona.PersonaFisica).State = EntityState.Deleted;
+            if (propietario.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica)
+            {
+                _context.Entry(propietario.Persona.PersonaFisica).State = EntityState.Deleted;
+                if(propietario.Persona.PersonaFisica.CambioPropietario != null)
+                    _context.Entry(propietario.Persona.PersonaFisica.CambioPropietario).State = EntityState.Deleted;
+            }
+            if (propietario.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaMoral)
+            {
+                _context.Entry(propietario.Persona.PersonaMoral).State = EntityState.Deleted;
+                if(propietario.Persona.PersonaMoral.CambioPropietarioPersonaMoral != null)
+                    _context.Entry(propietario.Persona.PersonaMoral.CambioPropietarioPersonaMoral).State = EntityState.Deleted;
+            }
+            
+            
+            
             _context.Entry(propietario.Persona).State = EntityState.Deleted;
             _context.Entry(propietario).State = EntityState.Deleted;           
 

@@ -121,12 +121,16 @@ namespace ComiteAgua.Controllers.Tomas
                     Accion = Accion.Editar,
                     CambioPropietario = cambioPropietario,
                     TipoPersonaId = propietario.Persona.TipoPersonaId,
+                    PropietarioId = propietarioId,
+                    LiquidacionTomaId = propietario.Toma.Select(t => t.LiquidacionTomaId).FirstOrDefault(),
+                    DireccionId = propietario.Toma.Select(d => d.DireccionId).FirstOrDefault(),
                     PropietarioPersonaMoral = new PropietarioPersonaMoralViewModel()
                     {
                         PropietarioId = propietario.PropietarioId,
                         Nombre = propietario.Persona.PersonaMoral != null ? propietario.Persona.PersonaMoral.Nombre : string.Empty,
                         Rfc = propietario.Persona.PersonaMoral != null ? propietario.Persona.PersonaMoral.Rfc : string.Empty,
-                        CorreoElectronico = propietario.Persona.PersonaMoral != null ? propietario.Persona.PersonaMoral.CorreoElectronico : string.Empty
+                        CorreoElectronico = propietario.Persona.PersonaMoral != null ? propietario.Persona.PersonaMoral.CorreoElectronico : string.Empty,
+                        
                     },
                     PropietariosPersonaFisica = new PropietariosPersonaFisicaViewModel()
                     {
@@ -142,6 +146,7 @@ namespace ComiteAgua.Controllers.Tomas
                         Rfc = propietario.Persona.PersonaFisica != null ? propietario.Persona.PersonaFisica.Rfc : string.Empty,
                         EstadoCivilId = propietario.Persona.PersonaFisica != null ? propietario.Persona.PersonaFisica.EstadoCivilId : (int?)null,
                         EstadosCiviles = estadosCiviles,
+                        ExisteArchivoPersona = propietario.Persona.ArchivoPersona.Count > 0,
                         Toma = new TomasViewModel()
                         {
                             TomaId = propietario.Toma.Select(x => x.TomaId).FirstOrDefault(),
@@ -155,6 +160,7 @@ namespace ComiteAgua.Controllers.Tomas
                             DireccionId = propietario.Toma.Select(x => x.Direccion).FirstOrDefault() != null ? propietario.Toma.Select(x => x.Direccion.DireccionId).FirstOrDefault() : (int?)null,
                             Activa = propietario.Toma.Select(t => t.Activa).FirstOrDefault(),
                             Pasiva = propietario.Toma.Select(t => t.Pasiva).FirstOrDefault() == null ? false : Convert.ToBoolean(propietario.Toma.Select(t => t.Pasiva).FirstOrDefault()),
+                            PersonaId = propietario.PersonaId,
                             Direccion = new DireccionesViewModel()
                             {
                                 DireccionId = propietario.Toma.Select(x => x.Direccion).FirstOrDefault() != null ? propietario.Toma.Select(x => x.Direccion.DireccionId).FirstOrDefault() : 0,
@@ -212,7 +218,7 @@ namespace ComiteAgua.Controllers.Tomas
                                 MesAnoFin = string.Empty                           
                             }
                         }
-                    }
+                    },                    
                 };
             }
             else
@@ -361,60 +367,274 @@ namespace ComiteAgua.Controllers.Tomas
             return PartialView("_ResultadoConsultarGastos", gastosLista);
         }
         [HttpPost]
-        public ActionResult _ListaArchivos(HttpPostedFileBase file, string name)
+        public ActionResult _ListaArchivos(HttpPostedFileBase file)
         {
             List<ArchivoClass> listaHttp = new List<ArchivoClass>();
             List<Archivo> listaArchivo = new List<Archivo>();
             List<ArchivoClass> listaArchivoClass = new List<ArchivoClass>();
             Archivo archivoClass = new Archivo();
 
-            var nombre = System.IO.Path.ChangeExtension(name, null);
+            var nombre = System.IO.Path.ChangeExtension(file.FileName, null);
+            var listFile = (List<Archivo>)Session["ListaArchivos"];
+            if (Session["ListaArchivos"] == null)
+            {
+                
+                    archivoClass = new Archivo()
+                    {
+                        ArchivoId = 1,
+                        Nombre = nombre + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName)
+                    };
+
+                    ArchivoClass archivo = new ArchivoClass()
+                    {
+                        File = file,
+                        FechaHora = DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName),
+                        nombre = nombre
+                    };
+
+                    listaHttp.Add(archivo);
+                    listaArchivo.Add(archivoClass);
+                    Session["ListaArchivos"] = listaArchivo;
+                    Session["ListaHttp"] = listaHttp;
+               
+            }
+            else
+            {
+                if (listFile.Count > 0)
+                {
+                    listaArchivo = (List<Archivo>)Session["ListaArchivos"];
+                    listaHttp = (List<ArchivoClass>)Session["ListaHttp"];
+
+                    archivoClass = new Archivo()
+                    {
+                        ArchivoId = listaArchivo.LastOrDefault().ArchivoId + 1,
+                        Nombre = nombre + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName)
+                    };
+
+                    ArchivoClass archivo = new ArchivoClass()
+                    {
+                        File = file,
+                        FechaHora = DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName),
+                        nombre = nombre
+                    };
+
+                    listaHttp.Add(archivo);
+                    listaArchivo.Add(archivoClass);
+                    Session["ListaArchivos"] = listaArchivo;
+                    Session["ListaHttp"] = listaHttp;
+                }
+                else
+                {
+                    archivoClass = new Archivo()
+                    {
+                        ArchivoId = 1,
+                        Nombre = nombre + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName)
+                    };
+
+                    ArchivoClass archivo = new ArchivoClass()
+                    {
+                        File = file,
+                        FechaHora = DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName),
+                        nombre = nombre
+                    };
+
+                    listaHttp.Add(archivo);
+                    listaArchivo.Add(archivoClass);
+                    Session["ListaArchivos"] = listaArchivo;
+                    Session["ListaHttp"] = listaHttp;
+                }
+            }      
+            return PartialView("_ListaArchivos", listaArchivo);           
+        }
+        [HttpPost]
+        public ActionResult _ListaArchivosPersona(FormCollection formCollection)
+        {
+            List<ArchivoClass> listaHttp = new List<ArchivoClass>();
+            List<Archivo> listaArchivo = new List<Archivo>();           
+            Archivo archivoClass = new Archivo();
+            var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
+
+            string nombre = AdsertiFunciones.FormatearTexto(formCollection["name"]);           
+            var file = Request.Files[0];
+            int personaId = Convert.ToInt32(formCollection["PersonaId"]);
+            int tipoArchivoId = Convert.ToInt32(formCollection["TipoArchivoId"]);
+
+            // valida si ya se guardo el propietario
+            if (personaId == 0) { 
+                var nombreArchivo = System.IO.Path.ChangeExtension(file.FileName, null);
+                var listFile = (List<Archivo>)Session["ListaArchivos"];
+                if (Session["ListaArchivos"] == null)
+                {
+                    archivoClass = new Archivo()
+                    {
+                        ArchivoId = 1,
+                        Nombre = nombre,
+                        UrlArchivo = nombre + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName),
+                        TipoArchivoId = tipoArchivoId
+                    };
+                    ArchivoClass archivo = new ArchivoClass()
+                    {
+                        File = file,
+                        FechaHora = DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName),
+                        nombre = nombre                        
+                    };
+                    listaHttp.Add(archivo);
+                    listaArchivo.Add(archivoClass);
+                    Session["ListaArchivos"] = listaArchivo;
+                    Session["ListaHttp"] = listaHttp;
+                }
+                else
+                {
+                    if (listFile.Count > 0)
+                    {
+                        listaArchivo = (List<Archivo>)Session["ListaArchivos"];
+                        listaHttp = (List<ArchivoClass>)Session["ListaHttp"];
+
+                        archivoClass = new Archivo()
+                        {
+                            ArchivoId = listaArchivo.LastOrDefault().ArchivoId + 1,
+                            Nombre = nombre,
+                            UrlArchivo = nombre + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName),
+                            TipoArchivoId = tipoArchivoId
+                        };
+
+                        ArchivoClass archivo = new ArchivoClass()
+                        {
+                            File = file,
+                            FechaHora = DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName),
+                            nombre = nombre
+                        };
+
+                        listaHttp.Add(archivo);
+                        listaArchivo.Add(archivoClass);
+                        Session["ListaArchivos"] = listaArchivo;
+                        Session["ListaHttp"] = listaHttp;
+                    }
+                    else
+                    {
+                        archivoClass = new Archivo()
+                        {
+                            ArchivoId = 1,
+                            Nombre = nombre,
+                            UrlArchivo = nombre + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName),
+                            TipoArchivoId = tipoArchivoId
+                        };
+
+                        ArchivoClass archivo = new ArchivoClass()
+                        {
+                            File = file,
+                            FechaHora = DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName),
+                            nombre = nombre
+                        };
+
+                        listaHttp.Add(archivo);
+                        listaArchivo.Add(archivoClass);
+                        Session["ListaArchivos"] = listaArchivo;
+                        Session["ListaHttp"] = listaHttp;
+                    }
+                }
+            }
+            else
+            {     
+                string archivo = nombre + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName);
+
+                string rutaArchivo = @"/UploadFiles/Persona/";
+
+                if (!Directory.Exists(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo)))
+                {
+                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo));
+                } //if (!Directory.Exists(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo)))
+
+                file.SaveAs(Server.MapPath(rutaArchivo + archivo));
+
+                ArchivoPersona archivoPersona = new ArchivoPersona()
+                {
+                    Nombre = nombre,
+                    PersonaId = personaId,
+                    UrlArchivo = archivo,
+                    TipoArchivoId = tipoArchivoId,
+                    FechaAlta = DateTime.Now,
+                    UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString())
+                };
+                archivosPersonaDomain.Guardar(archivoPersona);
+                archivoClass = new Archivo()
+                {
+                    ArchivoId = archivoPersona.ArchivoPersonaId,
+                    Nombre = nombre,
+                    UrlArchivo = nombre + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName),
+                    TipoArchivoId = tipoArchivoId
+                };
+               
+                if (Session["ListaArchivos"] == null)
+                {
+                    listaArchivo.Add(archivoClass);
+                    Session["ListaArchivos"] = listaArchivo;
+                }
+                else
+                {
+                    listaArchivo = (List<Archivo>)Session["ListaArchivos"];
+                    listaArchivo.Add(archivoClass);
+                    Session["ListaArchivos"] = listaArchivo;
+                }               
+            }
+            return PartialView("_ListaArchivosPersona", listaArchivo);            
+        }
+        [HttpPost]
+        public ActionResult _ListaArchivosToma(FormCollection formCollection)
+        {
+            List<ArchivoClass> listaHttp = new List<ArchivoClass>();
+            List<Archivo> listaArchivo = new List<Archivo>();
+            Archivo archivoClass = new Archivo();
+            var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
+
+            string nombre = AdsertiFunciones.FormatearTexto(formCollection["name"]);
+            var file = Request.Files[0];
+            int personaId = Convert.ToInt32(formCollection["PersonaId"]);
+            int tipoArchivoId = Convert.ToInt32(formCollection["TipoArchivoId"]);
+                        
+            string archivo = nombre + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName);
+
+            string rutaArchivo = @"/UploadFiles/Persona/";
+
+            if (!Directory.Exists(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo)))
+            {
+                Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo));
+            } //if (!Directory.Exists(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo)))
+
+            file.SaveAs(Server.MapPath(rutaArchivo + archivo));
+
+            ArchivoPersona archivoPersona = new ArchivoPersona()
+            {
+                Nombre = nombre,
+                PersonaId = personaId,
+                UrlArchivo = archivo,
+                TipoArchivoId = tipoArchivoId,
+                FechaAlta = DateTime.Now,
+                UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString())
+            };
+            archivosPersonaDomain.Guardar(archivoPersona);
+            archivoClass = new Archivo()
+            {
+                ArchivoId = archivoPersona.ArchivoPersonaId,
+                Nombre = nombre,
+                UrlArchivo = nombre + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName),
+                TipoArchivoId = tipoArchivoId,
+                PersonaId = personaId
+            };
 
             if (Session["ListaArchivos"] == null)
             {
-                archivoClass = new Archivo()
-                {
-                    ArchivoId = 1,
-                    Nombre = nombre + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName)
-                };
-
-                ArchivoClass archivo = new ArchivoClass()
-                {
-                    File = file,
-                    FechaHora = DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName),
-                    nombre = nombre
-                };
-
-                listaHttp.Add(archivo);
                 listaArchivo.Add(archivoClass);
                 Session["ListaArchivos"] = listaArchivo;
-                Session["ListaHttp"] = listaHttp;
             }
             else
             {
                 listaArchivo = (List<Archivo>)Session["ListaArchivos"];
-                listaHttp = (List<ArchivoClass>)Session["ListaHttp"];
-
-                archivoClass = new Archivo()
-                {
-                    ArchivoId = listaArchivo.LastOrDefault().ArchivoId + 1,
-                    Nombre = nombre + "_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName)
-                };
-
-                ArchivoClass archivo = new ArchivoClass()
-                {
-                    File = file,
-                    FechaHora = DateTime.Now.ToString("ddMMyyyyHHmmss") + Path.GetExtension(file.FileName),
-                    nombre = nombre
-                };
-
-                listaHttp.Add(archivo);
                 listaArchivo.Add(archivoClass);
                 Session["ListaArchivos"] = listaArchivo;
-                Session["ListaHttp"] = listaHttp;
-            }          
-
-            return PartialView("_ListaArchivos", listaArchivo);           
+            }
+            
+            return PartialView("_ListaArchivosToma", listaArchivo);
         }
         public ActionResult _ResultadoCorte(DateTime fecha)
         {
@@ -462,12 +682,9 @@ namespace ComiteAgua.Controllers.Tomas
                 var periodosPagoDomain = new PeriodosPagoDomain(_context);
                 var tomasDomain = new TomasDomain(_context);
                 var pagosDomain = new PagosDomain(_context);
-                Session["Abonos"] = null;
 
                 var toma = tomasDomain.ObtenerToma(tomaId);
                 var periodoPago = periodosPagoDomain.ObtenerPeriodoPago(tomaId);
-                var abonos = pagosDomain.ObtenerAbonos(tomaId);
-                Session["Abonos"] = abonos;
 
                 var pagosViewModel = new PagosViewModel()
                 {
@@ -475,7 +692,6 @@ namespace ComiteAgua.Controllers.Tomas
                     TomaId = tomaId,
                     MesAnoInicio = periodoPago != null ? Convert.ToDateTime(periodoPago.MesAnoFin).AddMonths(1).ToString("yyyy-MM") : string.Empty,
                     CategoriaId = toma.CategoriaId,
-                    AbonoAnterior = abonos != null ? abonos.Sum(a => a.Abono).ToString() : "0",
                     Notificada = toma.Notificacion.Any(n => n.Activa)
                 };
 
@@ -591,7 +807,8 @@ namespace ComiteAgua.Controllers.Tomas
                     ConceptosConvenio = conceptosConvenioDomain.ObtenerConceptosConvenio(),
                     ConceptoConvenioId = convenio.ConceptoConvenioId,
                     NoTarjeta = convenio.NoTarjeta,
-                    EstatusConvenioId = convenio.EstatusConvenioId
+                    EstatusConvenioId = convenio.EstatusConvenioId,
+                    TotalPagos = convenio.Pago.Where(p => p.Activo).Sum(p => p.Total)
                 };
             }
             else
@@ -609,14 +826,27 @@ namespace ComiteAgua.Controllers.Tomas
             }
             return View(conveniosViewModel);
         }      
-        public ActionResult CalcularMontoPeriodo(DateTime periodoInicio, DateTime periodoFin, int categoriaId)
+        public JsonResult CalcularMontoPeriodo(DateTime periodoInicio, DateTime periodoFin, int categoriaId, int tomaId)
         {
             var tarifasDomain = new TarifasDomain(_context);
             var descuentosProntoPagoDomain = new DescuentosProntoPagoDomain(_context);
+            var tomasDomain = new TomasDomain(_context);
+            var descuentosDomain = new DescuentosDomain(_context);
+
             decimal total = 0;
             decimal? porcentajeDescuento = null;
             decimal? neto = null;
             int? porcentaje = null;
+            bool terceraEdad = false;
+            int? porcentajeTerceraEdad = null;
+            decimal? cantidadPorcentajeTerceraEdad = null;
+            decimal totalResul = 0;
+            bool madreSoltera = false;
+            decimal? cantidadPorcentajeMadreSoltera = null;
+            int? porcentajeMadreSoltera = null;
+            int? descuentoMadreSolteraId = null;
+            int? descuentoTerceraEdadId = null;
+
 
             var tarifas = tarifasDomain.ObtenerTarifasPeriodo(periodoInicio, periodoFin, categoriaId);
             var descuentoExiste = descuentosProntoPagoDomain.ConsultarDescuentoVigente(periodoInicio, periodoFin);                     
@@ -641,8 +871,67 @@ namespace ComiteAgua.Controllers.Tomas
                 neto = newtotal - porcentajeDescuento;
                 porcentaje = descuentoExiste.MontoPoncentaje;
             }
+
+            //Calcula tercera edad para mostrar etiqueta
+            var toma = tomasDomain.ObtenerToma(tomaId);
+            if (toma.Propietario.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica)
+            {
+                var fechaNacimiento = toma.Propietario.Persona.PersonaFisica.FechaNacimiento;
+                var descuento = descuentosDomain.Consultar(Convert.ToInt32(TiposDescuentoDomain.TiposDescuentoEnum.TerceraEdad))
+                    .OrderByDescending(d => d.DescuentoVariosId)
+                    .Take(1).FirstOrDefault();
+                if (fechaNacimiento != null)
+                {
+                    if ((DateTime.Now.Year - Convert.ToDateTime(fechaNacimiento).Year == 60 &&
+                        Convert.ToDateTime(fechaNacimiento).Month >= DateTime.Now.Month &&
+                        Convert.ToDateTime(fechaNacimiento).Day >= DateTime.Now.Day) || (DateTime.Now.Year - Convert.ToDateTime(fechaNacimiento).Year > 60))
+                    {
+                        terceraEdad = true;
+                        porcentajeTerceraEdad = descuento != null ? descuento.Porcentaje : 0;
+                        cantidadPorcentajeTerceraEdad = descuento != null ? descuento.Porcentaje * newtotal / 100 : 0;
+                        descuentoTerceraEdadId = descuento != null ? descuento.DescuentoVariosId : (int?)null;
+                    }
+                }
+            }//if (toma.Propietario.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica)
+
+            var pd = porcentajeDescuento == null ? 0 : Convert.ToDecimal(porcentajeDescuento);
+            var cpte = cantidadPorcentajeTerceraEdad == null ? 0 : Convert.ToDecimal(cantidadPorcentajeTerceraEdad);
+
+            totalResul = newtotal - pd - cpte;
+
+            //Es madre soltera
+            if (toma.Propietario.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica)
+            {
+                var descuento = descuentosDomain.Consultar(Convert.ToInt32(TiposDescuentoDomain.TiposDescuentoEnum.MadreSoltera))
+                   .OrderByDescending(d => d.DescuentoVariosId)
+                   .Take(1).FirstOrDefault();
+                if (toma.Propietario.Persona.PersonaFisica.EstadoCivilId == (int)EstadosCivilesDomain.EstadosCivilesEnum.MadreSoltera)
+                {
+                    madreSoltera = true;
+                    porcentajeMadreSoltera = descuento != null ? descuento.Porcentaje : 0;
+                    cantidadPorcentajeMadreSoltera = descuento != null ? descuento.Porcentaje * newtotal / 100 : 0;
+                    descuentoMadreSolteraId = descuento != null ? descuento.DescuentoVariosId : (int?)null;
+                }
+            }//if (toma.Propietario.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica)
+
            
-            return Json(new { success = Math.Truncate(newtotal), descuentoresult = porcentajeDescuento, totalresult = neto, porcentajeresult = porcentaje }, JsonRequestBehavior.AllowGet);
+            var cpms = cantidadPorcentajeMadreSoltera == null ? 0 : Convert.ToDecimal(cantidadPorcentajeMadreSoltera);
+            totalResul -= cpms;
+
+            return Json(new { success = Math.Truncate(newtotal),
+                descuentoresult = porcentajeDescuento,
+                totalresult = neto,
+                porcentajeresult = porcentaje,
+                terceraEdad = terceraEdad,
+                porcentajeTerceraEdad = porcentajeTerceraEdad,
+                cantidadPorcentajeTerceraEdad = cantidadPorcentajeTerceraEdad,
+                totalResul = totalResul,
+                porcentajeMadreSoltera = porcentajeMadreSoltera,
+                cantidadPorcentajeMadreSoltera = cantidadPorcentajeMadreSoltera,
+                madreSoltera = madreSoltera,
+                descuentoTerceraEdadId = descuentoTerceraEdadId,
+                descuentoMadreSolteraId = descuentoMadreSolteraId
+            }, JsonRequestBehavior.AllowGet);
         }
         public ActionResult CalcularPeriodoAbono(decimal subTotal, DateTime periodoInicio, int categoriaId)
         {
@@ -753,7 +1042,11 @@ namespace ComiteAgua.Controllers.Tomas
                     MesAnoFin = item.PeriodoPago.Count > 0 ? Convert.ToDateTime(item.PeriodoPago.Select(pp => pp.MesAnoFin).FirstOrDefault()).ToString("MMMMMMMMMM yyyy").ToUpper() : string.Empty,
                     TotalPago = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio ? total.ToString("C") : item.Total.ToString("C"),
                     ConceptoPago = item.ConceptoPago.Nombre,
-                    FechaPago = Convert.ToDateTime(item.FechaAlta).ToString("dd-MM-yyyy")
+                    FechaPago = Convert.ToDateTime(item.FechaAlta).ToString("dd-MM-yyyy"),
+                    Activo = item.Activo,
+                    NoRecibo = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count == 0 ? (!string.IsNullOrEmpty(item.Convenio.NoTarjeta) ? Convert.ToInt32(item.Convenio.NoTarjeta) : (int?)null) :
+                                item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count > 0 ? item.Recibo.Select(r => r.NoRecibo).FirstOrDefault() : item.Recibo.Select(r => r.NoRecibo).FirstOrDefault(),
+                    TipoPago = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count == 0 ? "Tarjeta" : "Recibo",
                 };
                 periodosPagoViewModelList.Add(periodosPagoViewModel);
             }
@@ -842,8 +1135,219 @@ namespace ComiteAgua.Controllers.Tomas
 
             return PartialView("_ListaArchivos", listaArchivo);
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        public ActionResult QuitarArchivoPersona(string nombre, int personaId, int archivoPersonaId, int tipoArchivoId)
+        {
+            List<ArchivoClass> listaHttp = new List<ArchivoClass>();
+            List<Archivo> listaArchivo = new List<Archivo>();
+            Archivo archivoClass = new Archivo();
+            var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
+
+            if (personaId == 0)
+            {
+                listaArchivo = (List<Archivo>)Session["ListaArchivos"];
+                listaHttp = (List<ArchivoClass>)Session["ListaHttp"];
+
+                listaArchivo.RemoveAll(x => x.Nombre == nombre);
+                listaHttp.RemoveAll(x => x.nombre + "_" + x.FechaHora == nombre);
+
+                Session["ListaArchivos"] = listaArchivo;
+                Session["ListaHttp"] = listaHttp;
+            }
+            else
+            {
+                var archivoPersona = archivosPersonaDomain.ObtenerArchivoPersona(archivoPersonaId);
+                //Elimina Archivo
+                var file = Path.Combine(HttpContext.Server.MapPath("/UploadFiles/Persona/"), archivoPersona.UrlArchivo);
+                if (System.IO.File.Exists(file))
+                    System.IO.File.Delete(file);
+
+                archivosPersonaDomain.Eliminar(archivoPersonaId);
+                var archivos = archivosPersonaDomain.Obtener(personaId, tipoArchivoId);
+
+                listaArchivo = archivos
+                  .Select(up => new Archivo
+                  {
+                      PersonaId = up.PersonaId,
+                      Nombre = up.Nombre,
+                      ArchivoId = up.ArchivoPersonaId,
+                      UrlArchivo = up.UrlArchivo,
+                      TipoArchivoId = tipoArchivoId
+                  })
+                  .OrderBy(up => up.ArchivoId)
+                  .ToList();
+
+                Session["ListaArchivos"] = listaArchivo;
+            }
+            
+            return PartialView("_ListaArchivosPersona", listaArchivo);
+        }
+        public ActionResult QuitarArchivoToma(int personaId, int archivoPersonaId, int tipoArchivoId)
+        {
+            List<ArchivoClass> listaHttp = new List<ArchivoClass>();
+            List<Archivo> listaArchivo = new List<Archivo>();
+            Archivo archivoClass = new Archivo();
+            var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
+           
+            var archivoPersona = archivosPersonaDomain.ObtenerArchivoPersona(archivoPersonaId);
+            //Elimina Archivo
+            var file = Path.Combine(HttpContext.Server.MapPath("/UploadFiles/Persona/"), archivoPersona.UrlArchivo);
+            if (System.IO.File.Exists(file))
+                System.IO.File.Delete(file);
+
+            archivosPersonaDomain.Eliminar(archivoPersonaId);
+            var archivos = archivosPersonaDomain.Obtener(personaId, tipoArchivoId);
+
+            listaArchivo = archivos
+                .Select(up => new Archivo
+                {
+                    PersonaId = up.PersonaId,
+                    Nombre = up.Nombre,
+                    ArchivoId = up.ArchivoPersonaId,
+                    UrlArchivo = up.UrlArchivo,
+                    TipoArchivoId = tipoArchivoId
+                })
+                .OrderBy(up => up.ArchivoId)
+                .ToList();
+
+            Session["ListaArchivos"] = listaArchivo;
+
+            return PartialView("_ListaArchivosToma", listaArchivo);
+        }
+        public ActionResult ConsultarArchivosPersona(string nombre, int personaId, int archivoPersonaId, int tipoArchivoId)
+        {
+            List<ArchivoClass> listaHttp = new List<ArchivoClass>();
+            List<Archivo> listaArchivo = new List<Archivo>();
+            Archivo archivoClass = new Archivo();
+            var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
+
+           
+                var archivoPersona = archivosPersonaDomain.ObtenerArchivoPersona(archivoPersonaId);
+                //Elimina Archivo
+                var file = Path.Combine(HttpContext.Server.MapPath("/UploadFiles/Persona/"), archivoPersona.UrlArchivo);
+                if (System.IO.File.Exists(file))
+                    System.IO.File.Delete(file);
+
+                archivosPersonaDomain.Eliminar(archivoPersonaId);
+                var archivos = archivosPersonaDomain.Obtener(personaId, tipoArchivoId);
+
+                listaArchivo = archivos
+                  .Select(up => new Archivo
+                  {
+                      PersonaId = up.PersonaId,
+                      Nombre = up.Nombre,
+                      ArchivoId = up.ArchivoPersonaId,
+                      UrlArchivo = up.UrlArchivo,
+                      TipoArchivoId = tipoArchivoId
+                  })
+                  .OrderBy(up => up.ArchivoId)
+                  .ToList();
+
+                Session["ListaArchivos"] = listaArchivo;
+           
+
+            return PartialView("_ListaArchivosToma", listaArchivo);
+        }
+        public ActionResult ConsultarArchivosPersona(int personaId, int tipoArchivoId)
+        {
+            var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
+            List<Archivo> listaArchivo = new List<Archivo>();
+            
+            if (personaId == 0)
+            {
+                listaArchivo = (List<Archivo>)Session["ListaArchivos"];   
+            }
+            else
+            {
+                var archivos = archivosPersonaDomain.Obtener(personaId, tipoArchivoId);
+                listaArchivo = archivos
+              .Select(up => new Archivo
+              {
+                  PersonaId = up.PersonaId,
+                  Nombre = up.Nombre,
+                  ArchivoId = up.ArchivoPersonaId,
+                  UrlArchivo = up.UrlArchivo,
+                  TipoArchivoId = tipoArchivoId
+              })
+              .OrderBy(up => up.ArchivoId)
+              .ToList();
+
+                Session["ListaArchivos"] = listaArchivo;
+            }
+
+            return PartialView("_ListaArchivosPersona", listaArchivo);
+        }
+        public ActionResult ConsultarArchivosToma(int personaId, int tipoArchivoId)
+        {
+            var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
+            List<Archivo> listaArchivo = new List<Archivo>();
+
+            
+                var archivos = archivosPersonaDomain.Obtener(personaId, tipoArchivoId);
+                listaArchivo = archivos
+              .Select(up => new Archivo
+              {
+                  PersonaId = up.PersonaId,
+                  Nombre = up.Nombre,
+                  ArchivoId = up.ArchivoPersonaId,
+                  UrlArchivo = up.UrlArchivo,
+                  TipoArchivoId = tipoArchivoId
+              })
+              .OrderBy(up => up.ArchivoId)
+              .ToList();
+
+                Session["ListaArchivos"] = listaArchivo;
+            
+
+            return PartialView("_ListaArchivosToma", listaArchivo);
+        }
+        public ActionResult _ConsultarArchivosPersona(int personaId, int tipoArchivoId)
+        {
+            var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
+
+            var archivos = archivosPersonaDomain.Obtener(personaId, tipoArchivoId);
+            return PartialView("_ConsultarArchivosPersona", archivos);
+        }
+        public ActionResult _ConsultarArchivosToma(int personaId, int tipoArchivoId)
+        {
+            var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
+
+            var archivos = archivosPersonaDomain.Obtener(personaId, tipoArchivoId);
+            return PartialView("_ConsultarArchivosToma", archivos);
+        }
+        public ActionResult EliminarArchivoPersona(int archivoPersonaId, int personaId, int tipoArchivoId)
+        {
+            var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
+
+            var archivoPersona = archivosPersonaDomain.ObtenerArchivoPersona(archivoPersonaId);
+            //Elimina
+            archivosPersonaDomain.Eliminar(archivoPersonaId);
+
+            //Elimina Archivo
+            var file = Path.Combine(HttpContext.Server.MapPath("/UploadFiles/Persona/"), archivoPersona.UrlArchivo);
+            if (System.IO.File.Exists(file))
+                System.IO.File.Delete(file);
+
+            //Consulta
+            var archivos = archivosPersonaDomain.Obtener(personaId, tipoArchivoId);
+            return PartialView("_ConsultarArchivosPersona", archivos);
+        }
+        public ActionResult EliminarArchivoToma(int archivoPersonaId, int personaId, int tipoArchivoId)
+        {
+            var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
+
+            var archivoPersona = archivosPersonaDomain.ObtenerArchivoPersona(archivoPersonaId);
+            //Elimina
+            archivosPersonaDomain.Eliminar(archivoPersonaId);
+
+            //Elimina Archivo
+            var file = Path.Combine(HttpContext.Server.MapPath("/UploadFiles/Persona/"), archivoPersona.UrlArchivo);
+            if (System.IO.File.Exists(file))
+                System.IO.File.Delete(file);
+
+            //Consulta
+            var archivos = archivosPersonaDomain.Obtener(personaId, tipoArchivoId);
+            return PartialView("_ConsultarArchivosToma", archivos);
+        }
         public ActionResult GuardarGasto(GastosViewModel model)
         {
             ArchivosGastoDomain archivosGastoDomain = new ArchivosGastoDomain(_context);
@@ -892,7 +1396,7 @@ namespace ComiteAgua.Controllers.Tomas
 
             Session["ListaArchivos"] = null;
             Session["ListaHttp"] = null;
-
+            ShowToastMessage("Éxito", "Guardado exitosamente", ToastMessage.ToastType.Success);
             return RedirectToAction("GastosComite", "Tomas");
         }
         public ActionResult GuardarPropietario(PropietariosPersonaFisicaViewModel model)
@@ -906,7 +1410,11 @@ namespace ComiteAgua.Controllers.Tomas
             var pagosDomain = new PagosDomain(_context);
             var recibosDomain = new RecibosDomain(_context);
             var usuariosDomain = new UsuariosDomain(_context);
-            
+            var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
+            List<ArchivoClass> listaHttp = new List<ArchivoClass>();
+            listaHttp = (List<ArchivoClass>)Session["ListaHttp"];
+
+
             //Si es cambio de propietario
             if (model.CambioPropietario)
             {
@@ -1066,6 +1574,40 @@ namespace ComiteAgua.Controllers.Tomas
                 PersonaId = model.PersonaId 
             };           
             propietariosDomain.Guardar(propietario);
+
+            //Agrega Archivos Persona            
+            if (listaHttp != null)
+            {
+                foreach (var item in listaHttp)
+                {
+                    string archivo = item.nombre + "_" + item.FechaHora;
+
+                    string rutaArchivo = @"/UploadFiles/Persona/";
+
+                    if (!Directory.Exists(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo)))
+                    {
+                        Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo));
+                    } // if (!Directory.Exists(ruta))
+
+                    item.File.SaveAs(Server.MapPath(rutaArchivo + archivo));
+
+                    ArchivoPersona archivoGasto = new ArchivoPersona()
+                    {
+                        Nombre = item.nombre,
+                        PersonaId = propietario.PersonaId,
+                        UrlArchivo = archivo,
+                        TipoArchivoId = (int)TiposArchivosDomain.TiposArchivosDomainEnum.TerceraEdad,
+                        FechaAlta = DateTime.Now,
+                        UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString())
+                    };
+
+                    archivosPersonaDomain.Guardar(archivoGasto);
+                }
+            }
+
+            Session["ListaArchivos"] = null;
+            Session["ListaHttp"] = null;
+
             if (model.CambioPropietario)
             {
                 return null;
@@ -1378,7 +1920,11 @@ namespace ComiteAgua.Controllers.Tomas
                     }
                 }
             }
-            ShowToastMessage("Éxito", "Guardado exitosamente", ToastMessage.ToastType.Success);
+            if (model.DireccionId > 0)
+            {
+                ShowToastMessage("Éxito", "Guardado exitosamente", ToastMessage.ToastType.Success);
+            }
+            
             return RedirectToAction("Tabs", "Tomas", new { propietarioId = model.PropietarioId });
         }
         public ActionResult GuardarConvenio(ConveniosViewModel model)
@@ -1686,7 +2232,6 @@ namespace ComiteAgua.Controllers.Tomas
             }
             return HttpNotFound();
         }
-       
         public ActionResult GuardarPagoSuministroAgua(PagosViewModel model)
         {
             var pagosDomain = new PagosDomain(_context);
@@ -1695,6 +2240,8 @@ namespace ComiteAgua.Controllers.Tomas
             var recibosDomain = new RecibosDomain(_context);
             var usuariosDomain = new UsuariosDomain(_context);
             var tomasDomain = new TomasDomain(_context);
+            var descuentosPagosDomain = new DescuentosPagosDomain(_context);
+
             // Cuando es Toma Nueva solo guarda pago y recibo
             if (model.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
             {
@@ -1706,9 +2253,9 @@ namespace ComiteAgua.Controllers.Tomas
                     Descuento = !string.IsNullOrEmpty(model.Descuento) ? Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.Descuento)) : (decimal?)null,
                     Total = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.Total)),
                     FechaAlta = DateTime.Now,
-                    UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),                    
+                    UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
                     NoRecibo = model.FolioTarjeta,
-                    Activo = true,                   
+                    Activo = true,
                     CostoToma = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.PrecioToma))
                 };
                 pagosDomain.Guardar(pagotomaNueva);
@@ -1767,99 +2314,128 @@ namespace ComiteAgua.Controllers.Tomas
 
                 return View();
             }
-            else { 
-
-            var notificacion = notificacionesDomain.ObtenerNotificacion(model.TomaId);            
-
-            int mes = 12 - DateTime.Now.Month;           
-            var periodoFin = String.Format("{0:yyyy-MM}", DateTime.Now.AddMonths(mes));
-
-            // Si esta notificada finaliza notificacion si esta totalmente liquidada
-            if (notificacion != null)
+            else
             {
-                if (Convert.ToDateTime(model.MesAnoFin) >= Convert.ToDateTime(periodoFin))
+
+                var notificacion = notificacionesDomain.ObtenerNotificacion(model.TomaId);
+
+                int mes = 12 - DateTime.Now.Month;
+                var periodoFin = String.Format("{0:yyyy-MM}", DateTime.Now.AddMonths(mes));
+
+                // Si esta notificada finaliza notificacion si esta totalmente liquidada
+                if (notificacion != null)
                 {
-                    notificacionesDomain.DesactivarNotificacion(Convert.ToInt32(notificacion.NotificacionId), notificacion.UsuarioAltaId);
-                }                              
-            }
+                    if (Convert.ToDateTime(model.MesAnoFin) >= Convert.ToDateTime(periodoFin))
+                    {
+                        notificacionesDomain.DesactivarNotificacion(Convert.ToInt32(notificacion.NotificacionId), notificacion.UsuarioAltaId);
+                    }
+                }
 
-            var pago = new Pago()
-            {
-                ConceptoPagoId = model.ConceptoPagoId,
-                TomaId = model.TomaId,
-                SubTotal = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.SubTotal)),
-                Descuento = !string.IsNullOrEmpty(model.Descuento) ? Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.Descuento)) : (decimal?)null,
-                Total = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.Total)),
-                FechaAlta = DateTime.Now,
-                UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
-                NotificacionId = notificacion != null ? notificacion.NotificacionId : (int?)null,
-                NoRecibo = model.FolioTarjeta,
-                Activo = true,
-                DescuentProntoPago = !string.IsNullOrEmpty(model.DescuentoProntoPago) ? Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.DescuentoProntoPago)) : (decimal?)null,
-                CostoToma = !string.IsNullOrEmpty(model.PrecioToma) ? Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.PrecioToma)) : (decimal?)null,
-            };
+                var pago = new Pago()
+                {
+                    ConceptoPagoId = model.ConceptoPagoId,
+                    TomaId = model.TomaId,
+                    SubTotal = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.SubTotal)),
+                    Descuento = !string.IsNullOrEmpty(model.Descuento) ? Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.Descuento)) : (decimal?)null,
+                    Total = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.Total)),
+                    FechaAlta = DateTime.Now,
+                    UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
+                    NotificacionId = notificacion != null ? notificacion.NotificacionId : (int?)null,
+                    NoRecibo = model.FolioTarjeta,
+                    Activo = true,
+                    DescuentProntoPago = !string.IsNullOrEmpty(model.DescuentoProntoPago) ? Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.DescuentoProntoPago)) : (decimal?)null,
+                    CostoToma = !string.IsNullOrEmpty(model.PrecioToma) ? Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.PrecioToma)) : (decimal?)null,
+                    DescuentoMadreSoltera = !string.IsNullOrEmpty(model.DescuentoMadreSoltera) ? Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.DescuentoMadreSoltera)) : (decimal?)null,
+                    DescuentoTerceraEdad = !string.IsNullOrEmpty(model.DescuentoTerceraEdad) ? Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.DescuentoTerceraEdad)) : (decimal?)null
+                };
 
-            pagosDomain.Guardar(pago);           
+                pagosDomain.Guardar(pago);
 
-            var periodoPago = new PeriodoPago()
-            {
-                TomaId = model.TomaId,
-                PagoId = pago.PagoId,
-                MesAnoInicio = Convert.ToDateTime(model.MesAnoInicio),
-                MesAnoFin = Convert.ToDateTime(model.MesAnoFin),
-                UltimoPeriodoPago = Convert.ToDateTime(model.MesAnoFin).ToString("MMMMMMMMM yyyy").ToUpper(),
-                FechaAlta = DateTime.Now,
-                UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString())
-            };
+                var periodoPago = new PeriodoPago()
+                {
+                    TomaId = model.TomaId,
+                    PagoId = pago.PagoId,
+                    MesAnoInicio = Convert.ToDateTime(model.MesAnoInicio),
+                    MesAnoFin = Convert.ToDateTime(model.MesAnoFin),
+                    UltimoPeriodoPago = Convert.ToDateTime(model.MesAnoFin).ToString("MMMMMMMMM yyyy").ToUpper(),
+                    FechaAlta = DateTime.Now,
+                    UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString())
+                };
 
-            periodosPagoDomain.Guardar(periodoPago);
+                periodosPagoDomain.Guardar(periodoPago);
 
-            if (Session["Abonos"] != null) pagosDomain.EditarAbonosActivos((List<Pago>)Session["Abonos"]);
+                if (Session["Abonos"] != null) pagosDomain.EditarAbonosActivos((List<Pago>)Session["Abonos"]);
 
-            if(model.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
-            {
-                tomasDomain.EditarConceptoPago(model.TomaId,(int)LiquidacionesTomaDomain.LiquidacionesTomaEnum.TomaExistente, Convert.ToInt32(Session["UsuarioId"].ToString()));
-            }
+                if (model.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
+                {
+                    tomasDomain.EditarConceptoPago(model.TomaId, (int)LiquidacionesTomaDomain.LiquidacionesTomaEnum.TomaExistente, Convert.ToInt32(Session["UsuarioId"].ToString()));
+                }
 
-            //Guarda recibo
-            var noRecibo = recibosDomain.ObtenerNoRecibo() + 1;
-            var usuarioPersona = usuariosDomain.ObtenerUsuarioPersona(Convert.ToInt32(Session["UsuarioId"].ToString()));
-            var toma = tomasDomain.ObtenerToma(model.TomaId);
-            
-            string informacionRecibo = string.Format("RECIBO DE PAGO NO: {1}{0}" +
-                                                     "FECHA: {2}{0}" +
-                                                     "CLAVE DE CONTROL: {3}{0}" +
-                                                     "CANTIDAD PAGADA: {4}{0}" +                                                    
-                                                     "CAJERO(A): {5}{0}",
-                                                     Environment.NewLine, noRecibo,
-                                                     DateTime.Now.ToString("dd/MM/yyyy"),
-                                                     toma.Folio,
-                                                     pago.Total.ToString("C"),                                                    
-                                                     usuarioPersona.Persona.Nombre + " " + usuarioPersona.Persona.ApellidoPaterno + " " + usuarioPersona.Persona.ApellidoMaterno);
-            //Genera codigoQR
-            var QQRurl = this.GenerarCodigoQR(informacionRecibo);
+                //Guarda descuento tercera edad
+                if (model.DescuentoTerceraEdadId != null)
+                {
+                    var descuentoPago = new DescuentoPago()
+                    {
+                        DescuentoVariosId = Convert.ToInt32(model.DescuentoTerceraEdadId),
+                        PagoId = pago.PagoId,
+                        UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
+                        FechaAlta = DateTime.Now
+                    };
+                    descuentosPagosDomain.Agregar(descuentoPago);
+                }
 
-            var recibo = new Recibo()
-            {
-                PagoId = pago.PagoId,
-                Fecha = DateTime.Now,
-                CodigoQRurl = QQRurl,
-                NoRecibo = noRecibo,
-                Observaciones = !string.IsNullOrEmpty(model.Observaciones) ? AdsertiFunciones.FormatearTexto(model.Observaciones) : string.Empty,
-                Adicional = !string.IsNullOrEmpty(model.Adicional) ? AdsertiFunciones.FormatearTexto(model.Adicional) : string.Empty,               
-                CantidadLetra = this.Convertir(pago.Total.ToString()),
-                FechaAlta = DateTime.Now,
-                UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
-                RenglonAdicional1 = !string.IsNullOrEmpty(model.RenglonAdicional1) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional1) : string.Empty,
-                RenglonAdicional2 = !string.IsNullOrEmpty(model.RenglonAdicional2) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional2) : string.Empty,
-                RenglonAdicional3 = !string.IsNullOrEmpty(model.RenglonAdicional3) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional3) : string.Empty,
-            };
+                //Guarda descuento madre soltera 
+                if (model.DescuentoMadreSolteraId != null)
+                {
+                    var descuentoPago = new DescuentoPago()
+                    {
+                        DescuentoVariosId = Convert.ToInt32(model.DescuentoMadreSolteraId),
+                        PagoId = pago.PagoId,
+                        UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
+                        FechaAlta = DateTime.Now
+                    };
+                    descuentosPagosDomain.Agregar(descuentoPago);
+                }
 
-            recibosDomain.Gurdar(recibo);
-            
-            Response.Redirect("~/Print/ReciboSistema.aspx?reciboId=" + recibo.ReciboId);
+                //Guarda recibo
+                var noRecibo = recibosDomain.ObtenerNoRecibo() + 1;
+                var usuarioPersona = usuariosDomain.ObtenerUsuarioPersona(Convert.ToInt32(Session["UsuarioId"].ToString()));
+                var toma = tomasDomain.ObtenerToma(model.TomaId);
 
-            return View();
+                string informacionRecibo = string.Format("RECIBO DE PAGO NO: {1}{0}" +
+                                                         "FECHA: {2}{0}" +
+                                                         "CLAVE DE CONTROL: {3}{0}" +
+                                                         "CANTIDAD PAGADA: {4}{0}" +
+                                                         "CAJERO(A): {5}{0}",
+                                                         Environment.NewLine, noRecibo,
+                                                         DateTime.Now.ToString("dd/MM/yyyy"),
+                                                         toma.Folio,
+                                                         pago.Total.ToString("C"),
+                                                         usuarioPersona.Persona.Nombre + " " + usuarioPersona.Persona.ApellidoPaterno + " " + usuarioPersona.Persona.ApellidoMaterno);
+                //Genera codigoQR
+                var QQRurl = this.GenerarCodigoQR(informacionRecibo);
+
+                var recibo = new Recibo()
+                {
+                    PagoId = pago.PagoId,
+                    Fecha = DateTime.Now,
+                    CodigoQRurl = QQRurl,
+                    NoRecibo = noRecibo,
+                    Observaciones = !string.IsNullOrEmpty(model.Observaciones) ? AdsertiFunciones.FormatearTexto(model.Observaciones) : string.Empty,
+                    Adicional = !string.IsNullOrEmpty(model.Adicional) ? AdsertiFunciones.FormatearTexto(model.Adicional) : string.Empty,
+                    CantidadLetra = this.Convertir(pago.Total.ToString()),
+                    FechaAlta = DateTime.Now,
+                    UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
+                    RenglonAdicional1 = !string.IsNullOrEmpty(model.RenglonAdicional1) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional1) : string.Empty,
+                    RenglonAdicional2 = !string.IsNullOrEmpty(model.RenglonAdicional2) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional2) : string.Empty,
+                    RenglonAdicional3 = !string.IsNullOrEmpty(model.RenglonAdicional3) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional3) : string.Empty,
+                };
+
+                recibosDomain.Gurdar(recibo);
+
+                Response.Redirect("~/Print/ReciboSistema.aspx?reciboId=" + recibo.ReciboId);
+
+                return View();
             }
         }
         public ActionResult GuardarPagoAbono(PagosViewModel model)
@@ -2200,6 +2776,64 @@ namespace ComiteAgua.Controllers.Tomas
 
             return null;
         }
+        public ActionResult GuardarRecibosExtra(RecibosViewModel model)
+        {
+            var pagosDomain = new PagosDomain(_context);
+            var recibosDomain = new RecibosDomain(_context);
+            var usuariosDomain = new UsuariosDomain(_context);
+            var tomasDomain = new TomasDomain(_context);
+
+            var pago = new Pago()
+            {
+                ConceptoPagoId = (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Otro,
+                TomaId = model.TomaId,
+                SubTotal = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.SubTotal)),
+                Descuento = !string.IsNullOrEmpty(model.Descuento) ? Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.Descuento)) : (decimal?)null,
+                Total = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.Total)),
+                FechaAlta = DateTime.Now,
+                UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
+                Activo = true
+            };
+            pagosDomain.Guardar(pago);
+
+            //Guarda recibo
+            var noRecibo = recibosDomain.ObtenerNoRecibo() + 1;
+            var usuarioPersona = usuariosDomain.ObtenerUsuarioPersona(Convert.ToInt32(Session["UsuarioId"].ToString()));
+            var toma = tomasDomain.ObtenerToma(model.TomaId);
+
+            string informacionRecibo = string.Format("RECIBO DE PAGO NO: {1}{0}" +
+                                                     "FECHA: {2}{0}" +
+                                                     "CLAVE DE CONTROL: {3}{0}" +
+                                                     "CANTIDAD PAGADA: {4}{0}" +
+                                                     "CAJERO(A): {5}{0}",
+                                                     Environment.NewLine, noRecibo,
+                                                     DateTime.Now.ToString("dd/MM/yyyy"),
+                                                     toma.Folio,
+                                                     pago.Total.ToString("C"),
+                                                     usuarioPersona.Persona.Nombre + " " + usuarioPersona.Persona.ApellidoPaterno + " " + usuarioPersona.Persona.ApellidoMaterno);
+            //Genera codigoQR
+            var QQRurl = this.GenerarCodigoQR(informacionRecibo);
+
+            var recibo = new Recibo()
+            {
+                PagoId = pago.PagoId,
+                Fecha = DateTime.Now,
+                CodigoQRurl = QQRurl,
+                NoRecibo = noRecibo,
+                Adicional = !string.IsNullOrEmpty(model.RenglonAdicional1) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional1) : string.Empty,
+                CantidadLetra = this.Convertir(pago.Total.ToString()),
+                FechaAlta = DateTime.Now,
+                UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString()),
+                RenglonAdicional1 = !string.IsNullOrEmpty(model.RenglonAdicional2) ? AdsertiFunciones.FormatearTexto(model.RenglonAdicional2) : string.Empty,
+                Concepto = AdsertiFunciones.FormatearTexto(model.Concepto)
+            };
+
+            recibosDomain.Gurdar(recibo);
+
+            Response.Redirect("~/Print/ReciboSistema.aspx?reciboId=" + recibo.ReciboId);
+
+            return View();
+        }
         public ActionResult ImprimirCorte(string fecha, string downloadToken)
         {
             DateTime fecha1 = Convert.ToDateTime(fecha);
@@ -2474,7 +3108,6 @@ namespace ComiteAgua.Controllers.Tomas
             }
             serviciosViewModel.Asuntos = asuntosDomain.ObtenerAsuntos();
             return View(serviciosViewModel);
-
         }
         public JsonResult CargarDescripcionAsunto(int asuntoId)
         {
@@ -2576,15 +3209,59 @@ namespace ComiteAgua.Controllers.Tomas
             return View("Recibos", reciboVM);
             
         }        
-        public ActionResult CancelarRecibo(int reciboId, bool estado)
+        public ActionResult CancelarRecibo(int reciboId, int tomaId)
         {
             var recibosDomain = new RecibosDomain(_context);
-            recibosDomain.CancelarRecibo(reciboId, estado, Convert.ToInt32(Session["UsuarioId"].ToString()));
+            int usuarioId = Convert.ToInt32(Session["UsuarioId"].ToString());
 
+            var pagos = recibosDomain.ObtenerRecibos(tomaId);
+            var pago = pagos.Where(p => p.Recibo.Select(r => r.ReciboId == reciboId).FirstOrDefault()).FirstOrDefault();
+
+            if (pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
+            {
+                if (pagos.Count > 1)
+                {
+                    ShowToastMessage("Alerta", "La toma ya tiene pagos registrados, por lo tanto no se puede cancelar", ToastMessage.ToastType.Warning);
+                }
+                else
+                {
+                    recibosDomain.CancelarReciboTomaNueva(reciboId, usuarioId);
+                    ShowToastMessage("SAAP", "Recibo cancelado exitosamente", ToastMessage.ToastType.Success);
+                }
+            }else if(pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua)
+            {
+                var pagosConsecuentes = pagos.Where(p => (p.PagoId > pago.PagoId) && (p.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua ||
+                                                                                        p.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio)).ToList();
+                if (pagosConsecuentes.Count > 0)
+                {
+                    ShowToastMessage("Alerta", "La toma ya tiene pagos por suministro de agua posteriores, por lo tanto no se puede cancelar", ToastMessage.ToastType.Warning);
+                }
+                else
+                {
+                    recibosDomain.CancelarReciboSuministroAgua(reciboId, usuarioId);
+                    ShowToastMessage("SAAP", "Recibo cancelado exitosamente", ToastMessage.ToastType.Success);
+                }                
+            }else if(pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio)
+            {
+                var pagosConsecuentes = pagos.Where(p => (p.PagoId > pago.PagoId) && (p.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio ||
+                                                                                        p.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.SuministroAgua)).ToList();
+                if (pagosConsecuentes.Count > 0)
+                {
+                    ShowToastMessage("Alerta", "La toma ya tiene pagos por convenio posteriores, por lo tanto no se puede cancelar", ToastMessage.ToastType.Warning);
+                }
+                else
+                {
+                    recibosDomain.CancelarReciboPagoConvenio(reciboId, usuarioId);
+                    ShowToastMessage("SAAP", "Recibo cancelado exitosamente", ToastMessage.ToastType.Success);
+                }
+            }
+            else
+            {
+                recibosDomain.CancelarRecibo(reciboId, usuarioId);
+                ShowToastMessage("SAAP", "Recibo cancelado exitosamente", ToastMessage.ToastType.Success);
+            }
             var recibo = recibosDomain.ObtenerRecibo(reciboId);
-
-            var recibosListVM = this.ObtenerRecibos(null, null, DateTime.Now,null);
-            ShowToastMessage("SAAP", "Recibo cancelado exitosamente", ToastMessage.ToastType.Success);
+            var recibosListVM = this.ObtenerRecibos(null, null, DateTime.Now, null);
             return View("Recibos", recibosListVM);
         }       
         public ActionResult Limpiar()
@@ -2716,6 +3393,60 @@ namespace ComiteAgua.Controllers.Tomas
             Response.AppendCookie(new HttpCookie("fileDownloadToken", downloadToken));
             return Json(new { existe = existeFolio }, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult ValidarRfcPersonaFisica(string rfc)
+        {
+            bool rfcValido = AdsertiValidaciones.EsRfcPersonaFisica(rfc);
+            return Json(new { valido = rfcValido }, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult ValidarRfcPersonaMoral(string rfc)
+        {
+            bool rfcValido = AdsertiValidaciones.EsRfcPersonaMoral(rfc);
+            return Json(new { valido = rfcValido }, JsonRequestBehavior.AllowGet);
+        }
+        public ActionResult RecibosExtraFiltros()
+        {
+            var recibosViewModel = new RecibosViewModel()
+            {
+                Accion = ComiteAgua.Accion.Consultar,
+            };
+
+            return View(recibosViewModel);
+        }
+        public ActionResult _RecibosExtraConsulta(int? folio, string propietario, string calle)
+        {
+            ConstanciasDomain constanciasDomain = new ConstanciasDomain(_context);
+            var tomasPreList = constanciasDomain.ObtenerTomas(folio, propietario, calle);
+
+            var tomas = tomasPreList
+                .Select(t => new TomasViewModel
+                {
+                    TomaId = t.TomaId,
+                    Folio = t.Folio,
+                    Propietario = t.Propietario.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica ? t.Propietario.Persona.PersonaFisica.Nombre + " " +
+                                  t.Propietario.Persona.PersonaFisica.ApellidoPaterno + " " +
+                                  t.Propietario.Persona.PersonaFisica.ApellidoMaterno : t.Propietario.Persona.PersonaMoral.Nombre,
+                    Calle = t.Direccion != null ? ((t.Direccion.TipoCalleId > 0 ? t.Direccion.TiposCalle.Nombre : string.Empty) + ' ' + (t.Direccion.CalleId > 0 ? t.Direccion.Calles.Nombre : string.Empty) +
+                                    (!string.IsNullOrEmpty(t.Direccion.NumInt) ? " INT " + t.Direccion.NumInt : string.Empty) +
+                                    (!string.IsNullOrEmpty(t.Direccion.NumExt) ? " EXT " + t.Direccion.NumExt : string.Empty)) : String.Empty,
+                    Colonia = t.Direccion != null ? (t.Direccion.ColoniaId > 0 ? t.Direccion.Colonias.Nombre : string.Empty) : string.Empty,
+                    UltimoPeriodoPago = t.PeriodoPago.Select(p => p.MesAnoInicio).LastOrDefault() != null ?
+                                        Convert.ToDateTime(t.PeriodoPago.Select(p => p.MesAnoInicio).LastOrDefault()).ToString("MMM-yyyy", new CultureInfo("es-ES")) : t.PeriodoPago.Select(p => p.UltimoPeriodoPago).LastOrDefault(),
+                    ReciboImpreso = t.Constancia.Count > 0 ? t.Constancia.Select(c => c.ReciboImpreso).LastOrDefault() : true
+                })
+                .OrderBy(t => t.Folio)
+                .ToList();
+
+            return PartialView(tomas);
+        }
+        public ActionResult RecibosExtraAdministracion(int tomaId)
+        {
+            var recibosViewModel = new RecibosViewModel()
+            {
+                Accion = Accion.Agregar,
+            };
+            return View("RecibosExtraAdministracion", recibosViewModel);
+        }
+        
         #endregion
 
         #region * Métodos creados por Comité Agua *
@@ -2861,7 +3592,13 @@ namespace ComiteAgua.Controllers.Tomas
                     NoRecibo = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count == 0 ? (!string.IsNullOrEmpty(item.Convenio.NoTarjeta) ? Convert.ToInt32(item.Convenio.NoTarjeta) : (int?)null) :
                                 item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count > 0 ? item.Recibo.Select(r => r.NoRecibo).FirstOrDefault() : item.Recibo.Select(r => r.NoRecibo).FirstOrDefault(),
                     PagoId = item.PagoId,
-                    ConceptoPago = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Renta ? item.Renta.TipoRenta.Nombre : item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia ? item.Constancia.TiposConstancia.Nombre : item.ConceptoPago.Nombre,
+                    ConceptoPago = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Renta ? 
+                                                            item.Renta.TipoRenta.Nombre : 
+                                                           item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia ? 
+                                                            item.Constancia.TiposConstancia.Nombre :
+                                                           item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Otro ?
+                                                           item.Recibo.Select(r => r.Concepto).FirstOrDefault():
+                                                            item.ConceptoPago.Nombre,
                     Total = item.Total.ToString("C"),
                     TipoPago = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count == 0 ? "Tarjeta" : "Recibo",
                     Activo = item.Activo
@@ -3018,7 +3755,7 @@ namespace ComiteAgua.Controllers.Tomas
                 FechaFiltro = fecha,
                 ReciboId = reciboId,
                 Recibos = recibos,
-                UrlOrigen = Url.Action("Recibos", "Tomas")
+                UrlOrigen = Url.Action("Recibos", "Tomas")                
             };
 
             return reciboVM;
@@ -3034,6 +3771,9 @@ public class Archivo
 {
     public int ArchivoId { get; set; }
     public string Nombre { get; set; }
+    public string UrlArchivo { get; set; }
+    public int PersonaId { get; set; }
+    public int TipoArchivoId { get; set; }
 }
 
 public class ArchivoClass

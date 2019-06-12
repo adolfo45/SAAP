@@ -85,7 +85,7 @@ namespace ComiteAgua.Controllers
                 transaccionesAutomaticasDomain.CambiarEstatusConveniosVencido(usurios.UsuarioId);
             }           
 
-            UserSession.AddUserToSession(usurios.UsuarioId.ToString());
+            //UserSession.AddUserToSession(usurios.UsuarioId.ToString());
 
             Session["UsuarioId"] = usurios.UsuarioId;
             Session["RolIds"] = usurios.UsuarioRol.Select(r => r.RolId).ToList();

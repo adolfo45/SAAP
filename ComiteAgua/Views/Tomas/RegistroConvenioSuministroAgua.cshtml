@@ -28,7 +28,7 @@
                 <button type="submit" class="btn btn-secondary">Imprimir convenio</button>
             </div>
             }
-            @if (Model.EstatusConvenioId == (int)@EstatusConvenioDomain.EstatusConvenioEnum.Cancelado) { 
+            @if (Model.EstatusConvenioId == (int)@EstatusConvenioDomain.EstatusConvenioEnum.Cancelado || Model.TotalPagos == 0) { 
                 using (Html.BeginForm("EliminarConvenio", "Tomas", new{convenioId = Model.ConvenioId}, FormMethod.Post,null))
                  {
                      <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
@@ -243,6 +243,21 @@
 
                             var periodoInicio = $("#PeriodoInicio").val();
                             var periodoFin = $("#PeriodoFin").val();
+
+                            if ((periodoFin == "") || ($("#PeriodoFin").val() < $("#PeriodoInicio").val())) {
+                                $("#SubTotal").val("");
+                                $("#Total").val("");
+                                $("#Descuento").val("");
+                                toastr.warning(
+                                    "El Periodo Fin no pude ser menor al Periodo Inicio.",
+                                    "Alerta",
+                                    {
+                                        closeButton: true,
+                                        progressBar: true,
+                                        positionClass: "toast-bottom-full-width"
+                                    });
+                                return;
+                            }
 
                             $.ajax({
                                 type: 'get',

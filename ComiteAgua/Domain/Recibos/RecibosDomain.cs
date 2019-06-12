@@ -39,33 +39,85 @@ namespace ComiteAgua.Domain.Recibos
         #endregion
 
         #region * Métodos creados por Comité Agua *
-
-        public void CancelarRecibo(int reciboId, bool estado, int usuarioId)
+        public void CancelarReciboTomaNueva(int reciboId, int usuarioCambioId)
         {
             var bd = _context.Recibo
-                .Include( r => r.Pago)
-                .Include(r => r.Pago.PeriodoPago)
-                .Include(r => r.Pago.Convenio)
+                .Include(r => r.Pago)
+                .Include(r => r.Pago.Toma)
+                .Include(r => r.Pago.PeriodoPago)                
                 .Where(r => r.ReciboId == reciboId).FirstOrDefault();
 
-            if (bd.Pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
-            {
-                var bdToma = _context.Toma.Where(x => x.TomaId == bd.Pago.TomaId).FirstOrDefault();
-                bdToma.LiquidacionTomaId = (int)LiquidacionesTomaDomain.LiquidacionesTomaEnum.TomaNueva;
-                bdToma.UsuarioCambioId = usuarioId;
-                bdToma.FechaCambio = DateTime.Now;
-            }
-            if (bd.Pago.ConvenioId != null)
-            {
-                bd.Pago.Convenio.EstatusConvenioId = (int) EstatusConvenioDomain.EstatusConvenioEnum.Activo;
-            }            
-
-            if (bd.Pago.PeriodoPago.Count > 0) _context.Entry(bd.Pago.PeriodoPago.FirstOrDefault()).State = EntityState.Deleted;
-            //_context.Entry(bd.Pago).State = EntityState.Deleted;
-            //_context.Entry(bd).State = EntityState.Deleted;           
+            bd.Pago.Toma.LiquidacionTomaId = (int)LiquidacionesTomaDomain.LiquidacionesTomaEnum.TomaNueva;
+            bd.Pago.Toma.UsuarioCambioId = usuarioCambioId;
+            bd.Pago.Toma.FechaCambio = DateTime.Now;
             bd.Pago.Activo = false;
+            bd.Pago.UsuarioCambioId = usuarioCambioId;
+            bd.Pago.FechaCambio = DateTime.Now;
+            _context.Entry(bd.Pago.PeriodoPago.FirstOrDefault()).State = EntityState.Deleted;
 
             _context.SaveChanges();
+        }
+        public void CancelarReciboSuministroAgua(int reciboId, int usuarioCambioId)
+        {
+            var bd = _context.Recibo
+               .Include(r => r.Pago)              
+               .Include(r => r.Pago.PeriodoPago)
+               .Where(r => r.ReciboId == reciboId).FirstOrDefault();
+
+            _context.Entry(bd.Pago.PeriodoPago.FirstOrDefault()).State = EntityState.Deleted;
+            bd.Pago.Activo = false;
+            bd.Pago.UsuarioCambioId = usuarioCambioId;
+            bd.Pago.FechaCambio = DateTime.Now;
+
+            _context.SaveChanges();
+        }
+        public void CancelarReciboPagoConvenio(int reciboId, int usuarioCambioId)
+        {
+            var bd = _context.Recibo
+              .Include(r => r.Pago)
+              .Include(r => r.Pago.PeriodoPago)
+              .Include(r => r.Pago.Convenio)
+              .Where(r => r.ReciboId == reciboId).FirstOrDefault();
+
+            if (bd.Pago.PeriodoPago.Count > 0)
+            {
+                bd.Pago.Convenio.EstatusConvenioId = (int)EstatusConvenioDomain.EstatusConvenioEnum.Activo;
+                bd.Pago.Convenio.UsuarioCambioId = usuarioCambioId;
+                bd.Pago.Convenio.FechaCambio = DateTime.Now;
+                _context.Entry(bd.Pago.PeriodoPago.FirstOrDefault()).State = EntityState.Deleted;
+            }
+            
+            bd.Pago.Activo = false;
+            bd.Pago.UsuarioCambioId = usuarioCambioId;
+            bd.Pago.FechaCambio = DateTime.Now;
+
+            _context.SaveChanges();
+        }
+        public void CancelarRecibo(int reciboId, int usuarioCambioId)
+        {
+            var bd = _context.Recibo
+              .Include(r => r.Pago)
+              .Where(r => r.ReciboId == reciboId).FirstOrDefault();          
+
+            bd.Pago.Activo = false;
+            bd.Pago.UsuarioCambioId = usuarioCambioId;
+            bd.Pago.FechaCambio = DateTime.Now;
+
+            _context.SaveChanges();
+        }
+        public List<Pago> ObtenerRecibos(int tomaId)
+        {
+            var recibos = _context.Pago
+                .Include( r => r.Recibo)
+                .Include(r => r.Toma)
+                .Include(r => r.PeriodoPago)
+                .Include(r => r.Convenio)
+                .Where(r => r.TomaId == tomaId &&
+                            r.Activo)
+                            .OrderBy(r => r.PagoId)
+                            .ToList();
+           
+            return recibos;
         }
         public void Gurdar(Recibo model)
         {

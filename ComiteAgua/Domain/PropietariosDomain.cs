@@ -55,6 +55,7 @@ namespace ComiteAgua.Domain
                 .Include(x => x.Persona.PersonaFisica)
                 .Include(x => x.Persona.PersonaMoral)
                 .Include(x => x.Persona.TipoPersona)
+                .Include(x => x.Persona.ArchivoPersona)
                 .Where(x => x.PropietarioId == propietarioId).SingleOrDefault();
 
             return result;
@@ -198,7 +199,7 @@ namespace ComiteAgua.Domain
                         from e in propietarios
                         select new
                         {
-                            Folio = e.Toma.Select(x => x.Folio).FirstOrDefault(),
+                            Folio = e.Toma.Select(x => x.Folio).FirstOrDefault() == 0 ? string.Empty : e.Toma.Select(x => x.Folio).FirstOrDefault().ToString(),
                             PropietarioId = e.PropietarioId,
                             Propietario = e.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica ?
                                           e.Persona.PersonaFisica.Nombre + ' ' + e.Persona.PersonaFisica.ApellidoPaterno + ' ' + e.Persona.PersonaFisica.ApellidoMaterno : 
@@ -215,7 +216,8 @@ namespace ComiteAgua.Domain
                             TomaId = e.Toma.Select(x => x.TomaId),
                             Activa = e.Toma.Select(t => t.Activa).FirstOrDefault() == true ? 1 : 0,
                             CategoriaId = e.Toma.Select(t => t.CategoriaId).FirstOrDefault(),
-                            ConvenioActivo = e.Toma.Select(c => c.Convenio.Select(ca => ca.EstatusConvenioId).LastOrDefault()).LastOrDefault() == (int)EstatusConvenioDomain.EstatusConvenioEnum.Activo ? true : false,
+                            ConvenioActivo = e.Toma.Select(c => c.Convenio.Select(ca => ca.EstatusConvenioId).LastOrDefault()).LastOrDefault() == (int)EstatusConvenioDomain.EstatusConvenioEnum.Activo &&
+                                e.Toma.Select(c => c.Convenio.Select(ca => ca.Eliminado).LastOrDefault()).LastOrDefault() == null ? true : false,
                             ConvenioVencido = e.Toma.Select(c => c.Convenio.Select(ca => ca.EstatusConvenioId).LastOrDefault()).LastOrDefault() == (int)EstatusConvenioDomain.EstatusConvenioEnum.Cancelado &&
                                 e.Toma.Select(c => c.Convenio.Select(ca => ca.Eliminado).LastOrDefault()).LastOrDefault() == null ? true : false,
                             Notificacion = e.Toma.Any(c => c.Notificacion.Any(ca => ca.Activa)) ? true : false,

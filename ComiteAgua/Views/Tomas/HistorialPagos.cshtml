@@ -3,7 +3,11 @@
 @{
     ViewBag.Title = "Historial de Pagos";
 }
-
+<style>
+    .amarillo {
+        background-color: gold;
+    }
+</style>
 <br />
 
 @*Breadcrumb*@
@@ -16,7 +20,8 @@
 
 <table class="table">
     <thead class="thead-dark">
-        <tr>            
+        <tr>          
+            <th scope="col">No</th>
             <th scope="col">Total</th>
             <th scope="col">Periodo Inicio</th>
             <th scope="col">Periodo Fin</th>
@@ -28,7 +33,10 @@
         
         @foreach (var item in Model)
         {
-            <tr>
+            <tr class="@(!item.Activo ? "amarillo" : "")">
+                <td>
+                    @(item.TipoPago + "-" + item.NoRecibo.ToString()) @(!item.Activo ? "(Cancelado)" : "")
+                </td>
                 <td>@item.TotalPago</td>
                 <td>@item.MesAnoInicio</td>
                 <td>@item.MesAnoFin</td>

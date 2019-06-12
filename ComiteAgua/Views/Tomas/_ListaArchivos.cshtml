@@ -1,5 +1,6 @@
 ﻿@model List<Archivo>
 
+@if (Model != null) { 
 <ul class="list-group">
     @foreach (var item in Model)
     {
@@ -12,6 +13,7 @@
         </li>
     }    
 </ul>
+}
 
 <script>
 
@@ -19,7 +21,6 @@
     {
         $.ajax({
             type: 'get',
-            type: 'post',
             cache: false,
             url: '@Url.Action("QuitarArchivo", "Tomas")',
             data: { nombre: nombre },

@@ -22,6 +22,8 @@
     @Html.HiddenFor(m => m.TomaId)
     @Html.HiddenFor(m => m.ConvenioId)
     @Html.HiddenFor(m => m.ConceptoPagoId)
+    @Html.HiddenFor(m => m.DescuentoTerceraEdadId)
+    @Html.HiddenFor(m => m.DescuentoMadreSolteraId)
 
     <div class="col-md-9 mr-auto ml-auto">
         <div class="card">
@@ -29,18 +31,6 @@
                 Pagos Suministro Agua
             </div>
             <div class="card-body">
-
-                @if (Model.AbonoAnterior != "0")
-                {
-                    @*Abono Anterior*@
-                    <div class="form-group row">
-                        @Html.LabelFor(x => x.AbonoAnterior, new { @for = "AbonoAnterior", @class = "col-md-2 col-form-label ml-auto" })
-                        <div class="col-sm-6 mr-auto">
-                            @Html.TextBoxFor(d => d.AbonoAnterior, new { @class = "form-control moneda" })
-                            @Html.ValidationMessageFor(m => m.AbonoAnterior, null, new { @class = "badge badge-pill badge-danger" })
-                        </div>
-                    </div>
-                }
                 @if (Model.ConceptoPagoId != (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
                 {
                     @*Periodo inicio*@
@@ -60,15 +50,15 @@
                             @Html.ValidationMessageFor(m => m.MesAnoFin, null, new { @class = "badge badge-pill badge-danger" })
                         </div>
                     </div>
-               
-                @*Sub total*@
-                <div class="form-group row">
-                    @Html.LabelFor(x => x.SubTotal, new { @for = "SubTotal", @class = "col-md-2 col-form-label ml-auto" })
-                    <div class="col-sm-6 mr-auto">
-                        @Html.TextBoxFor(d => d.SubTotal, new { @class = "form-control moneda" })
-                        @Html.ValidationMessageFor(m => m.SubTotal, null, new { @class = "badge badge-pill badge-danger" })
+
+                    @*Sub total*@
+                    <div class="form-group row">
+                        @Html.LabelFor(x => x.SubTotal, new { @for = "SubTotal", @class = "col-md-2 col-form-label ml-auto" })
+                        <div class="col-sm-6 mr-auto">
+                            @Html.TextBoxFor(d => d.SubTotal, new { @class = "form-control moneda" })
+                            @Html.ValidationMessageFor(m => m.SubTotal, null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
                     </div>
-                </div>
                 }
                 @if (Model.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
                 {
@@ -95,8 +85,30 @@
                     <div class="form-group row">
                         @Html.LabelFor(d => d.DescuentoProntoPago, new { @for = "Descuento", @class = "col-md-2 col-form-label ml-auto" })
                         <div class="col-sm-6 mr-auto">
-                            @Html.TextBoxFor(d => d.DescuentoProntoPago, new { @class = "form-control validaDescuent moneda", @id = "DescuentoProntoPagoTextBox" })
+                            @Html.TextBoxFor(d => d.DescuentoProntoPago, new { @class = "form-control moneda", @id = "DescuentoProntoPagoTextBox" })
                             <span class="badge badge-info" id="DescuentoProntoPagoSpan"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="DescuntoTerceraEdadDiv" style="display: none">
+                    @*Descuento Tercera Edad*@
+                    <div class="form-group row">
+                        @Html.LabelFor(d => d.DescuentoTerceraEdad, new { @for = "DescuentoTerceraEdad", @class = "col-md-2 col-form-label ml-auto" })
+                        <div class="col-sm-6 mr-auto">
+                            @Html.TextBoxFor(d => d.DescuentoTerceraEdad, new { @class = "form-control moneda" })
+                            <span class="badge badge-info" id="DescuentoTerceraEdadSpan"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="DescuntoMadreSolteraDiv" style="display: none">
+                    @*Descuento Madre Soltera*@
+                    <div class="form-group row">
+                        @Html.LabelFor(d => d.DescuentoMadreSoltera, new { @for = "DescuentoMadreSoltera", @class = "col-md-2 col-form-label ml-auto" })
+                        <div class="col-sm-6 mr-auto">
+                            @Html.TextBoxFor(d => d.DescuentoMadreSoltera, new { @class = "form-control moneda" })
+                            <span class="badge badge-info" id="DescuentoMadreSolteraSpan"></span>
                         </div>
                     </div>
                 </div>
@@ -109,15 +121,6 @@
                         @Html.ValidationMessageFor(m => m.Total, null, new { @class = "badge badge-pill badge-danger" })
                     </div>
                 </div>
-
-                @*Folio Tarjeta*@
-                @*<div class="form-group row">
-                    @Html.LabelFor(x => x.FolioTarjeta, "No Recibo", new { @for = "FolioTarjeta", @class = "col-md-2 col-form-label ml-auto" })
-                    <div class="col-sm-6 mr-auto">
-                        @Html.TextBoxFor(d => d.FolioTarjeta, new { @class = "form-control validaPago enteros" })
-                        @Html.ValidationMessageFor(m => m.FolioTarjeta, null, new { @class = "badge badge-pill badge-danger" })
-                    </div>
-                </div>*@
 
                 @*Observaciones*@
                 <div class="form-group row">
@@ -194,38 +197,46 @@
                     return $("#PrecioTomaTextBox").val().trim().length > 0;
                 }, "El Precio de la toma es requerido.");
             }
+
             $.validator.addMethod("validaFechaFin", function () {
                 return !($("#MesAnoFin").val() < $("#MesAnoInicio").val());
             }, "El Periodo Fin no pude ser menor al Periodo Inicio.");
 
-            $("#Descuento").change(function () {
+            $("#DescuentoProntoPagoTextBox").prop("readonly", true);
+            $("#DescuentoTerceraEdad").prop("readonly", true);
+            $("#DescuentoMadreSoltera").prop("readonly", true);
+            $("#SubTotal").prop("readonly", true);
+            $("#Total").prop("readonly", true);
 
-               
+            $("#Descuento").change(function () {
                 var descuento = $(this).val().replace(/[^0-9\.]/g, '');
-                
 
                 @if (Model.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
                 {
                     <Text>
-                        var precioToma = $("#PrecioTomaTextBox").val().replace(/[^0-9\.]/g, '');
-                        $("#Total").val(precioToma - descuento);
-                        $.validator.addMethod("validaDescuent", function () {
-                            return !(Number(descuento) > Number(precioToma));
-                        }, "El descuento no puede ser mayor al precio de la toma.");
+                    var precioToma = $("#PrecioTomaTextBox").val().replace(/[^0-9\.]/g, '');
+                    $("#Total").val(precioToma - descuento);
+                    $.validator.addMethod("validaDescuent", function () {
+                        return !(Number(descuento) > Number(precioToma));
+                    }, "El descuento no puede ser mayor al precio de la toma.");
                     </Text>
                 }
                 else
                 {
                     <Text>
-                var SubTotal = $("#SubTotal").val().replace(/[^0-9\.]/g, '');
-                var descuentoProntoPago = $("#DescuentoProntoPagoTextBox").val().replace(/[^0-9\.]/g, '');
-                        $("#Total").val(SubTotal - descuento - descuentoProntoPago);
-                        $.validator.addMethod("validaDescuent", function () {
-                            return !(Number(descuento) > Number(SubTotal));
-                        }, "El descuento no puede ser mayor al Sub Total.");
+                   
+                    var SubTotal = $("#SubTotal").val().replace(/[^0-9\.]/g, '');
+                    var descuentoProntoPago = $("#DescuentoProntoPagoTextBox").val().replace(/[^0-9\.]/g, '');
+                    var descuentoTerceraEdad = $("#DescuentoTerceraEdad").val().replace(/[^0-9\.]/g, '');
+                    var descuentoMadreSoltera = $("#DescuentoMadreSoltera").val().replace(/[^0-9\.]/g, '');
+
+                $("#Total").val(SubTotal - descuento - descuentoProntoPago - descuentoTerceraEdad - descuentoMadreSoltera);
+
+                    $.validator.addMethod("validaDescuent", function () {
+                        return !(Number(descuento) > Number(SubTotal));
+                    }, "El descuento no puede ser mayor al Sub Total.");
                     </Text>
                 }
-
             });
 
             $("#MesAnoFin").change(function () {
@@ -233,36 +244,77 @@
                 var periodoInicio = $("#MesAnoInicio").val();
                 var periodoFin = $("#MesAnoFin").val();
 
-                if (periodoFin == "")
-                {
+                if ((periodoFin == "") || ($("#MesAnoFin").val() < $("#MesAnoInicio").val()))
+                {    
+                    LimpiarControles();
                     return;
                 }
-
                 $.ajax({
                     type: 'get',
                     dataType: 'json',
                     cache: false,
                     url: '@Url.Action("CalcularMontoPeriodo", "Tomas")',
-                    data: { periodoInicio: periodoInicio, periodoFin: periodoFin, categoriaId: @Model.CategoriaId },
+                    data:
+                    {
+                        periodoInicio: periodoInicio,
+                        periodoFin: periodoFin,
+                        categoriaId: @Model.CategoriaId,
+                        tomaId: @Model.TomaId
+                    },
                     success: function (response) {
                         if (response.porcentajeresult == null) {
-                            $("#SubTotal").val(response.success);
-                            $("#Total").val(response.success);
+                            document.getElementById("DescuntoProntoPagoDiv").style.display = "none";
+                            $("#Observaciones").val("");
+                            document.getElementById("DescuentoProntoPagoSpan").textContent = "";
+                            $("#DescuentoProntoPagoTextBox").val("");
                         } else {
-                            $("#SubTotal").val(response.success);
-                            $("#Total").val(response.totalresult);
                             $("#DescuentoProntoPagoTextBox").val(response.descuentoresult);
                             document.getElementById("DescuntoProntoPagoDiv").style.display = "block";
                             $("#Observaciones").val("Descuento de " + response.porcentajeresult + "% por pronto pago");
                             document.getElementById("DescuentoProntoPagoSpan").textContent = "Descuento de " + response.porcentajeresult + "% por pronto pago";
                             descuentoPronto = response.porcentajeresult;
                         }
+                        if (response.terceraEdad) {
+                            document.getElementById("DescuntoTerceraEdadDiv").style.display = "block";
+                            $("#DescuentoTerceraEdad").val(response.cantidadPorcentajeTerceraEdad);
+                            document.getElementById("DescuentoTerceraEdadSpan").textContent = "Descuento de " + response.porcentajeTerceraEdad + "% por tercera edad";
+                            if (response.cantidadPorcentajeTerceraEdad == "0") {
+                                $("#Adicional").val("");
+                            } else {
+                                $("#Adicional").val("Descuento de " + response.porcentajeTerceraEdad + "% por tercera edad");
+                                document.getElementById("DescuentoTerceraEdadId").value = response.descuentoTerceraEdadId;
+                            }                      
+                        } else {
+                            document.getElementById("DescuntoTerceraEdadDiv").style.display = "none";
+                            $("#DescuentoTerceraEdad").val("");
+                            document.getElementById("DescuentoTerceraEdadSpan").textContent = "";
+                            $("#Adicional").val("");
+                        }
+                        if (response.madreSoltera) {
+                            document.getElementById("DescuntoMadreSolteraDiv").style.display = "block";
+                            $("#DescuentoMadreSoltera").val(response.cantidadPorcentajeMadreSoltera);
+                            document.getElementById("DescuentoMadreSolteraSpan").textContent = "Descuento de " + response.porcentajeMadreSoltera + "% por madre soltera";
+                            if (response.cantidadPorcentajeMadreSoltera == "0") {
+                                $("#RenglonAdicional1").val("");
+                            } else {
+                                $("#RenglonAdicional1").val("Descuento de " + response.porcentajeMadreSoltera + "% por madre soltera");   
+                                document.getElementById("DescuentoMadreSolteraId").value = response.descuentoMadreSolteraId;
+                            }
+                        } else {
+                            document.getElementById("DescuntoMadreSolteraDiv").style.display = "none";
+                            $("#DescuentoMadreSoltera").val("");
+                            document.getElementById("DescuentoMadreSolteraSpan").textContent = "";
+                            $("#RenglonAdicional1").val("");
+                        }
+                        
+
+                        $("#SubTotal").val(response.success);
+                        $("#Total").val(response.totalResul);
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         alert('Error - ' + errorThrown);
                     }
                 });
-
             });
 
             var mesAnoInicio = $("#MesAnoInicio").val();
@@ -276,16 +328,13 @@
 
                 var SubTotal = $(this).val().replace(/[^0-9\.]/g, '');
                 var descuento = $("#Descuento").val().replace(/[^0-9\.]/g, '');
-                if (descuentoPronto != null) {
-                    var desc = descuentoPronto * SubTotal / 100;
-                    $("#DescuentoProntoPagoTextBox").val(desc);
-                    $("#Total").val(SubTotal - descuento - desc);
-                } else {
-                    $("#Total").val(SubTotal - descuento);
-                }
+                var descuentoProntoPago = $("#DescuentoProntoPagoTextBox").val().replace(/[^0-9\.]/g, '');
+                var descuentoTerceraEdad = $("#DescuentoTerceraEdad").val().replace(/[^0-9\.]/g, '');
+                var descuentoMadreSoltera = $("#DescuentoMadreSoltera").val().replace(/[^0-9\.]/g, '');
+
+                $("#Total").val(SubTotal - descuento - descuentoProntoPago - descuentoTerceraEdad - descuentoMadreSoltera);
 
             });
-
             $("#DescuentoProntoPagoTextBox").change(function () {
 
                 var SubTotal = $("#SubTotal").val().replace(/[^0-9\.]/g, '');
@@ -295,7 +344,6 @@
                 $("#Total").val(SubTotal - descuento - descuentoProntoPago );
 
             });
-
             $("#PrecioTomaTextBox").change(function () {
                 var precioToma = $(this).val().replace(/[^0-9\.]/g, '');
                 var descuento = $("#Descuento").val().replace(/[^0-9\.]/g, '');
@@ -308,6 +356,23 @@
                     window.location = "@Url.Action("GuardarPagoSuministroAgua", "Tomas")?" + $("#PagoForm").serialize();
                 }
             });//$("#GuardarButton").click(function () {
+            function LimpiarControles() {
+                $("#SubTotal").val("");
+                $("#Total").val("");
+                $("#Descuento").val("");
+                $("#Observaciones").val("");
+                $("#Adicional").val("");
+                $("#RenglonAdicional1").val("");
+                $("#DescuentoProntoPagoTextBox").val("");
+                $("#DescuentoTerceraEdad").val("");
+                $("#DescuentoMadreSoltera").val("");
+                document.getElementById("DescuntoProntoPagoDiv").style.display = "none";
+                document.getElementById("DescuntoTerceraEdadDiv").style.display = "none";
+                document.getElementById("DescuntoMadreSolteraDiv").style.display = "none";
+                document.getElementById("DescuentoProntoPagoSpan").textContent = "";
+                document.getElementById("DescuentoTerceraEdadSpan").textContent = "";
+                document.getElementById("DescuentoMadreSolteraSpan").textContent = "";                         
+            }
         });
         
     </script>

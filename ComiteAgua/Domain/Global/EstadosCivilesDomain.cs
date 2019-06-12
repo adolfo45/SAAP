@@ -20,7 +20,12 @@ namespace ComiteAgua.Domain.Global
         #endregion
 
         #region * Enumeraciones declaradas por Comité Agua *
-
+        public enum EstadosCivilesEnum
+        {
+            Soltero = 1,
+            Casado,
+            MadreSoltera
+        }
         #endregion
 
         #region * Variables declaradas por Comité Agua *

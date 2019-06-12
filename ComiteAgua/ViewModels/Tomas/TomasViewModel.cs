@@ -79,6 +79,7 @@ namespace ComiteAgua.ViewModels.Tomas
         public string Secretario { get; set; }
         public string Presidente { get; set; }
         public string Precio { get; set; }
+        public int PersonaId { get; set; }        
 
         public List<Categoria> Categorias { get; set; }
         public DireccionesViewModel Direccion { get; set; }

@@ -11,9 +11,16 @@
         <li class="breadcrumb-item active" aria-current="page"><a>Descuentos</a></li>
     </ol>
 </nav>
-
+<div class="row">
+    <div class="col-md-12 text-right">
+        <a href="@Url.Action("EditAddDescuento","Catalogos", new { urlRetorno = Url.Action("Descuentos", "Catalogos") })" class="btn btn-success active" role="button" aria-pressed="true" title="Agregar"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</a>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-6 offset-md-3">
+        <div class="text-center">
+            <h4><label>Descuentos Pronto Pago</label></h4>
+        </div>
         <table id="descuentos" class="table table-hover table-bordered table-sm" style="width: 100%">
             <thead class="thead-dark text-center">
             <tr>
@@ -47,14 +54,7 @@
     </div>
 </div>
 
-    @section scripts
-{
-        <script>
-            $(document).ready(function () {
-                $('#descuentos').DataTable();
-            });
-        </script>
-    }
+
 
 
 

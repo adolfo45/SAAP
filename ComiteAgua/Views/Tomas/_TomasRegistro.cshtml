@@ -1,22 +1,22 @@
 ﻿@model ComiteAgua.ViewModels.Tomas.TomasViewModel
-
+@using ComiteAgua.Domain
 @{
 
 }
 
-@*@using (Html.BeginForm("GuardarToma", "Tomas", FormMethod.Post, new { role = "form" }))
-{*@
 <form id="TomaForm">
     @Html.HiddenFor(m => m.TomaId)
+    @Html.HiddenFor(m => m.PersonaId)
     @Html.HiddenFor(m => m.PropietarioId)
     @Html.HiddenFor(m => m.DireccionId)
     @Html.HiddenFor(m => m.Activa)
+    @Html.Hidden("tipoArchivoId",0)
 
     @*Folio*@
     <div class="form-group row">
         @Html.LabelFor(x => x.Folio, new { @for = "Folio", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
-            @Html.TextBoxFor(d => d.Folio, new { @class = "form-control", @type="number" })
+            @Html.TextBoxFor(d => d.Folio, new { @class = "form-control", @type = "number" })
             @Html.ValidationMessageFor(m => m.Folio, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
@@ -47,6 +47,15 @@
         </div>
     </div>
 
+    @*Archivos*@
+    <div class="form-group row">
+        @Html.Label("Archivos", new { @for = "Pasiva", @class = "col-md-2 col-form-label offset-md-2" })
+        <div class="col-sm-6">
+            <a href="javascript:AgregarArchivoToma(@Convert.ToInt32(TiposArchivosDomain.TiposArchivosDomainEnum.TomaNueva))" id="AgregarArchivoTomaButton" title="Agregar Archivo"><i class="fa fa-file-image-o fa-lg verde" aria-hidden="true"></i></a>
+            <a href="javascript:VerArchivoToma(@Convert.ToInt32(TiposArchivosDomain.TiposArchivosDomainEnum.TomaNueva))" class="offset-md-1" id="VerArchivoTomaButton" title="Ver Archivo"><i class="fa fa-search fa-lg naranja" aria-hidden="true"></i></a>
+        </div>
+    </div>
+
     @*Button*@
     <div class="row">
         <div class="mr-auto ml-auto">
@@ -54,38 +63,208 @@
         </div>
     </div>
 </form>
-@*}*@
 
-    <script>
-        $("#GuardarButton").click(function () {
-            if ($("#TomaForm").valid()) {
-                // Valida folio
-                var tomaId = document.getElementById('TomaId').value;
-                var folio = document.getElementById('Folio').value;
-                var token = new Date().getTime();
-                $.ajax({
-                    url: "@Url.Action("ValidarFolio", "Tomas")?tomaId=" + tomaId + "&folio=" + folio + "&downloadToken=" + token,
-                    success: function (result) {
-                        if (result.existe) {
-                            blockUIForDownload(token);
-                            toastr.warning(
-                                "El folio ya se encuentra en existencia",
-                                "Alerta",
-                                {
-                                    closeButton: true,
-                                    progressBar: true,
-                                    positionClass: "toast-bottom-full-width"
-                                });
-                            document.getElementById("Folio").focus();
-                        } else {
-                            BloquearProcesando();
-                            window.location = "@Url.Action("GuardarToma", "Tomas")?" + $("#TomaForm").serialize();
-                        }
-                    },
-                    error: function () {
-                        toastr.error("Error al validar el folio", "Tomas", { closeButton: true, progressBar: true, positionClass: "toast-bottom-full-width" });
+<!--MODAL ARCHIVOS-->
+<form id="ArchivosTomaForm">
+    <div class="modal fade" id="ArchivoTomaModal" tabindex="-1" role="dialog" aria-labelledby="ArchivoTomaModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ArchivoTomaModalLabel">Agregar Archivos Toma</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group row">
+                        @Html.Label(string.Empty,"Nombre", new { @for = "NombreTomaArchivo", @class = "col-md-3 col-form-label" })
+                        <div class="col-md-9">
+                            @Html.TextBox("NombreTomaArchivo",null, new { @class = "form-control validaNombreTomaArchivo" })
+                            @Html.ValidationMessage("NombreTomaArchivo", null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        @Html.Label("Archivo", new { @for = "UrlTomaArchivo", @class = "col-md-3 col-form-label" })
+                        <div class="col-md-9">
+                            <input type="file" class="form-control-file validaTomaArchivo" id="fileToma">
+                            @Html.ValidationMessage("UrlTomaArchivo", null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
+                    </div>
+                    @*Lista Archivos*@
+                    <div class="form-group row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-9">
+                            <div id="TomaArchivos"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="CancelarArchivoTomaButton" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i> Cerrar</button>
+                    <button id="GuardarArchivoTomaButton" type="button" class="btn btn-success"><i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="modal fade" id="ConsultarArchivoTomaModal" tabindex="-1" role="dialog" aria-labelledby="ConsultarArchivoTomaModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ConsultarArchivoTomaModalLabel">Consultar Archivos Toma</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @*Lista Archivos*@
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <div id="ConsultarArchivosToma"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="CancelarButton" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i> Cerrar</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $.validator.addMethod("validaNombreTomaArchivo", function () {
+            return $("#NombreTomaArchivo").val().trim().length > 0;
+        }, "El nombre es requerido.");//$.validator.addMethod("validaNombreArchivo", function () {
+        $.validator.addMethod("validaTomaArchivo", function () {
+            return $("#fileToma").val().trim().length > 0;
+        }, "El archivo es requerido.");//$.validator.addMethod("validaArchivo", function () {
+    });
+    $("#GuardarButton").click(function () {
+        if ($("#TomaForm").valid()) {
+            // Valida folio
+            var tomaId = document.getElementById('TomaId').value;
+            var folio = document.getElementById('Folio').value;
+            var token = new Date().getTime();
+            $.ajax({
+                url: "@Url.Action("ValidarFolio", "Tomas")?tomaId=" + tomaId + "&folio=" + folio + "&downloadToken=" + token,
+                success: function (result) {
+                    if (result.existe) {
+                        blockUIForDownload(token);
+                        toastr.warning(
+                            "El folio ya se encuentra en existencia",
+                            "Alerta",
+                            {
+                                closeButton: true,
+                                progressBar: true,
+                                positionClass: "toast-bottom-full-width"
+                            });
+                        document.getElementById("Folio").focus();
+                    } else {
+                        BloquearProcesando();
+                        window.location = "@Url.Action("GuardarToma", "Tomas")?" + $("#TomaForm").serialize();
                     }
-                });//$.ajax({      
+                },
+                error: function () {
+                    toastr.error("Error al validar el folio", "Tomas", { closeButton: true, progressBar: true, positionClass: "toast-bottom-full-width" });
+                }
+            });//$.ajax({
+        }
+    });//$("#GuardarCambioPropietarioButton").click(function () {
+    $("#GuardarArchivoTomaButton").click(function () {
+        if ($("#ArchivosTomaForm").valid()) {
+            var file = document.getElementById("fileToma").files[0];
+            var name = document.getElementById("fileToma").files[0].name;
+            var nombreArchivo = $("#NombreTomaArchivo").val();
+            var personaId = document.getElementById("PersonaId").value;
+            var tipoArchivoId = document.getElementById('tipoArchivoId').value;
+
+            var size = file.size / 1024;
+            if (size > 3716) {
+                toastr.warning(
+                    "El Archivo es demasiado grande, debe ser menor a 3.6MB",
+                    "Alerta",
+                    {
+                        closeButton: true,
+                        progressBar: true,
+                        positionClass: "toast-bottom-full-width"
+                    });
+                return;
             }
-        });//$("#GuardarCambioPropietarioButton").click(function () {
-    </script>
+            var formData = new FormData();
+            formData.append('file', file);
+            formData.append('name', nombreArchivo);
+            formData.append('PersonaId', personaId);
+            formData.append('TipoArchivoId', tipoArchivoId);
+            
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("_ListaArchivosToma", "Tomas")',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    //$('#ArchivoModal').modal('hide');
+                    $("#fileToma").val("");
+                    $("#NombreTomaArchivo").val("");
+                    $("#TomaArchivos").html(data);
+                    $.unblockUI();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    
+                    $("#fileToma").val("");
+                    $("#NombreTomaArchivo").val("");                   
+                    alert('Error - ' + errorThrown);
+                }
+            });
+        }
+    });
+    function AgregarArchivoToma(tipoArchivoId) {
+        var personaId = document.getElementById("PersonaId").value;
+        document.getElementById('tipoArchivoId').value = tipoArchivoId;
+        $.ajax({
+            type: 'get',
+            cache: false,
+            url: '@Url.Action("ConsultarArchivosToma", "Tomas")',
+            data:
+            {
+                personaId: personaId,
+                tipoArchivoId: tipoArchivoId
+            },
+            success: function (data) {
+                $("#TomaArchivos").html(data);
+                $('#ArchivoTomaModal').modal('show');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $("#fileToma").val("");
+                $("#NombreTomaArchivo").val("");
+                alert('Error - ' + errorThrown);
+            }
+        });
+    }//function AgregarArchivo(tipoArchivoId) {
+    function VerArchivoToma(tipoArchivoId) {
+        var personaId = document.getElementById("PersonaId").value;
+        document.getElementById('tipoArchivoId').value = tipoArchivoId;
+        $.ajax({
+            type: 'get',
+            cache: false,
+            url: '@Url.Action("_ConsultarArchivosToma", "Tomas")',
+            data:
+            {
+                personaId: personaId,
+                tipoArchivoId: tipoArchivoId
+            },
+            success: function (data) {
+                $("#ConsultarArchivosToma").html(data);
+                $('#ConsultarArchivoTomaModal').modal('show');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error - ' + errorThrown);
+            }
+        });
+    }//function VerArchivo(tipoArchivoId) {
+</script>

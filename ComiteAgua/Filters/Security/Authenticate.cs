@@ -14,7 +14,7 @@ namespace ComiteAgua.Filters.Security
         // Si no estamos logeado, regresamos al login
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {            
-            if (!UserSession.ExistUserInSession() || filterContext.HttpContext.Session["UsuarioId"] == null)
+            if (filterContext.HttpContext.Session["UsuarioId"] == null)
             {
                 filterContext.Result = new RedirectResult("~/Account");                
             }

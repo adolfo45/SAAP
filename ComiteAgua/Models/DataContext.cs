@@ -23,7 +23,7 @@ namespace ComiteAgua.Models
                
         #region * Constructor generado por Comité Agua *
         public DataContext() : base("name=ComiteAgua")
-        {     
+        {                 
             //Database.Connection.ConnectionString = AdsertiFunciones.DesencriptarTexto(ConfigurationManager.ConnectionStrings["ComiteAgua"].ConnectionString);
         }
         #endregion
@@ -58,8 +58,6 @@ namespace ComiteAgua.Models
         public DbSet<EstatusConvenio> EstatusConvenio { get; set; }
         public DbSet<PeriodoPagoConvenio> PeriodoPagoConvenio { get; set; }
         public DbSet<Convenio> Convenio { get; set; }
-        public DbSet<Descuento> Descuento { get; set; }
-        public DbSet<ModoDescuento> ModoDescuento { get; set; }
         public DbSet<LiquidacionToma> LiquidacionToma { get; set; }
         public DbSet<Gasto> Gasto { get; set; }
         public DbSet<ArchivoGasto> ArchivoGasto { get; set; }
@@ -87,6 +85,10 @@ namespace ComiteAgua.Models
         public DbSet<TipoRenta> TipoRenta { get; set; }
         public DbSet<CambioPropietario> CambioPropietario { get; set; }
         public DbSet<PersonaMoral> PersonaMoral { get; set; }
+        public DbSet<ArchivoPersona> ArchivoPersona { get; set; }
+        public DbSet<TipoArchivo> TipoArchivo { get; set; }
+        public DbSet<TipoDescuento> TipoDescuento { get; set; }
+        public DbSet<Descuento> Descuento { get; set; }
         #endregion
 
         #region * Acciones generados por Comité Agua *
@@ -522,39 +524,6 @@ namespace ComiteAgua.Models
 
             #endregion
 
-            #region * Descuento *           
-
-            modelBuilder.Entity<Descuento>().ToTable("Descuentos", "Comite")
-            .HasKey(a => a.DescuentoId);
-
-            modelBuilder.Entity<Descuento>().Property(x => x.Nombre)
-           .HasColumnName("Descuento")
-           .HasMaxLength(100)
-           .IsRequired();
-
-            modelBuilder.Entity<Descuento>().Property(cpm => cpm.PeriodoDescuentoInicio)
-             .HasColumnType("date");
-
-            modelBuilder.Entity<Descuento>().Property(cpm => cpm.PeriodoDescuentoFin)
-             .HasColumnType("date");
-
-            modelBuilder.Entity<Descuento>().Property(cpm => cpm.MesAnoPago)
-             .HasColumnType("date");
-
-            #endregion
-
-            #region * Modo Descuento *
-
-            modelBuilder.Entity<ModoDescuento>().ToTable("ModoDescuento", "Comite")
-            .HasKey(a => a.ModoDescuentoId);
-
-            modelBuilder.Entity<ModoDescuento>().Property(x => x.Nombre)
-           .HasColumnName("ModoDescuento")
-           .HasMaxLength(100)
-           .IsRequired();
-
-            #endregion
-
             #region * Liquidacion Toma *
 
             modelBuilder.Entity<LiquidacionToma>().ToTable("LiquidacionesToma", "Comite")
@@ -824,6 +793,9 @@ namespace ComiteAgua.Models
 
             modelBuilder.Entity<Recibo>().Property(x => x.RenglonAdicional3)
                .HasMaxLength(250)
+               .IsOptional();
+            modelBuilder.Entity<Recibo>().Property(x => x.Concepto)
+               .HasMaxLength(50)
                .IsOptional();
 
             #endregion
@@ -1117,6 +1089,101 @@ namespace ComiteAgua.Models
             modelBuilder.Entity<CambioPropietarioPersonaMoral>()
                 .HasOptional(p => p.UsuarioCambio)
                 .WithMany(u => u.CambioPropietarioMoralCambio)
+                .HasForeignKey(p => p.UsuarioCambioId);
+            #endregion
+
+            #region * ArchivoPersona *
+            modelBuilder.Entity<ArchivoPersona>().ToTable("ArchivosPersona", "Comite")
+             .HasKey(a => a.ArchivoPersonaId);
+
+            modelBuilder.Entity<ArchivoPersona>().Property(x => x.Nombre)
+                      .HasMaxLength(150)
+                      .IsRequired();
+
+            modelBuilder.Entity<ArchivoPersona>().Property(x => x.UrlArchivo)
+                      .HasMaxLength(250)
+                      .IsRequired();
+           
+            modelBuilder.Entity<ArchivoPersona>()
+            .HasRequired(p => p.UsuarioAlta)
+            .WithMany(u => u.ArchivoPersonaAlta)
+            .HasForeignKey(p => p.UsuarioAltaId);
+
+            modelBuilder.Entity<ArchivoPersona>()
+                .HasOptional(p => p.UsuarioCambio)
+                .WithMany(u => u.ArchivoPersonaCambio)
+                .HasForeignKey(p => p.UsuarioCambioId);
+            #endregion
+
+            #region * ArchivoPersona *
+            modelBuilder.Entity<TipoArchivo>().ToTable("TiposArchivo", "Comite")
+             .HasKey(a => a.TipoArchivoId);
+
+            modelBuilder.Entity<TipoArchivo>().Property(x => x.Nombre)
+                      .HasMaxLength(150)
+                      .IsRequired();
+
+            modelBuilder.Entity<TipoArchivo>()
+            .HasRequired(p => p.UsuarioAlta)
+            .WithMany(u => u.TipoArchivoAlta)
+            .HasForeignKey(p => p.UsuarioAltaId);
+
+            modelBuilder.Entity<TipoArchivo>()
+                .HasOptional(p => p.UsuarioCambio)
+                .WithMany(u => u.TipoArchivoCambio)
+                .HasForeignKey(p => p.UsuarioCambioId);
+            #endregion
+
+            #region * TipoDescuento *
+            modelBuilder.Entity<TipoDescuento>().ToTable("TiposDescuento", "Comite")
+             .HasKey(a => a.TipoDescuentoId);
+
+            modelBuilder.Entity<TipoDescuento>().Property(x => x.Nombre)
+              .HasColumnName("TipoDescuento")
+              .HasMaxLength(150)
+              .IsRequired();
+
+            modelBuilder.Entity<TipoDescuento>()
+            .HasRequired(p => p.UsuarioAlta)
+            .WithMany(u => u.TipoDescuentoAlta)
+            .HasForeignKey(p => p.UsuarioAltaId);
+
+            modelBuilder.Entity<TipoDescuento>()
+                .HasOptional(p => p.UsuarioCambio)
+                .WithMany(u => u.TipoDescuentoCambio)
+                .HasForeignKey(p => p.UsuarioCambioId);
+            #endregion
+
+            #region * Descuento *
+            modelBuilder.Entity<Descuento>().ToTable("Descuentos", "Comite")
+             .HasKey(a => a.DescuentoVariosId);
+
+            modelBuilder.Entity<Descuento>().Property(x => x.Porcentaje)
+             .IsRequired();
+
+            modelBuilder.Entity<Descuento>()
+            .HasRequired(p => p.UsuarioAlta)
+            .WithMany(u => u.DescuentoAlta)
+            .HasForeignKey(p => p.UsuarioAltaId);
+
+            modelBuilder.Entity<Descuento>()
+                .HasOptional(p => p.UsuarioCambio)
+                .WithMany(u => u.DescuentoCambio)
+                .HasForeignKey(p => p.UsuarioCambioId);
+            #endregion
+
+            #region * DescuentoPago *
+            modelBuilder.Entity<DescuentoPago>().ToTable("DescuentosPagos", "Comite")
+             .HasKey(a => a.DescuentoPagoId);
+
+            modelBuilder.Entity<DescuentoPago>()
+            .HasRequired(p => p.UsuarioAlta)
+            .WithMany(u => u.DescuentoPagoAlta)
+            .HasForeignKey(p => p.UsuarioAltaId);
+
+            modelBuilder.Entity<DescuentoPago>()
+                .HasOptional(p => p.UsuarioCambio)
+                .WithMany(u => u.DescuentoPagoCambio)
                 .HasForeignKey(p => p.UsuarioCambioId);
             #endregion
         } // protected override void OnModelCreating(DbModelBuilder modelBuilder)

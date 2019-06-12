@@ -43,21 +43,21 @@
                     </div>
                 </div>   
                 @*Abreviatura*@
-                <div class="form-group row">
+                @*<div class="form-group row">
                         @Html.LabelFor(x => x.MesAno, new { @for = "Total", @class = "col-md-2 col-form-label ml-auto" })
                         <div class="col-sm-6 mr-auto">
                             @Html.TextBoxFor(d => d.MesAno, new { @class = "form-control", @type="number" })
                             @Html.ValidationMessageFor(m => m.MesAno, null, new { @class = "badge badge-pill badge-danger" })
                         </div>
-                    </div>
+                    </div>*@
                 @*Costo Tarifa*@
-                <div class="form-group row">
+                @*<div class="form-group row">
                         @Html.LabelFor(x => x.CostoTarifa, new { @for = "Total", @class = "col-md-2 col-form-label ml-auto" })
                         <div class="col-sm-6 mr-auto">
                             @Html.TextBoxFor(d => d.CostoTarifa, new { @class = "form-control moneda" })
                             @Html.ValidationMessageFor(m => m.CostoTarifa, null, new { @class = "badge badge-pill badge-danger" })
                         </div>
-                    </div>
+                    </div>*@
             </div>
             <div class="card-footer">
                 @*Button*@

@@ -45,7 +45,7 @@ namespace ComiteAgua.Controllers
         {
             if (bandera)
                 ShowToastMessage("SAAP", "Bienvenido a SAAP...", ToastMessage.ToastType.Info);
-
+            this.LimpiarSesiones();
             return View();          
         }
         public JsonResult Listar(AnexGRID agrid)
@@ -64,7 +64,11 @@ namespace ComiteAgua.Controllers
             _context.Dispose();
 
         } // protected override void Dispose(bool disposing)
-
+        private void LimpiarSesiones()
+        {
+            Session["ListaArchivos"] = null;
+            Session["ListaHttp"] = null;
+        }
         #endregion
 
     } // public class HomeController : Controller

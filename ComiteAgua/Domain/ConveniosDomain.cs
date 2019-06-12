@@ -119,6 +119,7 @@ namespace ComiteAgua.Domain
         public Convenio ObtenerConvenioActivo(int tomaId = 0)
         {
             var result = _context.Convenio
+                .Include(c => c.Pago)
                 .Where(c => c.TomaId == tomaId &&
                             (c.EstatusConvenioId == (int) EstatusConvenioDomain.EstatusConvenioEnum.Activo ||
                              c.EstatusConvenioId == (int) EstatusConvenioDomain.EstatusConvenioEnum.Cancelado) &&
@@ -136,48 +137,30 @@ namespace ComiteAgua.Domain
         } 
         public IQueryable<ConveniosViewModel> ObtenerConvenios()
         {
-            var query = _context.Convenio
-               .Join(_context.EstatusConvenio,
-                   c => c.EstatusConvenioId,
-                   ec => ec.EstatusConvenioId,
-                   (c, ec) => new { Convenio = c, EstatusConvenio = ec })
-               .Join(_context.ConceptoConvenio,
-                   c_c => c_c.Convenio.ConceptoConvenioId,
-                   cc => cc.ConceptoConvenioId,
-                   (c_c, cc) => new { c_c.Convenio, c_c.EstatusConvenio, ConceptoConvenio = cc })
-               .Join(_context.Toma,
-                    c_c_c => c_c_c.Convenio.TomaId,
-                    t => t.TomaId,
-                    (c_c_c, t) => new { c_c_c.Convenio, c_c_c.EstatusConvenio, c_c_c.ConceptoConvenio, Toma = t })
-               .Join(_context.Propietario,
-                    t_t => t_t.Toma.PropietarioId,
-                    p => p.PropietarioId,
-                    (t_t, p) => new { t_t.Toma, t_t.Convenio, t_t.EstatusConvenio, t_t.ConceptoConvenio, Propietario = p })
-                .Join(_context.Persona,
-                    p_p => p_p.Propietario.PersonaId,
-                    per => per.PersonaId,
-                    (p_p, per) => new { p_p.Propietario, p_p.Toma, p_p.Convenio, p_p.EstatusConvenio, p_p.ConceptoConvenio, Persona = per })
-                .Join(_context.PersonaFisica,
-                    per_per => per_per.Persona.PersonaId,
-                    pf => pf.PersonaId,
-                    (per_per, pf) => new { per_per.Persona, per_per.Propietario, per_per.Toma, per_per.Convenio, per_per.EstatusConvenio, per_per.ConceptoConvenio, PersonaFisica = pf })
-                .Join(_context.PersonaMoral,
-                    perm_perm => perm_perm.Persona.PersonaId,
-                    pfm => pfm.PersonaId,
-                    (perm_perm, pfm) => new { perm_perm.Persona, perm_perm.Propietario, perm_perm.Toma, perm_perm.Convenio, perm_perm.EstatusConvenio, perm_perm.ConceptoConvenio, PersonaFisica = perm_perm.PersonaFisica, PersonaMoral = pfm })
-                    .Select(c => new ConveniosViewModel
-                    {
-                        ConvenioId = c.Convenio.ConvenioId,
-                        ConceptoConvenio = c.ConceptoConvenio.Nombre,
-                        EstatusConvenio = c.EstatusConvenio.Nombre,
-                        TomaId = c.Toma.TomaId,
-                        Folio = c.Toma.Folio,
-                        NoTarjeta = c.Convenio.NoTarjeta,
-                        NombreCompleto = c.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica ? c.PersonaFisica.Nombre + " " + c.PersonaFisica.ApellidoPaterno + " " + c.PersonaFisica.ApellidoMaterno : c.PersonaMoral.Nombre
-                    })
-                    .OrderBy(x => x.Folio);
+            var convenios = _context.Convenio
+                .Include(c => c.EstatusConvenio)
+                .Include(c => c.ConceptoConvenio)
+                .Include(c => c.Toma)
+                .Include(c => c.Toma.Propietario)
+                .Include(c => c.Toma.Propietario.Persona)
+                .Include(c => c.Toma.Propietario.Persona.PersonaFisica)
+                .Include(c => c.Toma.Propietario.Persona.PersonaMoral)
+                .OrderBy(c => c.Toma.Folio);
 
-            return query;
+            var preList = convenios
+               .Select(up => new ConveniosViewModel
+               {
+                   ConvenioId = up.ConvenioId,
+                   ConceptoConvenio = up.ConceptoConvenio.Nombre,
+                   EstatusConvenio = up.EstatusConvenio.Nombre,
+                   TomaId = up.Toma.TomaId,
+                   Folio = up.Toma.Folio,
+                   NoTarjeta = up.NoTarjeta,
+                   NombreCompleto = up.Toma.Propietario.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica ? up.Toma.Propietario.Persona.PersonaFisica.Nombre + " " + up.Toma.Propietario.Persona.PersonaFisica.ApellidoPaterno + " " + up.Toma.Propietario.Persona.PersonaFisica.ApellidoMaterno : up.Toma.Propietario.Persona.PersonaMoral.Nombre
+               })
+               .OrderByDescending(up => up.Folio);
+
+            return preList;
         }
 
         #endregion

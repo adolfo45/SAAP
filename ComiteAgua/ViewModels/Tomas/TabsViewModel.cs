@@ -26,7 +26,6 @@ namespace ComiteAgua.ViewModels.Tomas
         #endregion
 
         #region * Propiedades declaradas por Comité Agua * 
-
         public string TabDireccionActivo { get; set; }
         public string TabTomaActivo { get; set; }
         public string TabPropietarioActivo { get; set; }
@@ -54,7 +53,9 @@ namespace ComiteAgua.ViewModels.Tomas
                 return "Error";
             } // get
         } // public string Titulo
-
+        public int PropietarioId { get; set; }
+        public int? LiquidacionTomaId { get; set; }
+        public int? DireccionId { get; set; }
         #endregion
 
         #region * Eventos generados por Comité Agua *

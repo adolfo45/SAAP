@@ -41,6 +41,7 @@ namespace ComiteAgua.ViewModels.Tomas
         [Display(Name = "Costo")]
         [Required(ErrorMessage = "El {0} es requerido.")]
         public string CostoCambioPropietario { get; set; }
+        public bool ExisteArchivoPersona { get; set; }
         #endregion
 
         #region * Acciones generados por Comité Agua *

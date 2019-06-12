@@ -33,6 +33,7 @@ namespace ComiteAgua.ViewModels.Catalogos
         [Required(ErrorMessage = "La {0} es requerida.")]
         public string Categoria { get; set; }
 
+        [Display(Name = "Abreviatura")]
         [Required(ErrorMessage = "La {0} es requerida.")]
         public string Abreviatura { get; set; }
         public int UsuarioAltaId { get; set; }

@@ -71,6 +71,39 @@ namespace ComiteAgua.Print
             var recibosDomain = new RecibosDomain(_context);
             var recibo = recibosDomain.ObtenerReciboImpresion(Convert.ToInt32(this.ReciboIdHiddenField.Value.Trim()));
 
+            //Recibo Extra
+            if (recibo.Pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Otro)
+            {
+                this.CanceladoText.Visible = !recibo.Pago.Activo;
+                this.UsuarioTextBox.InnerText = recibo.Pago.Toma.Propietario.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica ?
+                                                recibo.Pago.Toma.Propietario.Persona.PersonaFisica.Nombre + " " +
+                                                recibo.Pago.Toma.Propietario.Persona.PersonaFisica.ApellidoPaterno + " " +
+                                                recibo.Pago.Toma.Propietario.Persona.PersonaFisica.ApellidoMaterno : recibo.Pago.Toma.Propietario.Persona.PersonaMoral.Nombre;
+
+                this.DireccionTextBox.InnerText = recibo.Pago.Toma.DireccionId > 0 ? (recibo.Pago.Toma.Direccion.CalleId > 0 ? recibo.Pago.Toma.Direccion.TiposCalle.Nombre + " " + recibo.Pago.Toma.Direccion.Calles.Nombre : recibo.Pago.Toma.Direccion.Calle) + "" + (!string.IsNullOrEmpty(recibo.Pago.Toma.Direccion.NumExt) ? " EXT." + recibo.Pago.Toma.Direccion.NumExt : string.Empty) + "" +
+                                                            (!string.IsNullOrEmpty(recibo.Pago.Toma.Direccion.NumInt) ? " INT." + recibo.Pago.Toma.Direccion.NumInt : string.Empty) : string.Empty;
+
+                this.ConceptoPagoTextBox.InnerText = recibo.Concepto;
+                this.FechaTextBox.InnerText = recibo.FechaAlta.ToString("dd/MM/yyyy");
+                this.FolioTextBox.InnerText = recibo.Pago.Toma.Folio.ToString();
+                this.NoReciboTextBox.InnerText = recibo.NoRecibo.ToString();
+               
+                this.AdicionalTextBox.InnerText = recibo.Adicional;
+                this.CantidadLetraTextBox.InnerText = recibo.CantidadLetra;
+                this.TotalTextBox.InnerText = recibo.Pago.Total.ToString("C");
+                this.SubTotalTextBox.InnerText = recibo.Pago.SubTotal.ToString("C");               
+                this.RenglonAdicional1.InnerText = recibo.RenglonAdicional1;
+                         
+                if (recibo.Pago.Descuento != null)
+                {
+                    this.DescuentoTextBox.InnerText = Convert.ToDecimal(recibo.Pago.Descuento).ToString("C");
+                }               
+                // Muestra codigo QR                                    
+                CodigoImg.ImageUrl = "/UploadFiles/CodigosQR/" + recibo.CodigoQRurl;
+                CodigoImg.Height = 100;
+                CodigoImg.Width = 100;
+                return;
+            }
             //Recibo Renta
             if (recibo.Pago.RentaId != null)
             {
@@ -175,19 +208,31 @@ namespace ComiteAgua.Print
             this.RenglonAdicional2.InnerText = recibo.RenglonAdicional2;
             this.RenglonAdicional3.InnerText = recibo.RenglonAdicional3;
 
-            if (recibo.Pago.DescuentProntoPago != null && recibo.Pago.Descuento != null)
-            {
-                this.DescuentoTextBox.InnerText = Convert.ToDecimal(recibo.Pago.DescuentProntoPago).ToString("C");
-                this.OtroTextBox.InnerText = Convert.ToDecimal(recibo.Pago.Descuento).ToString("C");
-            }else if (recibo.Pago.DescuentProntoPago != null)
-            {
-                this.DescuentoTextBox.InnerText = Convert.ToDecimal(recibo.Pago.DescuentProntoPago).ToString("C");
-            }else if (recibo.Pago.Descuento != null)
-            {
-                this.DescuentoTextBox.InnerText = Convert.ToDecimal(recibo.Pago.Descuento).ToString("C");
-            }
+            //Suma descuentos 
+            decimal descuentoProntoPago = recibo.Pago.DescuentProntoPago != null ? Convert.ToDecimal(recibo.Pago.DescuentProntoPago) : 0;
+            decimal descuentoMadreSoltera = recibo.Pago.DescuentoMadreSoltera != null ? Convert.ToDecimal(recibo.Pago.DescuentoMadreSoltera) : 0;
+            decimal descuentoTerceraEdad = recibo.Pago.DescuentoTerceraEdad != null ? Convert.ToDecimal(recibo.Pago.DescuentoTerceraEdad) : 0;
+            decimal descuento = recibo.Pago.Descuento != null ? Convert.ToDecimal(recibo.Pago.Descuento) : 0;
 
-            if(recibo.Pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
+            decimal totalDescuentoPersona = descuentoProntoPago + descuentoMadreSoltera + descuentoTerceraEdad;
+
+            this.DescuentoTextBox.InnerText = totalDescuentoPersona > 0 ? totalDescuentoPersona.ToString("C") :
+                descuento > 0 ? descuento.ToString("C") : string.Empty;
+            this.OtroTextBox.InnerText = totalDescuentoPersona > 0 ? descuento > 0 ? descuento.ToString("C") : string.Empty : string.Empty; 
+
+            //if (recibo.Pago.DescuentProntoPago != null && recibo.Pago.Descuento != null)
+            //{
+            //    this.DescuentoTextBox.InnerText = Convert.ToDecimal(recibo.Pago.DescuentProntoPago).ToString("C");
+            //    this.OtroTextBox.InnerText = Convert.ToDecimal(recibo.Pago.Descuento).ToString("C");
+            //}else if (recibo.Pago.DescuentProntoPago != null)
+            //{
+            //    this.DescuentoTextBox.InnerText = Convert.ToDecimal(recibo.Pago.DescuentProntoPago).ToString("C");
+            //}else if (recibo.Pago.Descuento != null)
+            //{
+            //    this.DescuentoTextBox.InnerText = Convert.ToDecimal(recibo.Pago.Descuento).ToString("C");
+            //}
+
+            if (recibo.Pago.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
             {
                 //this.OtroTextBox.InnerText = Convert.ToDecimal(recibo.Pago.CostoToma).ToString("C");
                 this.TotalTextBox.InnerText = recibo.Pago.Total.ToString("C");

@@ -1,0 +1,44 @@
+﻿@model ComiteAgua.ViewModels.Catalogos.DescuentosVariosViewModel
+@{
+    ViewBag.Title = "Agregar Descuento";
+}
+
+<br />
+
+@*Breadcrumb*@
+<nav aria-label="breadcrumb" role="navigation">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Model.UrlRetorno">Regresar</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Descuentos</a></li>
+    </ol>
+</nav>
+
+@using (Html.BeginForm("GuardarDescuentoVarios", "Catalogos", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.HiddenFor(m => m.TipoDescuentoId)
+    <div class="col-md-5 mr-auto ml-auto">
+        <div class="card">
+            <div class="card-header text-center">
+                Descuentos
+            </div>
+            <div class="card-body">
+                @*Descunto*@
+                <div class="form-group row">
+                    @Html.LabelFor(x => x.Porcentaje, new { @for = "Porcentaje", @class = "col-md-3 col-form-label ml-auto" })
+                    <div class="col-sm-6 mr-auto">
+                        @Html.TextBoxFor(d => d.Porcentaje, new { @class = "form-control porcentaje" })
+                        @Html.ValidationMessageFor(m => m.Porcentaje, null, new { @class = "badge badge-pill badge-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                @*Button*@
+                <div class="row">
+                    <div class="mr-auto ml-auto">
+                        <button type="submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

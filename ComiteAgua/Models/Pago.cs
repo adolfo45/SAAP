@@ -52,9 +52,12 @@ namespace ComiteAgua.Models
         public int? DescuentoId { get; set; }
         public DescuentoProntoPago DescuentoProntoPago { get; set; }
         public decimal? CostoToma { get; set; }
+        public decimal? DescuentoMadreSoltera { get; set; }
+        public decimal? DescuentoTerceraEdad { get; set; }
 
         public List<PeriodoPago> PeriodoPago { get; set; }
         public List<Recibo> Recibo { get; set; }
+        public List<DescuentoPago> DescuentoPago { get; set; }
 
         #endregion
 
@@ -66,6 +69,5 @@ namespace ComiteAgua.Models
 
         #endregion
 
-    } // public class Pago
-
-} // namespace ComiteAgua.Models
+    }//public class Pago
+}//namespace ComiteAgua.Models

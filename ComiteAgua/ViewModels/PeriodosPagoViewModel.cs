@@ -46,6 +46,9 @@ namespace ComiteAgua.ViewModels
         public int UsuarioAltaId { get; set; }
         public DateTime? FechaCambio { get; set; }
         public int? UsuarioCambioId { get; set; }
+        public bool Activo { get; set; }
+        public int? NoRecibo { get; set; }
+        public string TipoPago { get; set; }
 
         #endregion
 

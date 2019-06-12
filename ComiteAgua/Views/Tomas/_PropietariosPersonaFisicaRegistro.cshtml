@@ -1,8 +1,8 @@
 ﻿@model ComiteAgua.ViewModels.Tomas.PropietariosPersonaFisicaViewModel
-
+@using ComiteAgua.Domain
 <div class="row">
-    <div class="col-md-12 text-right">    
-        <a href="#" id="PersonaMoralButton" class="btn btn-info active" role="button" aria-pressed="true" title="Eliminar">Cambiar a Moral</a>    
+    <div class="col-md-12 text-right">
+        <a href="#" id="PersonaMoralButton" class="btn btn-info active" role="button" aria-pressed="true" title="Eliminar">Cambiar a Moral</a>
     </div>
 </div>
 <form id="PropietarioForm">
@@ -10,6 +10,7 @@
     @Html.HiddenFor(m => m.PropietarioId)
     @Html.HiddenFor(m => m.CambioPropietario)
     @Html.Hidden("downloadToken", Model.DownloadToken)
+    @Html.Hidden("tipoArchivoId", Model.TipoArchivoId)
 
     @*Nombre*@
     <div class="form-group row">
@@ -19,7 +20,6 @@
             @Html.ValidationMessageFor(m => m.Nombre, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
-
     @*Apellido Paterno*@
     <div class="form-group row">
         @Html.LabelFor(x => x.ApellidoPaterno, new { @for = "ApellidoPaterno", @class = "col-md-2 col-form-label ml-auto" })
@@ -28,7 +28,6 @@
             @Html.ValidationMessageFor(m => m.ApellidoPaterno, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
-
     @*Apellido Materno*@
     <div class="form-group row">
         @Html.LabelFor(x => x.ApellidoMaterno, new { @for = "ApellidoMaterno", @class = "col-md-2 col-form-label ml-auto" })
@@ -37,23 +36,39 @@
             @Html.ValidationMessageFor(m => m.ApellidoMaterno, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
-
     @*Fecha Nacimiento*@
     <div class="form-group row">
-        @Html.LabelFor(x => x.FechaNacimiento, new { @for = "FechaNacimiento", @class = "col-md-2 col-form-label ml-auto" })
-        <div class="col-sm-6 mr-auto">
+        @Html.LabelFor(x => x.FechaNacimiento, new { @for = "FechaNacimiento", @class = "col-md-2 col-form-label offset-md-2" })
+        <div class="col-sm-6">
             @Html.TextBoxFor(d => d.FechaNacimiento, new { @class = "form-control validaFechaNacimiento", @type = "date" })
             @Html.ValidationMessageFor(m => m.FechaNacimiento, null, new { @class = "badge badge-pill badge-danger" })
         </div>
+     
+            <div class="col-md-1">
+                <a href="javascript:AgregarArchivo(@Convert.ToInt32(TiposArchivosDomain.TiposArchivosDomainEnum.TerceraEdad))" id="AgregarArchivoFechaNacimientoButton" title="Agregar Archivo"><i class="fa fa-file-image-o fa-lg verde" aria-hidden="true"></i></a>
+            </div>
+            <div class="col-md-1">
+                <a href="javascript:VerArchivo(@Convert.ToInt32(TiposArchivosDomain.TiposArchivosDomainEnum.TerceraEdad))" id="VerArchivoFechaNacimientoButton" title="Ver Archivo" data-tipoArchivoId="@Convert.ToInt32(TiposArchivosDomain.TiposArchivosDomainEnum.TerceraEdad)"><i class="fa fa-search fa-lg naranja" aria-hidden="true"></i></a>
+            </div>
+    
     </div>
 
     @*Estado Civil*@
     <div class="form-group row">
-        @Html.LabelFor(x => x.EstadoCivilId, new { @for = "EstadoCivilId", @class = "col-md-2 col-form-label ml-auto" })
+        @Html.LabelFor(x => x.EstadoCivilId, new { @for = "EstadoCivilId", @class = "col-md-2 col-form-label offset-md-2" })
         <div class="col-sm-6 mr-auto">
             @Html.DropDownListFor(m => m.EstadoCivilId, new SelectList(Model.EstadosCiviles, "EstadoCivilId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
             @Html.ValidationMessageFor(m => m.EstadoCivilId, null, new { @class = "badge badge-pill badge-danger" })
         </div>
+       
+            <div class="col-md-1">
+                <a href="javascript:AgregarArchivo(@Convert.ToInt32(TiposArchivosDomain.TiposArchivosDomainEnum.MadreSoltera))" id="AgregarArchivoEstadoCivilButton" title="Agregar Archivo"><i class="fa fa-file-image-o fa-lg verde" aria-hidden="true"></i></a>
+            </div>
+
+            <div class="col-md-1">
+                <a href="javascript:VerArchivo(@Convert.ToInt32(TiposArchivosDomain.TiposArchivosDomainEnum.MadreSoltera))" id="VerArchivoEstadoCivilButton" title="Ver Archivo"><i class="fa fa-search fa-lg naranja" aria-hidden="true"></i></a>
+            </div>
+        
     </div>
 
     @*Teléfono*@
@@ -78,7 +93,7 @@
     <div class="form-group row">
         @Html.LabelFor(x => x.Rfc, new { @for = "Rfc", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
-            @Html.TextBoxFor(d => d.Rfc, new { @class = "form-control" })
+            @Html.TextBoxFor(d => d.Rfc, new { @class = "form-control ValidaRfcFisica" })
             @Html.ValidationMessageFor(m => m.Rfc, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
@@ -116,15 +131,101 @@
         }
     </div>
 </form>
-@*}*@
+
+<!--MODAL ARCHIVOS-->
+<form id="ArchivosForm">
+    <div class="modal fade" id="ArchivoModal" tabindex="-1" role="dialog" aria-labelledby="ArchivoModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ArchivoModalLabel">Agregar Archivos</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group row">
+                        @Html.LabelFor(x => x.NombreArchivo, new { @for = "NombreArchivo", @class = "col-md-3 col-form-label" })
+                        <div class="col-md-9">
+                            @Html.TextBoxFor(d => d.NombreArchivo, new { @class = "form-control validaNombreArchivo" })
+                            @Html.ValidationMessageFor(m => m.NombreArchivo, null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        @Html.LabelFor(x => x.UrlArchivo, new { @for = "UrlArchivo", @class = "col-md-3 col-form-label" })
+                        <div class="col-md-9">
+                            <input type="file" class="form-control-file validaArchivo" id="file">
+                            @Html.ValidationMessageFor(m => m.UrlArchivo, null, new { @class = "badge badge-pill badge-danger" })
+                        </div>
+                    </div>
+                    @*Lista Archivos*@
+                    <div class="form-group row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-9">
+                            <div id="Archivos"></div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="CancelarButton" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i> Cerrar</button>
+                    <button id="GuardarArchivoButton" type="button" class="btn btn-success"><i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="modal fade" id="ConsultarArchivoModal" tabindex="-1" role="dialog" aria-labelledby="ConsultarArchivoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ConsultarArchivoModalLabel">Consultar Archivos</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @*Lista Archivos*@
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <div id="ConsultarArchivos"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="CancelarButton" type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i> Cerrar</button>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     var reciboIdValue;
-    $(document).ready(function () {   
+    $(document).ready(function () {
         $("button[disabled=disabled]").removeClass('btn-primary').addClass('grisClaro');
         $.validator.addMethod("validaCosto", function () {
             return $("#CostoCambioPropietario").val().trim().length > 0;
-        }, "El costo es requerido.");//$.validator.addMethod("validaCosto", function () { 
-    });
+        }, "El costo es requerido.");//$.validator.addMethod("validaCosto", function () {
+        $.validator.addMethod("validaNombreArchivo", function () {
+            return $("#NombreArchivo").val().trim().length > 0;
+        }, "El nombre es requerido.");//$.validator.addMethod("validaNombreArchivo", function () {
+        $.validator.addMethod("validaArchivo", function () {
+            return $("#file").val().trim().length > 0;
+        }, "El archivo es requerido.");//$.validator.addMethod("validaArchivo", function () {
+        var fecha = $("#FechaNacimiento").val();
+        var estadoCivilId = document.getElementById("EstadoCivilId").selectedIndex;
+        if (fecha.length == 0) {
+            document.getElementById("AgregarArchivoFechaNacimientoButton").style.display = 'none';
+            document.getElementById("VerArchivoFechaNacimientoButton").style.display = 'none';
+        }
+        if (estadoCivilId == 0) {
+            document.getElementById("AgregarArchivoEstadoCivilButton").style.display = 'none';
+            document.getElementById("VerArchivoEstadoCivilButton").style.display = 'none';
+        }
+    });//$(document).ready(function () {
     $("#ImprimirButton").click(function () {
         BloquearProcesando();
         href = "~/Print/ReciboSistema.aspx?reciboId=" + reciboIdValue + "";
@@ -150,8 +251,143 @@
         document.getElementById('propietarioMoral').style.display = 'block';
         document.getElementById('propietarioMoral-tab').style.display = 'block';
         document.getElementById('propietario').style.display = 'none';
-        document.getElementById('propietario-tab').style.display = 'none';       
+        document.getElementById('propietario-tab').style.display = 'none';
     });//$("#PersonaMoralButton").click(function () {
+    $("#Rfc").change(function () {
+        var rfc = $(this).val()
+        $.ajax({
+            url: "@Url.Action("ValidarRfcPersonaFisica", "Tomas")?rfc=" + rfc,
+            success: function (result) {
+                if (result.valido) {
+                    $.validator.addMethod("ValidaRfcFisica", function () {
+                        return true;
+                    }, "El RFC no es valido.");//$.validator.addMethod("ValidaRfc", function () {
+                } else {
+                    $.validator.addMethod("ValidaRfcFisica", function () {
+                        return false;
+                    }, "El RFC no es valido.");//$.validator.addMethod("ValidaRfc", function () {
+                }
+            },
+            error: function () {
+                toastr.error("Error al validar el RFC", "Tomas", { closeButton: true, progressBar: true, positionClass: "toast-bottom-full-width" });
+            }
+        });//$.ajax({
+    });//$("#Rfc").change(function () {
+    $("#GuardarArchivoButton").click(function () {
+        if ($("#ArchivosForm").valid()) {
+            var file = document.getElementById("file").files[0];
+            var name = document.getElementById("file").files[0].name;
+            var nombreArchivo = $("#NombreArchivo").val();
+            var personaId = document.getElementById("PersonaId").value;
+            var tipoArchivoId = document.getElementById('tipoArchivoId').value;
+
+            var size = file.size / 1024;
+            if (size > 3716) {
+                toastr.warning(
+                    "El Archivo es demasiado grande, debe ser menor a 3.6MB",
+                    "Alerta",
+                    {
+                        closeButton: true,
+                        progressBar: true,
+                        positionClass: "toast-bottom-full-width"
+                    });
+                return;
+            }
+            var formData = new FormData();
+            formData.append('file', file);
+            formData.append('name', nombreArchivo);
+            formData.append('PersonaId', personaId);
+            formData.append('TipoArchivoId', tipoArchivoId);
+         
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("_ListaArchivosPersona", "Tomas")',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    //$('#ArchivoModal').modal('hide');
+                    $("#file").val("");
+                    $("#NombreArchivo").val("");
+                    $("#Archivos").html(data);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $("#file").val("");
+                    $("#NombreArchivo").val("");
+                    alert('Error - ' + errorThrown);
+                }
+            });          
+        }
+    });// $("#GuardarArchivoButton").click(function () {
+    $("#CancelarButton").click(function () {
+        $("#file").val("");
+        $("#NombreArchivo").val("");
+    });//$("#CancelarButton").click(function () {
+    $("#FechaNacimiento").change(function () {
+        var fecha = $("#FechaNacimiento").val();
+        if (fecha.length > 0) {
+            document.getElementById("AgregarArchivoFechaNacimientoButton").style.display = 'block';
+            document.getElementById("VerArchivoFechaNacimientoButton").style.display = 'block';
+        } else {
+            document.getElementById("AgregarArchivoFechaNacimientoButton").style.display = 'none';
+            document.getElementById("VerArchivoFechaNacimientoButton").style.display = 'none';
+        }
+    });//$("#FechaNacimiento").change(function () {
+    $("#EstadoCivilId").change(function () {
+        var estadoCivilId = document.getElementById("EstadoCivilId").selectedIndex;
+        if (estadoCivilId == 0) {
+            document.getElementById("AgregarArchivoEstadoCivilButton").style.display = 'none';
+            document.getElementById("VerArchivoEstadoCivilButton").style.display = 'none';
+        } else {
+            document.getElementById("AgregarArchivoEstadoCivilButton").style.display = 'block';
+            document.getElementById("VerArchivoEstadoCivilButton").style.display = 'block';
+        }
+    });
+    function AgregarArchivo(tipoArchivoId) {
+        var personaId = document.getElementById("PersonaId").value;
+        document.getElementById('tipoArchivoId').value = tipoArchivoId;
+        $.ajax({
+            type: 'get',
+            cache: false,
+            url: '@Url.Action("ConsultarArchivosPersona", "Tomas")',
+            data:
+            {
+                personaId: personaId,
+                tipoArchivoId: tipoArchivoId
+            },
+            success: function (data) {
+                $("#Archivos").html(data);
+                $('#ArchivoModal').modal('show');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $("#file").val("");
+                $("#NombreArchivo").val("");
+                alert('Error - ' + errorThrown);
+            }
+        });
+    }//function AgregarArchivo(tipoArchivoId) {
+    function VerArchivo(tipoArchivoId) {
+        var personaId = document.getElementById("PersonaId").value;
+        document.getElementById('tipoArchivoId').value = tipoArchivoId;
+        $.ajax({
+            type: 'get',
+            cache: false,
+            url: '@Url.Action("_ConsultarArchivosPersona", "Tomas")',
+            data:
+            {
+                personaId: personaId,
+                tipoArchivoId: tipoArchivoId
+            },
+            success: function (data) {
+                $("#ConsultarArchivos").html(data);
+                $('#ConsultarArchivoModal').modal('show');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error - ' + errorThrown);
+            }
+        });
+    }//function VerArchivo(tipoArchivoId) {
     var DownloadCheckTimer;
     function blockForDownload() {
         DownloadCheckTimer = window.setInterval(function () {

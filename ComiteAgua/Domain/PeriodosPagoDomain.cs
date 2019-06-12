@@ -84,6 +84,8 @@ namespace ComiteAgua.Domain
             var result = _context.Pago
                 .Include(pp => pp.PeriodoPago)
                 .Include(pp => pp.ConceptoPago)
+                .Include(pp => pp.Recibo)
+                .Include(pp => pp.Convenio)
                 .Where(pp => pp.TomaId == tomaId)
                 .OrderByDescending(pp => pp.PagoId).ToList();
 

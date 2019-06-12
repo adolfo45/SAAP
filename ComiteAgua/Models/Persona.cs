@@ -40,6 +40,7 @@ namespace ComiteAgua.Models
         public PersonaFisica PersonaFisica { get; set; }
         public PersonaMoral PersonaMoral { get; set; }
         public List<Propietario> Propietario { get; set; }
+        public List<ArchivoPersona> ArchivoPersona { get; set; }
 
         #endregion
 

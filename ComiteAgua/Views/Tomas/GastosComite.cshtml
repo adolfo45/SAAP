@@ -14,8 +14,7 @@
     </ol>
 </nav>
 
-@using (Html.BeginForm("GuardarGasto", "Tomas", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
-{
+<form id="GastosForm">
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.SucursalId)
     @Html.HiddenFor(m => m.MultiComiteId)
@@ -62,13 +61,13 @@
                 @*Button*@
                 <div class="row">
                     <div class="mr-auto ml-auto">
-                        <button type="submit" class="btn btn-success">Guardar</button>
+                        <button id="GuardarButton" type="button" class="btn btn-success">Guardar</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-}
+</form>
 
 <!-- Modal Archivo -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -88,7 +87,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button id="CancelarButton" type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <button id="GuardarArchivoButton" type="button" class="btn btn-primary">Guardar</button>
             </div>
         </div>
@@ -99,17 +98,27 @@
 {
     <script>
         $(document).ready(function () {
-
+           
             $("#ModalArchivoButton").click(function () {
-
                 $('#exampleModal').modal('show');
-
             });
 
             $("#GuardarArchivoButton").click(function () {
                 var file = document.getElementById("file").files[0];
                 var name = document.getElementById("file").files[0].name;
 
+                var size = file.size / 1024;
+                if (size > 3716) {
+                    toastr.warning(
+                        "El Archivo es demasiado grande, debe ser menor a 3.6MB",
+                        "Alerta",
+                        {
+                            closeButton: true,
+                            progressBar: true,
+                            positionClass: "toast-bottom-full-width"
+                        });
+                    return;
+                }
                 var formData = new FormData();
                 formData.append('file', file);
                 formData.append('name', name);
@@ -131,15 +140,21 @@
                         $('#exampleModal').modal('hide');
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
+                        $("#file").val("")
                         alert('Error - ' + errorThrown);
                     }
                 });
-
             });
-            $(".form-horizontal").submit(function (event) {
-                if ($(".form-horizontal").valid()) {
+
+            $("#GuardarButton").click(function () {
+                if ($("#GastosForm").valid()) {
                     BloquearProcesando();
+                    window.location = "@Url.Action("GuardarGasto", "Tomas")?" + $("#GastosForm").serialize();
                 }
+            });
+
+            $("#CancelarButton").click(function () {
+                $("#file").val("");
             });
         });
     </script>

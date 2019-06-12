@@ -39,7 +39,7 @@ namespace ComiteAgua.Domain
 
         #region * Métodos creados por Comité Agua *
 
-        public void Agregar(Tarifa model)
+        public void Agregar(Categoria model)
         {
             _context.Entry(model).State = EntityState.Added;
 
@@ -51,21 +51,14 @@ namespace ComiteAgua.Domain
 
             _context.SaveChanges();
         }
-        public void Editar(Tarifa model)
+        public void Editar(Categoria model)
         {
-            var categoria = _context.Categoria.Where(c => c.CategoriaId == model.Categoria.CategoriaId).FirstOrDefault();
+            var categoria = _context.Categoria.Where(c => c.CategoriaId == model.CategoriaId).FirstOrDefault();
 
-            categoria.Nombre = model.Categoria.Nombre;
-            categoria.Abreviatura = model.Categoria.Abreviatura;
-            categoria.UsuarioCambioId = model.Categoria.UsuarioCambioId;
-            categoria.FechaCambio = DateTime.Now;
-
-            var tarifa = _context.Tarifa.Where(t => t.TarifaId == model.TarifaId).FirstOrDefault();
-
-            tarifa.MesAno = model.MesAno;
-            tarifa.CostoTarifa = model.CostoTarifa;
-            tarifa.UsuarioCambioId = model.UsuarioCambioId;
-            tarifa.FechaCambio = DateTime.Now;
+            categoria.Nombre = model.Nombre;
+            categoria.Abreviatura = model.Abreviatura;
+            categoria.UsuarioCambioId = model.UsuarioCambioId;
+            categoria.FechaCambio = DateTime.Now;           
 
             _context.SaveChanges();
         }
@@ -85,13 +78,12 @@ namespace ComiteAgua.Domain
 
             return tarifas;
         }
-        public Tarifa ObtenerCategoria(int tarifaId)
+        public Categoria ObtenerCategoria(int categoriaId)
         {
-            var tarifa = _context.Tarifa   
-                .Include(t => t.Categoria)
-                .Where(t => t.TarifaId == tarifaId).FirstOrDefault();
+            var categoria = _context.Categoria
+                .Where(t => t.CategoriaId == categoriaId).FirstOrDefault();
 
-            return tarifa;
+            return categoria;
         }        
         public IQueryable<Tarifa> ObtenerTarifas(int categoriaId)
         {

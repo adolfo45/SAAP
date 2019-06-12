@@ -36,14 +36,14 @@ namespace ComiteAgua.Models.Recibos
         public string CantidadLetra { get; set; }
         public string RenglonAdicional1 { get; set; }
         public string RenglonAdicional2 { get; set; }
-        public string RenglonAdicional3 { get; set; }
+        public string RenglonAdicional3 { get; set; }       
         public DateTime FechaAlta { get; set; }
         public int UsuarioAltaId { get; set; }
         public Usuario UsuarioAlta { get; set; }
         public DateTime? FechaCambio { get; set; }
         public int? UsuarioCambioId { get; set; }
         public Usuario UsuarioCambio { get; set; }
-
+        public string Concepto { get; set; }
         #endregion
 
         #region * Eventos generados por Comité Agua *

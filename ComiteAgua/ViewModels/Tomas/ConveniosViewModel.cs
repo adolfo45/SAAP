@@ -103,6 +103,7 @@ namespace ComiteAgua.ViewModels.Tomas
         public int Folio { get; set; }
         public string EstatusConvenio { get; set; }
         public string NombreCompleto { get; set; }
+        public decimal TotalPagos { get; set; }
 
 
         public List<ConceptoConvenio> ConceptosConvenio { get; set; }

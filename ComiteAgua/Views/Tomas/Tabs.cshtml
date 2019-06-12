@@ -13,15 +13,17 @@
         <li class="breadcrumb-item active" aria-current="page"><a>Toma</a></li>        
     </ol>
 </nav>
-<div class="row">
+@*<div class="row">
     <div class="col-md-12 text-right">
-        @if (!Model.CambioPropietario)
+        @if (!Model.CambioPropietario && Model.PropietarioId > 0)
         {
-            <a href="#" data-diaFestivo-dia="@Model.PropietariosPersonaFisica.Toma.Folio" id="eliminarToma" class="btn btn-danger active" role="button" aria-pressed="true" title="Eliminar">Eliminar</a>
+            <a href="#" data-diaFestivo-dia="@(Model.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica ?
+                                                            Model.PropietariosPersonaFisica.Nombre + " " + Model.PropietariosPersonaFisica.ApellidoPaterno + " " + Model.PropietariosPersonaFisica.ApellidoMaterno :
+                                                            Model.PropietarioPersonaMoral.Nombre)" id="eliminarToma" class="btn btn-danger active" role="button" aria-pressed="true" title="Eliminar">Eliminar</a>
         }
 
     </div>
-</div>
+</div>*@
 @*Tabs*@
 <div class="col-md-9 mr-auto ml-auto">      
     <div class="card">
@@ -41,7 +43,7 @@
                     <li class="nav-item">
                         <a class="nav-link @Model.TabDireccionActivo @Model.TabDireccionHabilitado" id="direccion-tab" data-toggle="tab" href="#direccion" role="tab" aria-controls="direccion" aria-selected="false">Dirección</a>
                     </li>
-                    if (Model.PropietariosPersonaFisica.Toma.Activa)
+                    if (Model.DireccionId != null && Model.LiquidacionTomaId != (int)LiquidacionesTomaDomain.LiquidacionesTomaEnum.TomaNueva)
                     {
                         <li class="nav-item">
                             <a class="nav-link @Model.TabPeriodoPagos" id="periodopago1-tab" data-toggle="tab" href="#periodopago1" role="tab" aria-controls="periodopago1" aria-selected="false">
@@ -134,11 +136,11 @@
                 .click(function () {
                     var eliminarButton = $(this);                       
                         bootbox.confirm({                           
-                            message: "¿Está seguro que desea eliminar la Toma: '" + eliminarButton.attr("data-diaFestivo-dia") + "'?",                           
+                            message: "¿Está seguro que desea eliminar la a nombre de: '" + eliminarButton.attr("data-diaFestivo-dia") + "'?",                           
                             callback: function (result) {
                                 if (result) {
                                     $.ajax({
-                                        url: "@Url.Action("EliminarToma", "Tomas", new { propietarioId = @Model.PropietariosPersonaFisica.PropietarioId })",
+                                        url: "@Url.Action("EliminarToma", "Tomas", new { propietarioId = @Model.PropietarioId })",
                                         success: function () {
                                             bootbox.alert({                                               
                                                 message: "La toma ha sido eliminada de forma exitosa.",

@@ -129,7 +129,13 @@ namespace ComiteAgua.ViewModels.Tomas
 
         //Notificaciones
         public bool Notificada { get; set; }
-
+        public bool TerceraEdad { get; set; }
+        [Display(Name = "Descuento Tercera Edad")]
+        public string DescuentoTerceraEdad { get; set; }
+        [Display(Name = "Descuento Madre Soltera")]
+        public string DescuentoMadreSoltera { get; set; }
+        public int? DescuentoTerceraEdadId { get; set; }
+        public int? DescuentoMadreSolteraId { get; set; }
         #endregion
 
         #region * Eventos generados por Comité Agua *

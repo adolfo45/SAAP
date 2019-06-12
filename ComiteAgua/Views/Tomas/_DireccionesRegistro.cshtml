@@ -4,8 +4,6 @@
 
 }
 
-@*@using (Html.BeginForm("GuardarDireccion", "Tomas", FormMethod.Post, new { role = "form" }))
-{*@
 <form id="DireccionForm">
     @Html.HiddenFor(m => m.PropietarioId)
     @Html.HiddenFor(m => m.TomaId)
@@ -71,7 +69,6 @@
         </div>
     </div>
 </form>
-    @*}*@
 
     <script>
         $("#GuardarDireccionButton").click(function () {

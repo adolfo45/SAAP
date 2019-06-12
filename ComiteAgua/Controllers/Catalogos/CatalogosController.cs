@@ -36,27 +36,13 @@ namespace ComiteAgua.Controllers.Catalogos
 
         #region * Acciones generados por Comité Agua *
         // GET: Catalogos
-        public ActionResult Categorias(int? mesAno)
+        public ActionResult Categorias()
         {
             var categoriasDomain = new CategoriasDomain(_context);
-            var tarifas = categoriasDomain.ObtenerCategorias(mesAno).OrderBy(t => t.Categoria.Nombre).ToList();
+            var categorias = categoriasDomain.ObtenerCategorias();
             var categoriasVM = new CategoriasViewModel()
             {
-                MesAnoFiltro = mesAno,
-                Categoria = tarifas.Select(c => c.Categoria.Nombre).FirstOrDefault(),
-                Abreviatura = tarifas.Select(c => c.Categoria.Abreviatura).FirstOrDefault(),
-                Tarifas = tarifas
-            };
-            return View("Categorias", categoriasVM);
-        }
-        public ActionResult ConsultarCategoria(CategoriasViewModel model)
-        {
-            var categoriasDomain = new CategoriasDomain(_context);
-            var tarifas = categoriasDomain.ObtenerCategorias(model.MesAnoFiltro).ToList();
-            var categoriasVM = new CategoriasViewModel()
-            {
-                MesAnoFiltro = model.MesAnoFiltro,               
-                Tarifas = tarifas
+                Categorias = categorias
             };
             return View("Categorias", categoriasVM);
         }
@@ -67,35 +53,61 @@ namespace ComiteAgua.Controllers.Catalogos
 
             var descuentosViewModel = new DescuentosViewModel()
             {
-                Descuentos = descuentos,
+                Descuentos = descuentos.Where(d => d.MesAno.Year == DateTime.Now.Year).ToList(),
                 Accion = Accion.Consultar,                
             };
             return View(descuentosViewModel);
         }
-        public ActionResult EditAddCategoria(int? tarifaId, int? mesAnoFiltro, string urlRetorno)
+        public ActionResult DescuentosVarios(int tipoDescuentoId)
+        {
+            var descuentosDomain = new DescuentosDomain(_context);
+            var descuentos = descuentosDomain.Consultar(tipoDescuentoId);
+            ViewBag.TipoDescuentoId = tipoDescuentoId;
+            var descuentosPreList = descuentos
+                .Select(up => new DescuentosVariosViewModel
+                {
+                    DescuentoVariosId = up.DescuentoVariosId,
+                    TipoDescuentoId = up.TipoDescuentoId,
+                    TipoDescuento = up.TipoDescuento.Nombre,
+                    Porcentaje = up.Porcentaje.ToString() + "%",
+                    FechaAlta = up.FechaAlta.ToString("dd-MM-yyyy")
+                })
+                .OrderByDescending(up => up.DescuentoVariosId)
+                .Take(1)
+                .ToList();
+            ViewBag.TituloLabel = tipoDescuentoId == (int)TiposDescuentoDomain.TiposDescuentoEnum.MadreSoltera ? "Descuento Madre Soltera" :
+                                       "Descuento Tercera Edad";
+            return View(descuentosPreList);
+        }
+        public ActionResult DescuentosVariosAdministracion(int tipoDescuentoId)
+        {
+            var descuentosVariosVM = new DescuentosVariosViewModel();
+            descuentosVariosVM.TipoDescuentoId = tipoDescuentoId;
+            descuentosVariosVM.UrlRetorno = Url.Action("DescuentosVarios", "Catalogos", new { tipoDescuentoId  = tipoDescuentoId });
+            return View(descuentosVariosVM);
+        }
+        public ActionResult EditAddCategoria(int? categoriaId, string urlRetorno)
         {
             var categoriasDomain = new CategoriasDomain(_context);
             var categoriaVM = new CategoriasViewModel();
-            if (tarifaId != null) { 
-                var tarifa = categoriasDomain.ObtenerCategoria(Convert.ToInt32(tarifaId));
+
+            if (categoriaId != null)
+            { 
+                var categoria = categoriasDomain.ObtenerCategoria(Convert.ToInt32(categoriaId));
                 categoriaVM = new CategoriasViewModel()
                 {
-                    CategoriaId = tarifa.CategoriaId,                   
-                    Categoria = tarifa.Categoria.Nombre,
-                    Abreviatura = tarifa.Categoria.Abreviatura,                   
+                    CategoriaId = categoria.CategoriaId,                   
+                    Categoria = categoria.Nombre,
+                    Abreviatura = categoria.Abreviatura,                   
                     Accion = Accion.Editar,
-                    MesAnoFiltro = mesAnoFiltro,
-                    UrlRetorno = urlRetorno,
-                    MesAno = tarifa.MesAno,
-                    CostoTarifa = tarifa.CostoTarifa.ToString("C")
+                    UrlRetorno = urlRetorno
                 };
             }
             else
             {
                 categoriaVM.Accion = Accion.Agregar;
                 categoriaVM.UrlRetorno = urlRetorno;
-            }
-                      
+            }                   
             return View("EditarCategoria", categoriaVM);
         }
         public ActionResult EditAddTarifa(int categoriaId, int? mesAnoFiltro, string urlRetorno)
@@ -134,22 +146,18 @@ namespace ComiteAgua.Controllers.Catalogos
 
             if (model.Accion == Accion.Agregar)
             {
-                var tarifa = new Tarifa()
-                {                   
-                    MesAno = Convert.ToInt32(model.MesAno),
-                    CostoTarifa = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.CostoTarifa)),
+
+                categoria = new Categoria()
+                {
+                    Nombre = AdsertiFunciones.FormatearTexto(model.Categoria),
+                    Abreviatura = AdsertiFunciones.FormatearTexto(model.Abreviatura),
                     UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"]),
-                    FechaAlta = DateTime.Now,
-                    Categoria = new Categoria()
-                    {                        
-                        Nombre = AdsertiFunciones.FormatearTexto(model.Categoria),
-                        Abreviatura = AdsertiFunciones.FormatearTexto(model.Abreviatura),
-                        UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"]),
-                        FechaAlta = DateTime.Now
-                    }
+                    FechaAlta = DateTime.Now
                 };
-                categoriasDomain.Agregar(tarifa);
-                return RedirectToAction("EditAddCategoria", new{ urlRetorno = model.UrlRetorno});
+                
+                categoriasDomain.Agregar(categoria);
+                ShowToastMessage("Éxito", "Registro guardado exitosamente", ToastMessage.ToastType.Success);
+                return RedirectToAction("Categorias");
             }
             else
             {                
@@ -160,22 +168,18 @@ namespace ComiteAgua.Controllers.Catalogos
                     ShowToastMessage("Alerta", "La categoría ya existe en el año", ToastMessage.ToastType.Warning);
                     return View("EditarCategoria", model);
                 }
-                var tarifa = new Tarifa()
+
+                categoria = new Categoria()
                 {
-                    TarifaId = model.TarifaId,
-                    MesAno = Convert.ToInt32(model.MesAno),
-                    CostoTarifa = Convert.ToDecimal(AdsertiFunciones.FormatearNumero(model.CostoTarifa)),
-                    UsuarioCambioId = Convert.ToInt32(Session["UsuarioId"]),
-                    Categoria = new Categoria()
-                    {
-                        CategoriaId = model.CategoriaId,
-                        Nombre = AdsertiFunciones.FormatearTexto(model.Categoria),
-                        Abreviatura = AdsertiFunciones.FormatearTexto(model.Abreviatura),
-                        UsuarioCambioId = Convert.ToInt32(Session["UsuarioId"])
-                    }
+                    CategoriaId = model.CategoriaId,
+                    Nombre = AdsertiFunciones.FormatearTexto(model.Categoria),
+                    Abreviatura = AdsertiFunciones.FormatearTexto(model.Abreviatura),
+                    UsuarioCambioId = Convert.ToInt32(Session["UsuarioId"])
                 };
-                categoriasDomain.Editar(tarifa);
-                return RedirectToAction("Categorias",new{ mesAno = model.MesAnoFiltro});
+                
+                categoriasDomain.Editar(categoria);
+                ShowToastMessage("Éxito", "Registro guardado exitosamente", ToastMessage.ToastType.Success);
+                return RedirectToAction("Categorias");
             }
            
         }
@@ -235,7 +239,20 @@ namespace ComiteAgua.Controllers.Catalogos
             };
             categoriasDomain.AgregarTarifa(tarifa);
             return RedirectToAction("Categorias", new { mesAno = model.MesAnoFiltro });
-        }        
+        }
+        public ActionResult GuardarDescuentoVarios(DescuentosVariosViewModel viewModel)
+        {
+            var descuentosDomain = new DescuentosDomain(_context);
+            var descuento = new Descuento();
+            descuento.TipoDescuentoId = viewModel.TipoDescuentoId;
+            descuento.Porcentaje = Convert.ToInt32(AdsertiFunciones.FormatearNumero(viewModel.Porcentaje));
+            descuento.FechaAlta = DateTime.Now;
+            descuento.UsuarioAltaId = Convert.ToInt32(Session["UsuarioId"].ToString());
+            descuentosDomain.Guardar(descuento);
+
+            ShowToastMessage("Éxito", "Registro guardado exitosamente", ToastMessage.ToastType.Success);
+            return RedirectToAction("DescuentosVarios", new { tipoDescuentoId = viewModel.TipoDescuentoId });
+        }
         public ActionResult Limpiar()
         {
             var categoriasVM = new CategoriasViewModel()

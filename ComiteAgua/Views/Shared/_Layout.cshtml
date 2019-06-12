@@ -1,5 +1,7 @@
 ﻿@using ComiteAgua.ViewModels.Tomas
 @using ComiteAgua
+@using AdsertiVS2017ClassLibrary
+@using ComiteAgua.Domain
 <!DOCTYPE html>
 
 <html>
@@ -71,9 +73,17 @@
                     <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("ReportesNotificacion", "Notificaciones")" title="Reportes Notificación"><span class="glyphicon glyphicon-bell"></span> Reportes Notificación<span class="sr-only">(current)</span></a>
                     </li>*@
-                <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("Recibos", "Tomas")" title="Reportes Notificación"><i class="fa fa-qrcode" aria-hidden="true"></i> Recibos<span class="sr-only">(current)</span></a>
+                
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-qrcode" aria-hidden="true"></i> Recibos
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="@Url.Action("Recibos", "Tomas")"> Consultar</a>
+                        <a class="dropdown-item" href="@Url.Action("RecibosExtraFiltros", "Tomas")"> Agregar</a>
+                    </div>
                 </li>
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-tags" aria-hidden="true"></i> Categorias
@@ -83,6 +93,7 @@
                         <a class="dropdown-item" href="@Url.Action("Categorias", "Catalogos")">Consultar</a>
                     </div>
                 </li>
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-user-o" aria-hidden="true"></i> Usuarios
@@ -97,8 +108,9 @@
                         <i class="fa fa-percent" aria-hidden="true"></i> Descuentos
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="@Url.Action("Descuentos", "Catalogos")">Consultar</a>
-                        <a class="dropdown-item" href="@Url.Action("EditAddDescuento", "Catalogos", new { urlRetorno = Url.Action("Index", "Home") })">Agregar</a>
+                        <a class="dropdown-item" href="@Url.Action("Descuentos", "Catalogos")">Pronto Pago</a>
+                        <a class="dropdown-item" href="@Url.Action("DescuentosVarios", "Catalogos", new { tipoDescuentoId = (int)TiposDescuentoDomain.TiposDescuentoEnum.TerceraEdad })">Tercera Edad</a>
+                        <a class="dropdown-item" href="@Url.Action("DescuentosVarios", "Catalogos", new { tipoDescuentoId = (int)TiposDescuentoDomain.TiposDescuentoEnum.MadreSoltera })">Madre Soltera</a>
                     </div>
                 </li>
                 <li class="nav-item">
@@ -123,8 +135,6 @@
                 </li>
             </ul>
         </div>
-
-        @*<img src="~/Images/SAAPRecortada.png" />*@
 
     </nav>
 

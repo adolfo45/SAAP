@@ -201,13 +201,11 @@
     <Content Include="fonts\ionicons.svg" />
     <Content Include="Images\EstadoCuenta\logo.png" />
     <Content Include="Images\Fondo.jpg" />
-    <Content Include="Images\fondoazul.jpg" />
     <Content Include="Images\gota2.png" />
     <Content Include="Images\llaveChica.png" />
-    <Content Include="Images\mundo.png" />
+    <Content Include="Images\LogoGrande.png" />
     <Content Include="Images\Recibo\Imprimir.png" />
     <Content Include="Images\Recibo\Regresar.png" />
-    <Content Include="Images\SAAP.png" />
     <Content Include="Images\SAAPRecortada.png" />
     <Content Include="Print\ReciboSistema.aspx" />
     <Content Include="Rotativa\help-wkhtmltoimage.txt" />
@@ -262,10 +260,14 @@
     <Compile Include="Controllers\Seguridad\SeguridadController.cs" />
     <Compile Include="Controllers\Tomas\TomasController.cs" />
     <Compile Include="Domain\ArchivosGastoDomain.cs" />
+    <Compile Include="Domain\ArchivosPersonaDomain.cs" />
     <Compile Include="Domain\AsuntosDescripcionDomain.cs" />
     <Compile Include="Domain\AsuntosDomain.cs" />
     <Compile Include="Domain\CambioPropietarioPersonaMoralDomain.cs" />
     <Compile Include="Domain\CambiosPropietarioDomain.cs" />
+    <Compile Include="Domain\Catalogos\DescuentosDomain.cs" />
+    <Compile Include="Domain\Catalogos\DescuentosPagosDomain.cs" />
+    <Compile Include="Domain\Catalogos\TiposDescuentoDomain.cs" />
     <Compile Include="Domain\CategoriasDomain.cs" />
     <Compile Include="Domain\ConceptosConvenioDomain.cs" />
     <Compile Include="Domain\ConceptosPagoDomain.cs" />
@@ -298,6 +300,7 @@
     <Compile Include="Domain\TarifasDomain.cs" />
     <Compile Include="Domain\TipoConstanciaDomain.cs" />
     <Compile Include="Domain\TipoPersonaDomain.cs" />
+    <Compile Include="Domain\TiposArchivosDomain.cs" />
     <Compile Include="Domain\TomasDomain.cs" />
     <Compile Include="Domain\Transacciones Automaticas\TiposTransaccionesAutomaticasDomain.cs" />
     <Compile Include="Domain\Transacciones Automaticas\TransaccionesAutomaticasDomain.cs" />
@@ -328,19 +331,54 @@
     <Compile Include="Migrations\201905242334387_AddTableCambioPropietarioPersonaMoral.Designer.cs">
       <DependentUpon>201905242334387_AddTableCambioPropietarioPersonaMoral.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201905271835085_AddFieldConcepto_Recibo.cs" />
+    <Compile Include="Migrations\201905271835085_AddFieldConcepto_Recibo.Designer.cs">
+      <DependentUpon>201905271835085_AddFieldConcepto_Recibo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906011629185_AddTableArchivosPersona.cs" />
+    <Compile Include="Migrations\201906011629185_AddTableArchivosPersona.Designer.cs">
+      <DependentUpon>201906011629185_AddTableArchivosPersona.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906031447280_AddTableTipoArchivo.cs" />
+    <Compile Include="Migrations\201906031447280_AddTableTipoArchivo.Designer.cs">
+      <DependentUpon>201906031447280_AddTableTipoArchivo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906101438282_DeleteTipoDescuento.cs" />
+    <Compile Include="Migrations\201906101438282_DeleteTipoDescuento.Designer.cs">
+      <DependentUpon>201906101438282_DeleteTipoDescuento.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906101543404_AddTableTipoDescuentoAndDescuento.cs" />
+    <Compile Include="Migrations\201906101543404_AddTableTipoDescuentoAndDescuento.Designer.cs">
+      <DependentUpon>201906101543404_AddTableTipoDescuentoAndDescuento.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906101755093_DecimalToIntTableDescuentos.cs" />
+    <Compile Include="Migrations\201906101755093_DecimalToIntTableDescuentos.Designer.cs">
+      <DependentUpon>201906101755093_DecimalToIntTableDescuentos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906121441443_AddTableDescuentosPago.cs" />
+    <Compile Include="Migrations\201906121441443_AddTableDescuentosPago.Designer.cs">
+      <DependentUpon>201906121441443_AddTableDescuentosPago.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201906121627470_AddPropertiesDescuento.cs" />
+    <Compile Include="Migrations\201906121627470_AddPropertiesDescuento.Designer.cs">
+      <DependentUpon>201906121627470_AddPropertiesDescuento.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ArchivoGasto.cs" />
+    <Compile Include="Models\ArchivoPersona.cs" />
     <Compile Include="Models\Asunto.cs" />
     <Compile Include="Models\AsuntoDescripcion.cs" />
     <Compile Include="Models\CambioPropietario.cs" />
     <Compile Include="Models\CambioPropietarioPersonaMoral.cs" />
+    <Compile Include="Models\Catalogos\Descuento.cs" />
+    <Compile Include="Models\Catalogos\DescuentoPago.cs" />
+    <Compile Include="Models\Catalogos\TipoDescuento.cs" />
     <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\ConceptoConvenio.cs" />
     <Compile Include="Models\ConceptoPago.cs" />
     <Compile Include="Models\Constancia.cs" />
     <Compile Include="Models\Convenio.cs" />
     <Compile Include="Models\DataContext.cs" />
-    <Compile Include="Models\Descuento.cs" />
     <Compile Include="Models\DescuentoProntoPago.cs" />
     <Compile Include="Models\Direccion.cs" />
     <Compile Include="Models\Direcciones\Calles.cs" />
@@ -352,7 +390,6 @@
     <Compile Include="Models\Global\EstadoCivil.cs" />
     <Compile Include="Models\LiquidacionToma.cs" />
     <Compile Include="Models\MessagesActionFilter.cs" />
-    <Compile Include="Models\ModoDescuento.cs" />
     <Compile Include="Models\Notificaciones\CtoOpcionesNotificacion.cs" />
     <Compile Include="Models\Notificaciones\Notificacion.cs" />
     <Compile Include="Models\Notificaciones\Reporte.cs" />
@@ -379,6 +416,7 @@
     <Compile Include="Models\Servicio.cs" />
     <Compile Include="Models\Servicios\EvidenciaServicio.cs" />
     <Compile Include="Models\Tarifa.cs" />
+    <Compile Include="Models\TipoArchivo.cs" />
     <Compile Include="Models\TiposConstancia.cs" />
     <Compile Include="Models\TipoPersona.cs" />
     <Compile Include="Models\ToastMessage.cs" />
@@ -396,6 +434,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\Account\AuthenticationViewModel.cs" />
     <Compile Include="ViewModels\Catalogos\CategoriasViewModel.cs" />
+    <Compile Include="ViewModels\Catalogos\DescuentosVariosViewModel.cs" />
     <Compile Include="ViewModels\Catalogos\DescuentosViewModel.cs" />
     <Compile Include="ViewModels\Constancias\ConstanciaNoServicioViewModel.cs" />
     <Compile Include="ViewModels\Rentas\RentasViewModel.cs" />
@@ -491,6 +530,15 @@
     <Content Include="Views\Rentas\Rentas.cshtml" />
     <Content Include="Views\Tomas\ReconexionToma.cshtml" />
     <Content Include="Views\Tomas\_PropietariosPersonaMoralRegistro.cshtml" />
+    <Content Include="Views\Tomas\RecibosExtraFiltros.cshtml" />
+    <Content Include="Views\Tomas\_RecibosExtraConsulta.cshtml" />
+    <Content Include="Views\Tomas\RecibosExtraAdministracion.cshtml" />
+    <Content Include="Views\Tomas\_ConsultarArchivosPersona.cshtml" />
+    <Content Include="Views\Tomas\_ListaArchivosPersona.cshtml" />
+    <Content Include="Views\Tomas\_ListaArchivosToma.cshtml" />
+    <Content Include="Views\Tomas\_ConsultarArchivosToma.cshtml" />
+    <Content Include="Views\Catalogos\DescuentosVarios.cshtml" />
+    <Content Include="Views\Catalogos\DescuentosVariosAdministracion.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -505,6 +553,7 @@
     <Folder Include="UploadFiles\ContratoCambioPropietario\" />
     <Folder Include="UploadFiles\Convenios\" />
     <Folder Include="UploadFiles\Gastos\" />
+    <Folder Include="UploadFiles\Persona\" />
     <Folder Include="UploadFiles\Servicios\" />
     <Folder Include="ViewModels\Archivos\" />
     <Folder Include="Views\AsuntosDescripcion\" />
@@ -525,6 +574,30 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201905242334387_AddTableCambioPropietarioPersonaMoral.resx">
       <DependentUpon>201905242334387_AddTableCambioPropietarioPersonaMoral.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201905271835085_AddFieldConcepto_Recibo.resx">
+      <DependentUpon>201905271835085_AddFieldConcepto_Recibo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906011629185_AddTableArchivosPersona.resx">
+      <DependentUpon>201906011629185_AddTableArchivosPersona.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906031447280_AddTableTipoArchivo.resx">
+      <DependentUpon>201906031447280_AddTableTipoArchivo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906101438282_DeleteTipoDescuento.resx">
+      <DependentUpon>201906101438282_DeleteTipoDescuento.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906101543404_AddTableTipoDescuentoAndDescuento.resx">
+      <DependentUpon>201906101543404_AddTableTipoDescuentoAndDescuento.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906101755093_DecimalToIntTableDescuentos.resx">
+      <DependentUpon>201906101755093_DecimalToIntTableDescuentos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906121441443_AddTableDescuentosPago.resx">
+      <DependentUpon>201906121441443_AddTableDescuentosPago.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201906121627470_AddPropertiesDescuento.resx">
+      <DependentUpon>201906121627470_AddPropertiesDescuento.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

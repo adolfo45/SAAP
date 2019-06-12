@@ -1,0 +1,63 @@
+﻿@using ComiteAgua.Models
+@model IList<ArchivoPersona>
+
+@if (Model.Count > 0)
+{
+    <table class="table table-sm table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Ver</th>
+                <th scope="col">Elimiar</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Nombre</td>
+                    <td class="text-center">
+                        <a href="/UploadFiles/Persona/@item.UrlArchivo" target="_blank" title="Ver"><i class="fa fa-search naranja" aria-hidden="true"></i></a>
+                    </td>
+                    <td class="text-center">
+                        <a href="javascript:Eliminar(@item.ArchivoPersonaId,@item.PersonaId,@item.TipoArchivoId)" title="Eliminar"><i class="fa fa-times rojo" aria-hidden="true"></i></a>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+        <strong>Alerta!</strong> No se encontraron registros.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+<script>
+    function Eliminar(archivoPersonaId, personaId, tipoArchivoId)
+    {
+        $.ajax({
+            type: 'get',
+            cache: false,
+            url: '@Url.Action("EliminarArchivoPersona", "Tomas")',
+            data:
+            {
+                archivoPersonaId: archivoPersonaId,
+                personaId: personaId,
+                tipoArchivoId: tipoArchivoId
+            },
+            success: function (data) {
+                $("#ConsultarArchivos").html(data);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Error - ' + errorThrown);
+            }
+        });
+    }
+</script>

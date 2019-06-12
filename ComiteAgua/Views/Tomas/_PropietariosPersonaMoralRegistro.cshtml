@@ -23,7 +23,7 @@
     <div class="form-group row">
         @Html.LabelFor(x => x.Rfc, new { @for = "Rfc", @class = "col-md-2 col-form-label ml-auto" })
         <div class="col-sm-6 mr-auto">
-            @Html.TextBoxFor(d => d.Rfc, new { @class = "form-control" })
+            @Html.TextBoxFor(d => d.Rfc, new { @class = "form-control ValidaRfcMoral", @id = "RfcPersonaMoral" })
             @Html.ValidationMessageFor(m => m.Rfc, null, new { @class = "badge badge-pill badge-danger" })
         </div>
     </div>
@@ -100,6 +100,26 @@
         //href = "~/Print/ReciboSistema.aspx?reciboId=" + reciboIdValue + "";
         window.location = "@Url.Action("../Print/ReciboSistema.aspx")?reciboId=" + reciboIdValue;
     });//$("#ImprimirButton").click(function () {
+    $("#RfcPersonaMoral").change(function () {
+        var rfc = $(this).val()
+        $.ajax({
+            url: "@Url.Action("ValidarRfcPersonaMoral", "Tomas")?rfc=" + rfc,
+            success: function (result) {
+                if (result.valido) {
+                    $.validator.addMethod("ValidaRfcMoral", function () {
+                        return true;
+                    }, "El RFC no es valido.");//$.validator.addMethod("ValidaRfc", function () {
+                } else {
+                    $.validator.addMethod("ValidaRfcMoral", function () {
+                        return false;
+                    }, "El RFC no es valido.");//$.validator.addMethod("ValidaRfc", function () {
+                }
+            },
+            error: function () {
+                toastr.error("Error al validar el RFC", "Tomas", { closeButton: true, progressBar: true, positionClass: "toast-bottom-full-width" });
+            }
+        });//$.ajax({   
+    });//$("#Rfc").change(function () {
     var DownloadCheckTimer;
     function blockForDownload() {
         DownloadCheckTimer = window.setInterval(function () {
