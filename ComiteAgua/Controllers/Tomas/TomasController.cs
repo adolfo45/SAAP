@@ -330,13 +330,13 @@ namespace ComiteAgua.Controllers.Tomas
         {
             return PartialView(model);
         }
-        public ActionResult _ResultadoConsultarGastos(DateTime fecha)
+        public ActionResult _ResultadoConsultarGastos(DateTime? fechaInicio, DateTime? fechaFin)
         {
             List<GastosViewModel> gastosLista = new List<GastosViewModel>();
             GastosDomain gastosDomain = new GastosDomain(_context);
             ArchivosGastoDomain archivosGastoDomain = new ArchivosGastoDomain(_context);            
 
-            var gastos = gastosDomain.ObtenerGastos(fecha);          
+            var gastos = gastosDomain.ObtenerGastos(fechaInicio, fechaFin);          
 
             foreach (var item in gastos)
             {
@@ -636,9 +636,9 @@ namespace ComiteAgua.Controllers.Tomas
             
             return PartialView("_ListaArchivosToma", listaArchivo);
         }
-        public ActionResult _ResultadoCorte(DateTime fecha)
+        public ActionResult _ResultadoCorte(DateTime? fechaInicio, DateTime? fechaFin)
         {
-            var model = this.ObtenerCorteViewModel(fecha);
+            var model = this.ObtenerCorteViewModel(fechaInicio, fechaFin);
 
             return PartialView("_ResultadoCorte", model);
         }
@@ -826,7 +826,7 @@ namespace ComiteAgua.Controllers.Tomas
             }
             return View(conveniosViewModel);
         }      
-        public JsonResult CalcularMontoPeriodo(DateTime periodoInicio, DateTime periodoFin, int categoriaId, int tomaId)
+        public JsonResult CalcularMontoPeriodo(DateTime periodoInicio, DateTime periodoFin, int categoriaId, int tomaId = 0)
         {
             var tarifasDomain = new TarifasDomain(_context);
             var descuentosProntoPagoDomain = new DescuentosProntoPagoDomain(_context);
@@ -872,6 +872,7 @@ namespace ComiteAgua.Controllers.Tomas
                 porcentaje = descuentoExiste.MontoPoncentaje;
             }
 
+            if (tomaId > 0) { 
             //Calcula tercera edad para mostrar etiqueta
             var toma = tomasDomain.ObtenerToma(tomaId);
             if (toma.Propietario.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica)
@@ -917,7 +918,7 @@ namespace ComiteAgua.Controllers.Tomas
            
             var cpms = cantidadPorcentajeMadreSoltera == null ? 0 : Convert.ToDecimal(cantidadPorcentajeMadreSoltera);
             totalResul -= cpms;
-
+            }
             return Json(new { success = Math.Truncate(newtotal),
                 descuentoresult = porcentajeDescuento,
                 totalresult = neto,
@@ -1067,7 +1068,7 @@ namespace ComiteAgua.Controllers.Tomas
         {           
             return View();
         }
-        public ActionResult EliminarGasto(int gastoId, DateTime fecha)
+        public ActionResult EliminarGasto(int gastoId, DateTime? fechaInicio, DateTime? fechaFin)
         {
             GastosDomain gastosDomain = new GastosDomain(_context);            
             List<GastosViewModel> gastosLista = new List<GastosViewModel>();           
@@ -1087,7 +1088,7 @@ namespace ComiteAgua.Controllers.Tomas
 
             gastosDomain.Eliminar(gastoId);            
 
-            var gastos = gastosDomain.ObtenerGastos(fecha);
+            var gastos = gastosDomain.ObtenerGastos(fechaInicio, fechaFin);
 
             foreach (var item in gastos)
             {
@@ -1213,40 +1214,40 @@ namespace ComiteAgua.Controllers.Tomas
 
             return PartialView("_ListaArchivosToma", listaArchivo);
         }
-        public ActionResult ConsultarArchivosPersona(string nombre, int personaId, int archivoPersonaId, int tipoArchivoId)
-        {
-            List<ArchivoClass> listaHttp = new List<ArchivoClass>();
-            List<Archivo> listaArchivo = new List<Archivo>();
-            Archivo archivoClass = new Archivo();
-            var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
+        //public ActionResult ConsultarArchivosPersona(string nombre, int personaId, int archivoPersonaId, int tipoArchivoId)
+        //{
+        //    List<ArchivoClass> listaHttp = new List<ArchivoClass>();
+        //    List<Archivo> listaArchivo = new List<Archivo>();
+        //    Archivo archivoClass = new Archivo();
+        //    var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
 
            
-                var archivoPersona = archivosPersonaDomain.ObtenerArchivoPersona(archivoPersonaId);
-                //Elimina Archivo
-                var file = Path.Combine(HttpContext.Server.MapPath("/UploadFiles/Persona/"), archivoPersona.UrlArchivo);
-                if (System.IO.File.Exists(file))
-                    System.IO.File.Delete(file);
+        //        var archivoPersona = archivosPersonaDomain.ObtenerArchivoPersona(archivoPersonaId);
+        //        //Elimina Archivo
+        //        var file = Path.Combine(HttpContext.Server.MapPath("/UploadFiles/Persona/"), archivoPersona.UrlArchivo);
+        //        if (System.IO.File.Exists(file))
+        //            System.IO.File.Delete(file);
 
-                archivosPersonaDomain.Eliminar(archivoPersonaId);
-                var archivos = archivosPersonaDomain.Obtener(personaId, tipoArchivoId);
+        //        archivosPersonaDomain.Eliminar(archivoPersonaId);
+        //        var archivos = archivosPersonaDomain.Obtener(personaId, tipoArchivoId);
 
-                listaArchivo = archivos
-                  .Select(up => new Archivo
-                  {
-                      PersonaId = up.PersonaId,
-                      Nombre = up.Nombre,
-                      ArchivoId = up.ArchivoPersonaId,
-                      UrlArchivo = up.UrlArchivo,
-                      TipoArchivoId = tipoArchivoId
-                  })
-                  .OrderBy(up => up.ArchivoId)
-                  .ToList();
+        //        listaArchivo = archivos
+        //          .Select(up => new Archivo
+        //          {
+        //              PersonaId = up.PersonaId,
+        //              Nombre = up.Nombre,
+        //              ArchivoId = up.ArchivoPersonaId,
+        //              UrlArchivo = up.UrlArchivo,
+        //              TipoArchivoId = tipoArchivoId
+        //          })
+        //          .OrderBy(up => up.ArchivoId)
+        //          .ToList();
 
-                Session["ListaArchivos"] = listaArchivo;
+        //        Session["ListaArchivos"] = listaArchivo;
            
 
-            return PartialView("_ListaArchivosToma", listaArchivo);
-        }
+        //    return PartialView("_ListaArchivosToma", listaArchivo);
+        //}
         public ActionResult ConsultarArchivosPersona(int personaId, int tipoArchivoId)
         {
             var archivosPersonaDomain = new ArchivosPersonaDomain(_context);
@@ -2687,6 +2688,7 @@ namespace ComiteAgua.Controllers.Tomas
                 EstatusServicioId = (int)EstatusServicioDomain.EstatusServicioEnum.NoIniciado
             };
 
+           
             if (string.IsNullOrEmpty(model.ServicioId))
             {
                 serviciosDomain.Guardar(servicio);
@@ -2694,7 +2696,7 @@ namespace ComiteAgua.Controllers.Tomas
                 {
                     string mensaje = model.UbicacionServicio;
                     EnviarNotificacionServicios(item, mensaje);
-                }              
+                }
             }
             else
             {
@@ -2834,15 +2836,16 @@ namespace ComiteAgua.Controllers.Tomas
 
             return View();
         }
-        public ActionResult ImprimirCorte(string fecha, string downloadToken)
+        public ActionResult ImprimirCorte(DateTime? fechaInicio, DateTime? fechaFin, string downloadToken)
         {
-            DateTime fecha1 = Convert.ToDateTime(fecha);
-            var corte = this.ObtenerCorteViewModel(fecha1);
+            var corte = this.ObtenerCorteViewModel(fechaInicio, fechaFin);
 
             Response.AppendCookie(new HttpCookie("fileDownloadToken", downloadToken));
             return new ViewAsPdf(corte)
             {
-                FileName = string.Format("Corte_" + fecha1.ToString("dd-MM-yyyy") + ".pdf")                
+                FileName = string.Format("Corte_" + DateTime.Now.ToString("dd-MM-yyyy") + ".pdf"),
+                PageSize = Rotativa.Options.Size.A4,
+                CustomSwitches = "--page-offset 0 --footer-center [page] --footer-font-size 8"
             };           
         }
         public ActionResult ImprimirEstadoCuenta(int tomaId, string downloadToken)
@@ -3563,15 +3566,15 @@ namespace ComiteAgua.Controllers.Tomas
 
             return codigoQRurl;
         }
-        public CorteViewModel ObtenerCorteViewModel(DateTime fecha)
+        public CorteViewModel ObtenerCorteViewModel(DateTime? fechaInicio, DateTime? fechaFin)
         {
             GastosDomain gastosDomain = new GastosDomain(_context);
             PagosDomain pagosDomain = new PagosDomain(_context);
             List<PagosViewModel> listaPagos = new List<PagosViewModel>();
             List<GastosViewModel> listaGastos = new List<GastosViewModel>();
 
-            var gastos = gastosDomain.ObtenerGastos(fecha);
-            var ingresos = pagosDomain.ObtenerPagos(fecha);
+            var gastos = gastosDomain.ObtenerGastos(fechaInicio, fechaFin);
+            var ingresos = pagosDomain.ObtenerPagos(fechaInicio, fechaFin);
 
             foreach (var item in gastos)
             {
@@ -3580,6 +3583,7 @@ namespace ComiteAgua.Controllers.Tomas
                     GastoId = item.GastoId,
                     Concepto = item.Concepto,
                     Total = item.Total.ToString("C"),
+                    FechaAlta = item.FechaAlta
                 };
 
                 listaGastos.Add(gastosViewModel);
@@ -3601,7 +3605,8 @@ namespace ComiteAgua.Controllers.Tomas
                                                             item.ConceptoPago.Nombre,
                     Total = item.Total.ToString("C"),
                     TipoPago = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && item.Recibo.Count == 0 ? "Tarjeta" : "Recibo",
-                    Activo = item.Activo
+                    Activo = item.Activo,
+                    FechaAlta = item.FechaAlta
                 };
 
                 listaPagos.Add(pagosViewModel);
@@ -3619,7 +3624,7 @@ namespace ComiteAgua.Controllers.Tomas
                 TotalIngresos = totalIngresos.ToString("C"),
                 TotalGastos = totalGastos.ToString("C"),
                 Total = total.ToString("C"),
-                FechaConsulta = fecha
+                FechaConsulta = DateTime.Now
             };
 
             return corteViewModel;

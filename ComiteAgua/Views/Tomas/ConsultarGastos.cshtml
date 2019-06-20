@@ -16,11 +16,18 @@
 <div class="col-md-6 mr-auto ml-auto">
     <div class="card">
         <div class="card-body">
-            @*Fecha*@
+            @*Fecha Inicio*@
             <div class="form-group row">
-                @Html.Label("Fecha", new { @for = "Fecha", @class = "col-md-3 col-form-label ml-auto" })
+                @Html.Label("Fecha Inicio", new { @for = "Fecha Inicio", @class = "col-md-3 col-form-label ml-auto" })
                 <div class="col-sm-6 mr-auto">
-                    <input id="Fecha" type="date" class="form-control" />
+                    <input id="FechaInicio" type="date" class="form-control" />
+                </div>
+            </div>
+            @*Fecha Fin*@
+            <div class="form-group row">
+                @Html.Label("Fecha Fin", new { @for = "Fecha Fin", @class = "col-md-3 col-form-label ml-auto" })
+                <div class="col-sm-6 mr-auto">
+                    <input id="FechaFin" type="date" class="form-control" />
                 </div>
             </div>
         </div>
@@ -71,11 +78,12 @@
 
             $("#BuscarButton").click(function () {
                 BloquearProcesando();
-                var fecha = $("#Fecha").val();
-
-                if (fecha == "") {
+                var fechaInicio = $("#FechaInicio").val();
+                var fechaFin = $("#FechaFin").val();
+                //Validaciones
+                if (fechaInicio == "" && fechaFin == "") {
                     toastr.warning(
-                        "Debe ingresar al menos un filtro",
+                        "Debe ingresar al menos un filtro para la busqueda",
                         "Alerta",
                         {
                             closeButton: true,
@@ -85,19 +93,31 @@
                     $.unblockUI();
                     return;
                 }
-
+                if (fechaInicio != "" && fechaFin != "") {
+                    if (fechaFin < fechaInicio) {
+                        toastr.warning(
+                            "La Fecha Fin no puede ser menor a Fecha Inicio",
+                            "Alerta",
+                            {
+                                closeButton: true,
+                                progressBar: true,
+                                positionClass: "toast-bottom-full-width"
+                            });
+                        $.unblockUI();
+                        return;
+                    }
+                }
                 $.ajax({
                     type: 'get',
                     cache: false,
                     url: '@Url.Action("_ResultadoConsultarGastos", "Tomas")',
-                    data: { fecha: fecha },
+                    data:
+                    {
+                        fechaInicio: fechaInicio,
+                        fechaFin: fechaFin
+                    },
                     success: function (data) {
                         $("#Gastos").html(data)
-                        $('#gastosTable').DataTable({
-                            "filter": false
-                        });
-                        div = document.getElementById('gastosTable_length');
-                        div.style.display = 'none';
                         $.unblockUI();
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
@@ -108,8 +128,8 @@
             });
 
             $("#LimpiarButton").click(function () {
-                $("#Fecha").val("");
-
+                $("#FechaInicio").val("");
+                $("#FechaFin").val("");
                 var table = $('#gastosTable').DataTable();
                 table
                     .clear()
@@ -124,17 +144,13 @@
                     url: '@Url.Action("EliminarGasto", "Tomas")',
                     data: {
                         gastoId: $("#gastoId").val(),
-                        fecha: $("#Fecha").val()
+                        fechaInicio: $("#FechaInicio").val(),
+                        fechaFin: $("#FechaFin").val()
                     },
                     success: function (data) {
                         $('#eliminarModal').modal('hide');
                         $("#gastoId").val("");
                         $("#Gastos").html(data);
-                        $('#gastosTable').DataTable({
-                            "filter": false
-                        });
-                        div = document.getElementById('gastosTable_length');
-                        div.style.display = 'none';
                         $.unblockUI();
                     },
                     error: function (jqXHR, textStatus, errorThrown) {

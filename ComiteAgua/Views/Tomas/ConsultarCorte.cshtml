@@ -9,24 +9,31 @@
 <nav aria-label="breadcrumb" role="navigation">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
-        <li class="breadcrumb-item active" aria-current="page"><a>Gastos Comité</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a>Corte</a></li>
     </ol>
 </nav>
 
 
 
 <div class="col-md-6 mr-auto ml-auto">
-    <div class="card text-center">
+    <div class="card">
         <div class="card-body">
             @*Fecha Inicio*@
             <div class="form-group row">
-                @Html.Label("Fecha", new { @for = "Fecha", @class = "col-md-3 col-form-label ml-auto" })
+                @Html.Label("Fecha Inicio", new { @for = "Fecha Inicio", @class = "col-md-3 col-form-label ml-auto" })
                 <div class="col-sm-6 mr-auto">
-                    <input id="Fecha" type="date" class="form-control" />
+                    <input id="FechaInicio" type="date" class="form-control" />
                 </div>
-            </div>           
+            </div>
+            @*Fecha Fin*@
+            <div class="form-group row">
+                @Html.Label("Fecha Fin", new { @for = "Fecha Fin", @class = "col-md-3 col-form-label ml-auto" })
+                <div class="col-sm-6 mr-auto">
+                    <input id="FechaFin" type="date" class="form-control" />
+                </div>
+            </div>
         </div>
-        <div class="card-footer">
+        <div class="card-footer text-center">
             <div class="row justify-content-center">
                 <div class="col-4">
                     <button id="BuscarButton" type="button" class="btn btn-success">Buscar</button>
@@ -50,29 +57,73 @@
         $(document).ready(function () {
 
             $("#BuscarButton").click(function () {
-                var fecha = $("#Fecha").val();
-
-                if (fecha == "") {
+                BloquearProcesando();
+                var fechaInicio = $("#FechaInicio").val();
+                var fechaFin = $("#FechaFin").val();
+                //Validaciones
+                if (fechaInicio == "" && fechaFin == "") {
+                    toastr.warning(
+                        "Debe de ingresar al menos un filtro para búsqueda",
+                        "Alerta",
+                        {
+                            closeButton: true,
+                            progressBar: true,
+                            positionClass: "toast-bottom-full-width"
+                        });
+                    $.unblockUI();
                     return;
                 }
-
+                if (fechaInicio != "" && fechaFin != "") {
+                    if (fechaFin < fechaInicio) {
+                        toastr.warning(
+                            "La Fecha Fin no puede ser menor a Fecha Inicio",
+                            "Alerta",
+                            {
+                                closeButton: true,
+                                progressBar: true,
+                                positionClass: "toast-bottom-full-width"
+                            });
+                        $.unblockUI();
+                        return;
+                    }
+                }
+                 //FIN Validaciones
                 $.ajax({
                     type: 'get',
                     cache: false,
                     url: '@Url.Action("_ResultadoCorte", "Tomas")',
-                    data: { fecha: fecha },
+                    data:
+                    {
+                        fechaInicio: fechaInicio,
+                        fechaFin: fechaFin
+                    },
                     success: function (data) {
                         $("#Corte").html(data)
+                        $.unblockUI();
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         alert('Error - ' + errorThrown);
+                        $.unblockUI();
                     }
                 });
             });
 
             $("#LimpiarButton").click(function () {
-                $("#Fecha").val("")
-                $("#Corte").html("")
+              
+                document.getElementById("TotalIngresosLabel").innerText = "";
+                document.getElementById("TotalGastosLabel").innerText = "";
+                document.getElementById("TotalLabel").innerText = "";
+
+                $("#FechaInicio").val("")
+                $("#FechaFin").val("")
+                var ingresosTable = $('#IngresosTable').DataTable();
+                var gastosTable = $('#GastosDataTable').DataTable();
+                ingresosTable
+                    .clear()
+                    .draw();
+                gastosTable
+                    .clear()
+                    .draw();
             });          
 
         });

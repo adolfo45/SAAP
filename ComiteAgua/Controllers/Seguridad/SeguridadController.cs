@@ -218,13 +218,11 @@ namespace ComiteAgua.Controllers.Seguridad
         #endregion
 
         #region * Métodos creados por Comité Agua *
-
         protected override void Dispose(bool disposing)
         {
             _context.Dispose();
 
         } // protected override void Dispose(bool disposing)
-        
         #endregion
                 
     }

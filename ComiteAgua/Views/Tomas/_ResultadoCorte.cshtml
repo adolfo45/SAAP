@@ -8,7 +8,9 @@
 
 <div class="col-md-12">
     <div class="row">               
-        <h6 class="text-center">Total Ingresos: @Model.TotalIngresos</h6>   
+        <h6 class="text-center">
+            Total Ingresos: <label id="TotalIngresosLabel"/>
+        </h6>   
        
       
             @Html.HiddenFor(x => x.FechaConsulta)    
@@ -22,24 +24,25 @@
         <br />
     </div>
     <div class="row">
-        <h6 class="text-center">Total Gastos: @Model.TotalGastos</h6>
+        <h6 class="text-center">Total Gastos: <label id="TotalGastosLabel" /></h6>
     </div>
     <div class="row">
-        <h6 class="text-center">Total: @Model.Total</h6>
+        <h6 class="text-center">Total: <label id="TotalLabel" /></h6>
     </div>
 </div>  
 
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="offset-md-1 col-md-10">
 
         <h4 class="text-center">Ingresos</h4>
 
         @if (Model.Pagos.Count > 0)
         {
-            <table class="table table-bordered table-sm">
+            <table id="IngresosTable" class="table table-bordered table-sm">
                 <thead class="thead-dark">
                     <tr>
+                        <th scope="col">Fecha</th>
                         <th scope="col">No</th>
                         <th scope="col">Concepto</th>
                         <th scope="col">Total</th>
@@ -50,6 +53,7 @@
                     @foreach (var item in Model.Pagos)
                     {
                         <tr class="@(!item.Activo ? "amarillo" : "")">
+                            <td>@item.FechaAlta.ToString("dd-MM-yyyy")</td>
                             <td>@(item.TipoPago + "-" + item.NoRecibo.ToString()) @(!item.Activo ? "(Cancelado)" : "")</td>
                             <td>@item.ConceptoPago</td>
                             <td>@item.Total</td>
@@ -69,18 +73,20 @@
             </div>
         }
     </div>
-
-    <div class="col-md-6">
+</div>
+<div class="row">
+    <div class="offset-md-1 col-md-10">
 
         <h4 class="text-center">Gastos</h4>
 
         @if (Model.Gastos.Count > 0)
         {
-            <table class="table table-bordered table-sm">
+            <table id="GastosDataTable" class="table table-bordered table-sm">
                 <thead class="thead-dark">
                     <tr>
+                        <th scope="col">Fecha</th>
                         <th scope="col">Concepto</th>
-                        <th scope="col">Total</th>                       
+                        <th scope="col">Total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,6 +94,7 @@
                     @foreach (var item in Model.Gastos)
                 {
                         <tr>
+                            <td>@item.FechaAlta.ToString("dd-MM-yyyy")</td>
                             <td>@item.Concepto</td>
                             <td>@item.Total</td>
                         </tr>
@@ -112,9 +119,10 @@
     $("#ImprimirButton")
         .click(function () {
             var token = new Date().getTime(); //use the current timestamp as the token value
-            var fechas = $("#Fecha").val();
+            var fechaInicio = $("#FechaInicio").val();
+            var fechaFin = $("#FechaFin").val();
                     blockUIForDownload(token);
-            window.location = "@Url.Action("ImprimirCorte", "Tomas")?fecha=" + fechas + "&downloadToken=" + token ;
+            window.location = "@Url.Action("ImprimirCorte", "Tomas")?fechaInicio=" + fechaInicio + "&fechaFin=" + fechaFin + "&downloadToken=" + token ;
         });
 
     var fileDownloadCheckTimer;
@@ -132,4 +140,13 @@
         $.removeCookie('fileDownloadToken'); //clears this cookie value
         $.unblockUI();
     }
+
+    $(document).ready(function () {
+        $('#IngresosTable').DataTable();
+        $('#GastosDataTable').DataTable();
+           
+        document.getElementById("TotalIngresosLabel").innerText = '@(Model.TotalIngresos)';
+        document.getElementById("TotalGastosLabel").innerText = '@(Model.TotalGastos)';
+        document.getElementById("TotalLabel").innerText = '@(Model.Total)';
+    });
 </script>

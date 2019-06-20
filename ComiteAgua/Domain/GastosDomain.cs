@@ -48,12 +48,18 @@ namespace ComiteAgua.Domain
             _context.Entry(gasto).State = EntityState.Deleted;
 
             _context.SaveChanges();
-        }        
-        public List<Gasto> ObtenerGastos(DateTime fecha)
+        }
+        public List<Gasto> ObtenerGastos(DateTime? fechaInicio, DateTime? fechaFin)
         {
+
             var result = _context.Gasto
-               .Where(i => DbFunctions.TruncateTime(i.FechaAlta) == DbFunctions.TruncateTime(fecha))
-               .ToList();
+           .Where(i => fechaInicio != null && fechaFin != null ?
+                        DbFunctions.TruncateTime(i.FechaAlta) >= DbFunctions.TruncateTime(fechaInicio) &&
+                        DbFunctions.TruncateTime(i.FechaAlta) <= DbFunctions.TruncateTime(fechaFin) :
+                        DbFunctions.TruncateTime(i.FechaAlta) == DbFunctions.TruncateTime(fechaInicio) ||
+                        DbFunctions.TruncateTime(i.FechaAlta) == DbFunctions.TruncateTime(fechaFin))
+                        .OrderBy(i => i.FechaAlta)
+                        .ToList();
 
             return result;
         }

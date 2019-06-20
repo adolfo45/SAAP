@@ -123,8 +123,8 @@ namespace ComiteAgua.Domain
                                                       : query.OrderBy(x => x.Toma.Select(t => t.Folio).FirstOrDefault());  
                 
                 if (agrid.columna == "Propietario") query = agrid.columna_orden == "DESC"
-                                                  ? query.OrderByDescending(x => (x.Persona.PersonaFisica.Nombre.Trim()))
-                                                  : query.OrderBy(x => (x.Persona.PersonaFisica.Nombre.Trim()));
+                                                  ? query.OrderByDescending(x => x.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica ? (x.Persona.PersonaFisica.Nombre.Trim()) : (x.Persona.PersonaMoral.Nombre.Trim()))
+                                                  : query.OrderBy(x => x.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica ? (x.Persona.PersonaFisica.Nombre.Trim()) : (x.Persona.PersonaMoral.Nombre.Trim()));
 
                 if (agrid.columna == "Calle") query = agrid.columna_orden == "DESC"
                                                   ? query.OrderByDescending(x => x.Toma.Select(d => d.Direccion.TiposCalle.Nombre.Trim()).FirstOrDefault())
@@ -176,7 +176,9 @@ namespace ComiteAgua.Domain
                         query = query.Where(x => x.Toma.Any(t => t.Folio.ToString() == f.valor));
 
                     if (f.columna == "Propietario")
-                        query = query.Where(x => (x.Persona.PersonaFisica.Nombre.Trim() + " " + x.Persona.PersonaFisica.ApellidoPaterno.Trim() + " " + x.Persona.PersonaFisica.ApellidoMaterno.Trim()).Trim().Contains(f.valor));
+                        query = query.Where(x => x.Persona.TipoPersonaId == (int)TipoPersonaDomain.TipoPersonaEnum.PersonaFisica ? 
+                                (x.Persona.PersonaFisica.Nombre.Trim() + " " + x.Persona.PersonaFisica.ApellidoPaterno.Trim() + " " + x.Persona.PersonaFisica.ApellidoMaterno.Trim()).Trim().Contains(f.valor) :
+                                x.Persona.PersonaMoral.Nombre.Trim().Contains(f.valor));
 
                     if (f.columna == "Calle")
                         query = query.Where(x => x.Toma.Select(d => (d.Direccion.TiposCalle.Nombre.Trim() + " " + d.Direccion.Calles.Nombre.Trim())).FirstOrDefault().Trim().Contains(f.valor));

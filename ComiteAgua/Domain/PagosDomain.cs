@@ -94,7 +94,7 @@ namespace ComiteAgua.Domain
 
             return result;
         }
-        public List<Pago> ObtenerPagos(DateTime fecha)
+        public List<Pago> ObtenerPagos(DateTime? fechaInicio, DateTime? fechaFin)
         {
             var result = _context.Pago
                 .Include(p => p.ConceptoPago)
@@ -104,7 +104,12 @@ namespace ComiteAgua.Domain
                  .Include(p => p.Renta.TipoRenta)
                  .Include(p => p.Constancia)
                  .Include(p => p.Constancia.TiposConstancia)
-                .Where(i => DbFunctions.TruncateTime(i.FechaAlta) == DbFunctions.TruncateTime(fecha))
+                .Where(i => fechaInicio != null && fechaFin != null ?
+                            DbFunctions.TruncateTime(i.FechaAlta) >= DbFunctions.TruncateTime(fechaInicio) &&
+                            DbFunctions.TruncateTime(i.FechaAlta) <= DbFunctions.TruncateTime(fechaFin) :
+                            DbFunctions.TruncateTime(i.FechaAlta) == DbFunctions.TruncateTime(fechaInicio) ||
+                            DbFunctions.TruncateTime(i.FechaAlta) == DbFunctions.TruncateTime(fechaFin))
+                            .OrderBy(p => p.FechaAlta)
                 .ToList();
 
             return result;

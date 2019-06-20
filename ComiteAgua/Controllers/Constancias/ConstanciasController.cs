@@ -71,8 +71,8 @@ namespace ComiteAgua.Controllers.Constancias
                                     (!string.IsNullOrEmpty(t.Direccion.NumInt) ? " INT " + t.Direccion.NumInt : string.Empty) +
                                     (!string.IsNullOrEmpty(t.Direccion.NumExt) ? " EXT " + t.Direccion.NumExt : string.Empty)) : String.Empty,
                     Colonia = t.Direccion != null ? (t.Direccion.ColoniaId > 0 ? t.Direccion.Colonias.Nombre : string.Empty) : string.Empty,
-                    UltimoPeriodoPago = t.PeriodoPago.Select(p => p.MesAnoInicio).LastOrDefault() != null ? 
-                                        Convert.ToDateTime(t.PeriodoPago.Select(p => p.MesAnoInicio).LastOrDefault()).ToString("MMM-yyyy", new CultureInfo("es-ES")) : t.PeriodoPago.Select(p => p.UltimoPeriodoPago).LastOrDefault(),
+                    UltimoPeriodoPago = t.PeriodoPago.Select(p => p.MesAnoFin).LastOrDefault() != null ? 
+                                        Convert.ToDateTime(t.PeriodoPago.Select(p => p.MesAnoFin).LastOrDefault()).ToString("MMM-yyyy", new CultureInfo("es-ES")) : t.PeriodoPago.Select(p => p.UltimoPeriodoPago).LastOrDefault(),
                     ReciboImpreso = t.Constancia.Count > 0 ? t.Constancia.Select(c => c.ReciboImpreso).LastOrDefault() : true
                 })
                 .OrderBy(t => t.Folio)
