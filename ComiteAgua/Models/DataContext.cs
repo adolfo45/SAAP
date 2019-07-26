@@ -25,7 +25,6 @@ namespace ComiteAgua.Models
         public DataContext() : base("name=ComiteAgua")
         {
             //Database.Connection.ConnectionString = AdsertiFunciones.DesencriptarTexto(ConfigurationManager.ConnectionStrings["ComiteAgua"].ConnectionString);
-            //Database.Connection.ConnectionString = AdsertiFunciones.DesencriptarTexto(ConfigurationManager.ConnectionStrings["ComiteAgua"].ConnectionString);
         }
         #endregion
 

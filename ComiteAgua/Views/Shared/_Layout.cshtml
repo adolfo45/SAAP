@@ -6,146 +6,146 @@
 
 <html>
 <head>
-
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title - Comité Agua</title>
     <link rel="shortcut icon" href="~/Images/gota2.png" />
-
     <link href="~/Content/font-awesome.css" rel="stylesheet" />
-
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Content/ionicons.min.css" rel="stylesheet" />
     <link href="~/Content/Site.css" rel="stylesheet" />
-
     <link href="~/Content/toastr.css" rel="stylesheet" />
-
     <link href="~/Content/dataTables.bootstrap4.min.css" rel="stylesheet" />
-
+    <link href="~/Content/w3.css" rel="stylesheet" />
     <script src="~/Scripts/jquery_3.3.1.js"></script>
-
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="@Url.Action("LogOut", "Account")" title="Cerrar sesión"><span class="ion-locked"></span></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+    <!-- Sidebar -->
+    <div class="w3-sidebar w3-bar-block w3-animate-left" style="display:none;z-index:5" id="mySidebar">
+
+        <button class="w3-bar-item w3-button w3-large" onclick="w3_close()">Cerrar &times;</button>
+
+        <a href="@Url.Action("LogOut", "Account")" title="Cerrar Sesión" class="w3-bar-item w3-button nav-link"><span class="ion-locked"></span> Cerrar Sesión</a>
+        <a href="@Url.Action("Index", "Home")" title="Inicio" class="w3-bar-item w3-button nav-link"><i class="fa fa-home" aria-hidden="true"></i> Inicio</a>
+        <a href="@Url.Action("Tabs", "Tomas")" title="Agregar toma" class="w3-bar-item w3-button nav-link"><i class="fa fa-plus" aria-hidden="true"></i> Toma</a>
+
+        <button class="w3-button w3-block w3-left-align" onclick="myAccFunc('TomasDropDown')">
+            <i class="fa fa-usd" aria-hidden="true"></i> Gastos <i class="fa fa-caret-down"></i>
         </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("Tabs", "Tomas")" title="Agregar toma"><span class="ion-plus-round"></span> Toma<span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-usd" aria-hidden="true"></i> Gastos
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="@Url.Action("GastosComite", "Tomas")">Agregar</a>
-                        <a class="dropdown-item" href="@Url.Action("ConsultarGastos", "Tomas")">Consultar</a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("ConsultarCorte", "Tomas")" title="Consultar corte"><span class="ion-cash"></span> Corte<span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-wrench" aria-hidden="true"></i> Servicios
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="@Url.Action("ConsultarServicios", "Tomas")">Consultar</a>
-                        <a class="dropdown-item" href="@Url.Action("RegistroServicio", "Tomas")">Agregar</a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="DescargarPadronButton" href="#" title="Descargar Padron"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Padron<span class="sr-only">(current)</span></a>
-                </li>
-                @*<li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Notificaciones
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="@Url.Action("NotificacionesLista", "Notificaciones")">Notificaciones entregadas</a>
-                <a class="dropdown-item" href="@Url.Action("NotificacionesPagadas", "Notificaciones")">Notificaciones pagadas</a>
-            </div>
-        </li>*@
-                    @*<li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("ReportesNotificacion", "Notificaciones")" title="Reportes Notificación"><span class="glyphicon glyphicon-bell"></span> Reportes Notificación<span class="sr-only">(current)</span></a>
-                    </li>*@
-                
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-qrcode" aria-hidden="true"></i> Recibos
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="@Url.Action("Recibos", "Tomas")"> Consultar</a>
-                        <a class="dropdown-item" href="@Url.Action("RecibosExtraFiltros", "Tomas")"> Agregar</a>
-                    </div>
-                </li>
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-tags" aria-hidden="true"></i> Categorias
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="@Url.Action("EditAddCategoria", "Catalogos", new { urlRetorno = Url.Action("Index", "Home") })">Agregar</a>
-                        <a class="dropdown-item" href="@Url.Action("Categorias", "Catalogos")">Consultar</a>
-                    </div>
-                </li>
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-user-o" aria-hidden="true"></i> Usuarios
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="@Url.Action("Usuarios", "Seguridad")">Consultar</a>
-                        <a class="dropdown-item" href="@Url.Action("AdministrarUsuarios", "Seguridad", new { urlRetorno = Url.Action("Usuarios", "Seguridad") })">Agregar</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-percent" aria-hidden="true"></i> Descuentos
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="@Url.Action("Descuentos", "Catalogos")">Pronto Pago</a>
-                        <a class="dropdown-item" href="@Url.Action("DescuentosVarios", "Catalogos", new { tipoDescuentoId = (int)TiposDescuentoDomain.TiposDescuentoEnum.TerceraEdad })">Tercera Edad</a>
-                        <a class="dropdown-item" href="@Url.Action("DescuentosVarios", "Catalogos", new { tipoDescuentoId = (int)TiposDescuentoDomain.TiposDescuentoEnum.MadreSoltera })">Madre Soltera</a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("Convenios", "Tomas")" title="Convenios"><i class="fa fa-users" aria-hidden="true"></i> Convenios<span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-file-word-o" aria-hidden="true"></i> Constancias
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="@Url.Action("ConstanciaNoAdeudoFiltros", "Constancias")">Constancia de no adeudo</a>
-                        <a class="dropdown-item" href="@Url.Action("ConstanciaNoServicio", "Constancias")">Constancia de no servicio</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-handshake-o" aria-hidden="true"></i> Rentas
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="@Url.Action("Renta", "Rentas")">Renta Retroexcavadora</a>
-                    </div>
-                </li>
-            </ul>
+        <div id="TomasDropDown" class="w3-hide w3-white w3-card">
+            <a href="@Url.Action("GastosComite", "Tomas")" class="w3-bar-item w3-button nav-link">Agregar</a>
+            <a href="@Url.Action("ConsultarGastos", "Tomas")" class="w3-bar-item w3-button nav-link">Consultar</a>
         </div>
 
-    </nav>
+        <a href="@Url.Action("ConsultarCorte", "Tomas")" title="Consultar Corte" class="w3-bar-item w3-button nav-link"><span class="ion-cash"></span> Corte</a>
 
-    <div class="container-fluid">
+        <button class="w3-button w3-block w3-left-align" onclick="myAccFunc('ServiciosDropDown')">
+            <i class="fa fa-wrench" aria-hidden="true"></i> Servicios <i class="fa fa-caret-down"></i>
+        </button>
+        <div id="ServiciosDropDown" class="w3-hide w3-white w3-card">
+            <a href="@Url.Action("RegistroServicio", "Tomas")" class="w3-bar-item w3-button nav-link">Agregar</a>
+            <a href="@Url.Action("ConsultarServicios", "Tomas")" class="w3-bar-item w3-button nav-link">Consultar</a>
+        </div>
 
-        @RenderBody()
+        <a href="#" id="DescargarPadronButton" title="Descargar Padron" class="w3-bar-item w3-button nav-link"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Padron</a>
+
+        <button class="w3-button w3-block w3-left-align" onclick="myAccFunc('NotificacionesDropDown')">
+            <i class="fa fa-bell-o" aria-hidden="true"></i> Notificaciones <i class="fa fa-caret-down"></i>
+        </button>
+        <div id="NotificacionesDropDown" class="w3-hide w3-white w3-card">
+            <a href="@Url.Action("NotificacionesLista", "Notificaciones")" class="w3-bar-item w3-button nav-link">Notificaciones Entregadas</a>
+            <a href="@Url.Action("NotificacionesPagadas", "Notificaciones")" class="w3-bar-item w3-button nav-link">Notificaciones Pagadas</a>
+        </div>
+
+        @*<li class="nav-item">
+            <a class="nav-link" href="@Url.Action("ReportesNotificacion", "Notificaciones")" title="Reportes Notificación"><span class="glyphicon glyphicon-bell"></span> Reportes Notificación<span class="sr-only">(current)</span></a>
+        </li>*@
+
+        <button class="w3-button w3-block w3-left-align" onclick="myAccFunc('RecibosDropDown')">
+            <i class="fa fa-qrcode" aria-hidden="true"></i> Recibos <i class="fa fa-caret-down"></i>
+        </button>
+        <div id="RecibosDropDown" class="w3-hide w3-white w3-card">
+            <a href="@Url.Action("RecibosExtraFiltros", "Tomas")" class="w3-bar-item w3-button nav-link">Agregar</a>
+            <a href="@Url.Action("Recibos", "Tomas")" class="w3-bar-item w3-button nav-link">Consultar</a>
+        </div>
+
+        <button class="w3-button w3-block w3-left-align" onclick="myAccFunc('CategoriasDropDown')">
+            <i class="fa fa-tags" aria-hidden="true"></i> Categorías <i class="fa fa-caret-down"></i>
+        </button>
+        <div id="CategoriasDropDown" class="w3-hide w3-white w3-card">
+            <a href="@Url.Action("EditAddCategoria", "Catalogos", new { urlRetorno = Url.Action("Index", "Home") })" class="w3-bar-item w3-button nav-link">Agregar</a>
+            <a href="@Url.Action("Categorias", "Catalogos")" class="w3-bar-item w3-button nav-link">Consultar</a>
+        </div>
+
+        <button class="w3-button w3-block w3-left-align" onclick="myAccFunc('UsuariosDropDown')">
+            <i class="fa fa-user-o" aria-hidden="true"></i> Usuarios <i class="fa fa-caret-down"></i>
+        </button>
+        <div id="UsuariosDropDown" class="w3-hide w3-white w3-card">
+            <a href="@Url.Action("AdministrarUsuarios", "Seguridad", new { urlRetorno = Url.Action("Usuarios", "Seguridad") })" class="w3-bar-item w3-button nav-link">Agregar</a>
+            <a href="@Url.Action("Usuarios", "Seguridad")" class="w3-bar-item w3-button nav-link">Consultar</a>
+        </div>
+
+        <button class="w3-button w3-block w3-left-align" onclick="myAccFunc('DescuentosDropDown')">
+            <i class="fa fa-percent" aria-hidden="true"></i> Descuentos <i class="fa fa-caret-down"></i>
+        </button>
+        <div id="DescuentosDropDown" class="w3-hide w3-white w3-card">
+            <a href="@Url.Action("Descuentos", "Catalogos")" class="w3-bar-item w3-button nav-link">Pronto Pago</a>
+            <a href="@Url.Action("DescuentosVarios", "Catalogos", new { tipoDescuentoId = (int)TiposDescuentoDomain.TiposDescuentoEnum.TerceraEdad })" class="w3-bar-item w3-button nav-link">Tercera Edad</a>
+            <a href="@Url.Action("DescuentosVarios", "Catalogos", new { tipoDescuentoId = (int)TiposDescuentoDomain.TiposDescuentoEnum.MadreSoltera })" class="w3-bar-item w3-button nav-link">Madre Soltera</a>
+        </div>
+
+        <a href="@Url.Action("Convenios", "Tomas")" title="Convenios" class="w3-bar-item w3-button nav-link"><i class="fa fa-users" aria-hidden="true"></i> Convenios</a>
+
+        <button class="w3-button w3-block w3-left-align" onclick="myAccFunc('ConstanciasDropDown')">
+            <i class="fa fa-file-word-o" aria-hidden="true"></i> Constancias <i class="fa fa-caret-down"></i>
+        </button>
+        <div id="ConstanciasDropDown" class="w3-hide w3-white w3-card">
+            <a href="@Url.Action("ConstanciaNoAdeudoFiltros", "Constancias")" class="w3-bar-item w3-button nav-link">Constancia de no adeudo</a>
+            <a href="@Url.Action("ConstanciaNoServicio", "Constancias")" class="w3-bar-item w3-button nav-link">Constancia de no servicio</a>
+        </div>
+
+        <a href="@Url.Action("Renta", "Rentas")" class="w3-bar-item w3-button nav-link"><i class="fa fa-handshake-o" aria-hidden="true"></i> Renta Retroexcavadora</a>
+
+        <a href="@Url.Action("Deudores", "Reportes")" class="w3-bar-item w3-button nav-link" title="Deudores"><i class="fa fa-line-chart" aria-hidden="true"></i> Deudores</a>
 
     </div>
 
+    <!-- Page Content -->
+    <div class="w3-overlay w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" id="myOverlay"></div>
+
+   
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2">
+                <button class="w3-button w3-white w3-xxlarge" onclick="w3_open()">&#9776;</button>
+                @if (@ViewBag.Title != "Tomas")
+                {
+                    <a href="@ViewBag.UrlRetorno" class="btn btn-primary btn-sm active" role="button" aria-pressed="true"><i class="fa fa-arrow-left" aria-hidden="true"></i> Regresar</a>
+                }
+
+            </div>
+
+            <div class="col-md-8" style="padding-top:12px;">
+                <h3 class="text-center font-weight-bold">@ViewBag.Title</h3>
+            </div>
+
+            <div class="col-md-2" style="padding-top:8px;">
+                @if (@ViewBag.Title == "Tomas")
+                {
+                    <span class="badge badge-primary col-md-12 text-center">@Session["NombreUsuario"]</span>
+                }
+                else
+                {
+                    <span class="badge badge-primary col-md-12 text-center">Folio: @Session["Folio"]</span>
+                }
+            </div>
+        </div>
+        @RenderBody()
+    </div>
+
     @Html.Partial("_Toastr")
-    
+
     <script src="~/Scripts/toastr.js"></script>
     <script src="~/Scripts/toastr.min.js"></script>
 
@@ -167,6 +167,38 @@
     @RenderSection("scripts", required: false)
 
     <script>
+        function myAccFunc(id) {
+            var x = document.getElementById(id);
+            if (x.className.indexOf("w3-show") == -1) {
+                x.className += " w3-show";
+                x.previousElementSibling.className += " w3-green";
+            } else {
+                x.className = x.className.replace(" w3-show", "");
+                x.previousElementSibling.className =
+                    x.previousElementSibling.className.replace(" w3-green", "");
+            }
+        }
+
+        function myDropFunc() {
+            var x = document.getElementById("demoDrop");
+            if (x.className.indexOf("w3-show") == -1) {
+                x.className += " w3-show";
+                x.previousElementSibling.className += " w3-green";
+            } else {
+                x.className = x.className.replace(" w3-show", "");
+                x.previousElementSibling.className =
+                    x.previousElementSibling.className.replace(" w3-green", "");
+            }
+        }
+        function w3_open() {
+            document.getElementById("mySidebar").style.display = "block";
+            document.getElementById("myOverlay").style.display = "block";
+        }
+
+        function w3_close() {
+            document.getElementById("mySidebar").style.display = "none";
+            document.getElementById("myOverlay").style.display = "none";
+        }
         function InIEvent() {
             $('.mp-pusher').css('padding-bottom', $('.row-footer').css('height'));
             $('.enteros').autoNumeric('init', { mDec: '0', vMin: '0', vMax: '99999999' });
@@ -185,6 +217,7 @@
                     blockUIForDownload(token);
                      window.location = "@Url.Action("DescargarPadron", "Tomas")?downloadToken=" + token;
                 });
+
         } // function InIEvent()
 
         $(document).ready(InIEvent);

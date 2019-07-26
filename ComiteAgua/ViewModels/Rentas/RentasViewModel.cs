@@ -60,7 +60,7 @@ namespace ComiteAgua.ViewModels.Rentas
             get
             {
                 if (Accion == ComiteAgua.Accion.Agregar)
-                    return "Agregar Renta Retroexcavadora";
+                    return "Renta Retroexcavadora";
                 if (Accion == ComiteAgua.Accion.Editar)
                     return "Editar Renta Retroexcavadora";
                 if (Accion == ComiteAgua.Accion.Consultar)

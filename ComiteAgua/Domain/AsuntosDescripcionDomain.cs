@@ -37,7 +37,6 @@ namespace ComiteAgua.Domain
         #endregion
 
         #region * Métodos creados por Comité Agua *
-
         public List<AsuntoDescripcion> ObtenerAsuntosDescripcion(int asuntoId)
         {
             var result = _context.AsuntoDescripcion
@@ -45,7 +44,13 @@ namespace ComiteAgua.Domain
 
             return result;
         }       
+        public AsuntoDescripcion ObtenerAsuntoDescripcion(int asuntoDescripcionId)
+        {
+            var asuntoDescripcion = _context.AsuntoDescripcion
+                .Where(a => a.AsuntoDescripcionId == asuntoDescripcionId).FirstOrDefault();
 
+            return asuntoDescripcion;
+        }
         #endregion
 
     } // public class AsuntosDescripcionDomain

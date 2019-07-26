@@ -80,6 +80,7 @@ namespace ComiteAgua.ViewModels.Tomas
         public string Descripcion { get; set; }
         public int EstatusServicioId { get; set; }
         public List<EvidenciaServiciosViewModel> EvidenciaServicios { get; set; }
+        public int Folio { get; set; }
 
         public List<Servicio> NoIniciado { get; set; }
         public List<Servicio> EnProceso { get; set; }

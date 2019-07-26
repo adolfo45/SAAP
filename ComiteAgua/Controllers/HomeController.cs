@@ -68,6 +68,7 @@ namespace ComiteAgua.Controllers
         {
             Session["ListaArchivos"] = null;
             Session["ListaHttp"] = null;
+            Session["Folio"] = null;
         }
         #endregion
 

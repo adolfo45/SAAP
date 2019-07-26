@@ -1,0 +1,126 @@
+﻿
+@{
+    ViewBag.Title = "Deudores";
+    ViewBag.UrlRetorno = Url.Action("Index", "Home");
+}
+
+<br />
+
+<div class="col-md-6 mr-auto ml-auto">
+    <div class="card">
+        <div class="card-body">
+            @*Periodo Inicio*@
+            <div class="form-group row">
+                @Html.Label("Periodo Inicio", new { @for = "PeriodoInicio", @class = "col-md-3 col-form-label ml-auto" })
+                <div class="col-sm-6 mr-auto">
+                    <input id="PeriodoInicio" type="month" class="form-control" />
+                </div>
+            </div>
+            @*Periodo Fin*@
+            <div class="form-group row">
+                @Html.Label("Periodo Fin", new { @for = "PeriodoFin", @class = "col-md-3 col-form-label ml-auto" })
+                <div class="col-sm-6 mr-auto">
+                    <input id="PeriodoFin" type="month" class="form-control" />
+                </div>
+            </div>
+            @*Calles*@
+            <div class="form-group row">
+                @Html.Label("Calles", new { @for = "CalleId", @class = "col-md-3 col-form-label ml-auto" })
+                <div class="col-sm-6 mr-auto">
+                    @Html.DropDownList("CalleId", new SelectList(ViewBag.Calles, "CalleId", "Nombre"), "Seleccione una opción", new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <div class="row justify-content-center">
+                <div class="col-4">
+                    <button id="BuscarButton" type="button" class="btn btn-success">Buscar</button>
+                </div>
+                <div class="col-4">
+                    <button id="LimpiarButton" type="button" class="btn btn-primary">Limpiar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div id="Deudores"></div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+
+            $("#BuscarButton").click(function () {
+                BloquearProcesando();
+                var periodoInicio = $("#PeriodoInicio").val();
+                var periodoFin = $("#PeriodoFin").val();
+                var calleId = $("#CalleId").val();
+                //Validaciones
+                if (periodoInicio == "" && periodoFin == "" && calleId == '') {
+                    toastr.warning(
+                        "Debe de ingresar al menos un filtro para búsqueda",
+                        "Alerta",
+                        {
+                            closeButton: true,
+                            progressBar: true,
+                            positionClass: "toast-bottom-full-width"
+                        });
+                    $.unblockUI();
+                    return;
+                }
+                if (periodoInicio != "" && periodoFin != "") {
+                    if (periodoFin < periodoInicio) {
+                        toastr.warning(
+                            "El Periodo Fin no puede ser menor a Periodo Inicio",
+                            "Alerta",
+                            {
+                                closeButton: true,
+                                progressBar: true,
+                                positionClass: "toast-bottom-full-width"
+                            });
+                        $.unblockUI();
+                        return;
+                    }
+                }
+                //FIN Validaciones
+                $.ajax({
+                    type: 'get',
+                    cache: false,
+                    url: '@Url.Action("_ConsultarDeudores", "Reportes")',
+                    data:
+                    {
+                        periodoInicio: periodoInicio,
+                        periodoFin: periodoFin,
+                        calleId: calleId
+                    },
+                    success: function (data)
+                    {
+                        $("#Deudores").html(data)
+                        $.unblockUI();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown)
+                    {
+                        alert('Error - ' + errorThrown);
+                        $.unblockUI();
+                    }
+                });
+            });
+
+            $("#LimpiarButton").click(function ()
+            {
+                $('#CalleId').get(0).selectedIndex = 0;
+
+                $("#PeriodoInicio").val("");
+                $("#PeriodoFin").val("");
+                var deudoresTable = $('#deudoresTable').DataTable();
+                deudoresTable
+                    .clear()
+                    .draw();
+            });
+        });
+    </script>
+
+}

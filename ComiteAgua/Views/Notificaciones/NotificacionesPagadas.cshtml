@@ -3,42 +3,31 @@
 
 @{
     ViewBag.Title = "Notificaciones Pagadas";
+    ViewBag.UrlRetorno = Url.Action("Index", "Home");
 }
 
 <br />
-
-@*Breadcrumb*@
-<nav aria-label="breadcrumb" role="navigation">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
-        <li class="breadcrumb-item active" aria-current="page"><a>Notificaciones Pagadas</a></li>
-    </ol>
-</nav>
-
-<div class="text-center">
-    <h3>Notificaciones Pagadas</h3>
-</div>
 
 <div class="col-md-6 mr-auto ml-auto">
     <div class="card">
         <div class="card-body">
             @*Fecha Inicio*@
             <div class="form-group row">
-                @Html.LabelFor(n => n.FechaPagoInicioFiltro, new { @for = "Fecha", @class = "col-md-3 col-form-label ml-auto" })
+                @Html.LabelFor(n => n.FechaPagoInicioFiltro, new { @for = "Fecha", @class = "col-md-4 col-form-label ml-auto" })
                 <div class="col-sm-6 mr-auto">
                     @Html.TextBoxFor(m => m.FechaPagoInicioFiltro, new { @class = "form-control input-sm", @type = "date" })
                 </div>
             </div>
             @*Fecha Fin*@
             <div class="form-group row">
-                @Html.LabelFor(n => n.FechaPagoFinFiltro, new { @for = "FechaFin", @class = "col-md-3 col-form-label ml-auto" })
+                @Html.LabelFor(n => n.FechaPagoFinFiltro, new { @for = "FechaFin", @class = "col-md-4 col-form-label ml-auto" })
                 <div class="col-sm-6 mr-auto">
                     @Html.TextBoxFor(m => m.FechaPagoFinFiltro, new { @class = "form-control input-sm", @type = "date" })
                 </div>
             </div>
             @*Notificadores*@
             <div class="form-group row">
-                @Html.LabelFor(n => n.NotificacionId, new { @for = "NotificacionId", @class = "col-md-3 col-form-label ml-auto" })
+                @Html.LabelFor(n => n.NotificacionId, new { @for = "NotificacionId", @class = "col-md-4 col-form-label ml-auto" })
                 <div class="col-sm-6 mr-auto">
                     @Html.DropDownListFor(m => m.NotificacionId, new SelectList(Model.Notificadores, "UsuarioId", "Nombre"), "Seleccione una opción", new { @class = "form-control input-sm" })
                 </div>

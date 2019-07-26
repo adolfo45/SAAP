@@ -24,6 +24,7 @@ namespace ComiteAgua.ViewModels.Tomas
 
         public List<PagosViewModel> Pagos { get; set; }
         public List<GastosViewModel> Gastos { get; set; }
+        public List<CorteExcelViewModel> CorteExcel { get; set; }
         public string TotalIngresos { get; set; }
         public string TotalGastos { get; set; }
         public string Total { get; set; }

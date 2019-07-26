@@ -69,6 +69,7 @@ namespace ComiteAgua.Domain.Seguridad
         public Usuario ObtenerUsuario(string usuario)
         {
             var result = _context.Usuario    
+                .Include(u => u.Persona)
                 .Include(u => u.UsuarioRol)
                 .Include(u => u.Persona.MultiComite.MultiComitesSucursales)
                 .Where(u => u.UserName.Equals(usuario) &&

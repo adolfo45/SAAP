@@ -35,6 +35,13 @@ using ComiteAgua.ViewModels.Servicios;
 using System.Net;
 using System.Web.Script.Serialization;
 using System.Text;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Row = DocumentFormat.OpenXml.Spreadsheet.Row;
+using Cell = DocumentFormat.OpenXml.Spreadsheet.Cell;
+using System.Diagnostics;
 
 namespace ComiteAgua.Controllers.Tomas
 {
@@ -97,7 +104,7 @@ namespace ComiteAgua.Controllers.Tomas
                 var convenioTomaNueva = conveniosDomain.ObtenerConvenioTomaNueva(propietario.Toma.Select(t => t.TomaId).FirstOrDefault());
                 // obtiene ultimo periodo pago
                 var ultimoPeriodoPago = periodosPagoDomain.ObtenerPeriodoPago(propietario.Toma.Select(t => t.TomaId).FirstOrDefault());
-               
+                Session["Folio"] = "Folio " + propietario.Toma.Select(t => t.Folio).FirstOrDefault();
                 if (cambioPropietario)
                 {
                     //ViewBag.ReciboId = reciboId;
@@ -227,7 +234,7 @@ namespace ComiteAgua.Controllers.Tomas
                 {
                     // Obtiene al propietario
                     var propietario = propietariosDomain.ObtenerPropietario(propietarioId);
-
+                    Session["Folio"] = "Folio " + propietario.Toma.Select(t => t.Folio).FirstOrDefault();
                     viewModel = new TabsViewModel()
                     {
                         TabPropietarioActivo = "active",
@@ -294,7 +301,7 @@ namespace ComiteAgua.Controllers.Tomas
                     };
                 }    
             }           
-
+            
             return View(viewModel);
 
         }
@@ -673,7 +680,7 @@ namespace ComiteAgua.Controllers.Tomas
                     UrlRetorno = urlRetorno,
                     FechaAltaFormato = DateTime.Now.ToString("yyyy-MM-dd")
                 };
-
+                Session["Folio"] = "Folio " + convenio.Toma.Folio;
                 return View("~/Views/Tomas/RegistroPagosConvenio.cshtml", pagosViewModel);
 
             }
@@ -694,7 +701,7 @@ namespace ComiteAgua.Controllers.Tomas
                     CategoriaId = toma.CategoriaId,
                     Notificada = toma.Notificacion.Any(n => n.Activa)
                 };
-
+                Session["Folio"] = "Folio " + toma.Folio;
                 return View("~/Views/Tomas/RegistroPagosSuministroAgua.cshtml", pagosViewModel);
             }
             else if(conceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.TomaNueva)
@@ -719,7 +726,7 @@ namespace ComiteAgua.Controllers.Tomas
                     AbonoAnterior = abonos != null ? abonos.Sum(a => a.Abono).ToString() : "0",
                     Notificada = toma.Notificacion.Any(n => n.Activa)                    
                 };
-
+                Session["Folio"] = "Folio " + toma.Folio;
                 return View("~/Views/Tomas/RegistroPagosSuministroAgua.cshtml", pagosViewModel);
             }
             return HttpNotFound();
@@ -771,7 +778,7 @@ namespace ComiteAgua.Controllers.Tomas
             var toma = tomasDomain.ObtenerToma(tomaId);
             var personasSeguridad = personasSeguridadDomain.ObtenerPersonasSeguridad();
             var convenio = conveniosDomain.ObtenerConvenioActivo(tomaId);
-
+            Session["Folio"] = "Folio " + toma.Folio;
             foreach (var item in personasSeguridad)
             {
                 PersonaSeguridad personaSeguridad = new PersonaSeguridad()
@@ -1023,14 +1030,16 @@ namespace ComiteAgua.Controllers.Tomas
         {
             var periodosPagoViewModelList = new List<PeriodosPagoViewModel>();
             var periodosPagoViewModel = new PeriodosPagoViewModel();
+            var tomasDomain = new TomasDomain(_context);
 
             var periodosPagoDomain = new PeriodosPagoDomain(_context);
 
             var periodosPago = periodosPagoDomain.ObtenerPeriodosPago(tomaId);
-
+            Session["Folio"] = tomasDomain.ObtenerToma(tomaId).Folio;
             foreach (var item in periodosPago)
             {
                 decimal total = 0;
+                
                 if (item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio)
                 {
                     var pagosDomain = new PagosDomain(_context);
@@ -1041,7 +1050,8 @@ namespace ComiteAgua.Controllers.Tomas
                 {
                     MesAnoInicio = item.PeriodoPago.Count > 0 ? Convert.ToDateTime(item.PeriodoPago.Select(pp => pp.MesAnoInicio).FirstOrDefault()).ToString("MMMMMMMMMM yyyy").ToUpper() : string.Empty,
                     MesAnoFin = item.PeriodoPago.Count > 0 ? Convert.ToDateTime(item.PeriodoPago.Select(pp => pp.MesAnoFin).FirstOrDefault()).ToString("MMMMMMMMMM yyyy").ToUpper() : string.Empty,
-                    TotalPago = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio ? total.ToString("C") : item.Total.ToString("C"),
+                    //TotalPago = item.ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio ? total.ToString("C") : item.Total.ToString("C"),
+                    TotalPago = item.Total.ToString("C"),
                     ConceptoPago = item.ConceptoPago.Nombre,
                     FechaPago = Convert.ToDateTime(item.FechaAlta).ToString("dd-MM-yyyy"),
                     Activo = item.Activo,
@@ -2551,7 +2561,7 @@ namespace ComiteAgua.Controllers.Tomas
             var convenio = new Convenio()
             {
                 ConvenioId = model.ConvenioId,
-                ConceptoConvenioId = (int)ConceptosConvenioDomain.ConceptosConvenioDomainEnum.TomaNueva,
+                ConceptoConvenioId = (int)ConceptosConvenioDomain.ConceptosConvenioDomainEnum.SuministroAgua,
                 TomaId = model.TomaId,
                 EstatusConvenioId = (int)EstatusConvenioDomain.EstatusConvenioEnum.Activo,
                 PeriodoPagoConvenioId = model.PeriodoPagoConvenioId,
@@ -2636,39 +2646,29 @@ namespace ComiteAgua.Controllers.Tomas
         {
             var serviciosDomain = new ServiciosDomain(_context);
             var usuariosDomain = new UsuariosDomain(_context);
-            string urlArchivo = string.Empty;          
+            var asuntosDomain = new AsuntosDomain(_context);
+            var asuntosDescripcionDomain = new AsuntosDescripcionDomain(_context);
+            string asunto = string.Empty;
+            string asuntoDescripcion = string.Empty;
+            string urlArchivo = string.Empty;
 
+            //Obtiene Asunto
+            if(!string.IsNullOrEmpty(model.AsuntoId))
+                asunto = AdsertiFunciones.FormatearTexto(asuntosDomain.ObtenerAsunto(Convert.ToInt32(model.AsuntoId)).Nombre);
+            //Obtiene Asunto Descripcion
+            if (!string.IsNullOrEmpty(model.AsuntoDescripcionId))
+                asuntoDescripcion = AdsertiFunciones.FormatearTexto(asuntosDescripcionDomain.ObtenerAsuntoDescripcion(Convert.ToInt32(model.AsuntoDescripcionId)).Nombre);
             //Obtiene tokens fontaneros
             var tokens = usuariosDomain.ObtenerTokenFontaneros();
 
-            // generar archivo word           
+            // genera ruta archivo       
             string rutaFormato = System.Web.HttpContext.Current.Server.MapPath("~/Print/Servicios.docx");
             string rutaArchivo = @"/UploadFiles/Servicios/";
             string nombreArchivo = DateTime.Now.ToString("_ddMMyyyyHHmmss") + ".docx";
 
             nombreArchivo = "Servicio" + nombreArchivo;
-
-            using (DocX document = DocX.Load(rutaFormato))
-            {
-                document.ReplaceText("{Nombre}", model.NombreReporto, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-                document.ReplaceText("{Direccion}", model.Direccion, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-                document.ReplaceText("{Colonia}", model.Colonia, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-                document.ReplaceText("{Telefono}", !string.IsNullOrEmpty(model.Telefono) ? model.Telefono : string.Empty, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-                document.ReplaceText("{UbicacionServicio}", model.UbicacionServicio, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-                document.ReplaceText("{Otro}", !string.IsNullOrEmpty(model.Otro) ? model.Otro : string.Empty, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-                document.ReplaceText("{Observaciones}", !string.IsNullOrEmpty(model.Observaciones) ? model.Observaciones : string.Empty, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-
-                //Si no existe el directorio se crea
-                if (!Directory.Exists(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo)))
-                {
-                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo));
-                } // if (!Directory.Exists(ruta))
-                document.SaveAs(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo) + nombreArchivo);
-            }
-
             urlArchivo = System.Web.HttpContext.Current.Server.MapPath(rutaArchivo) + nombreArchivo;
-            //}
-            // fin archivo word
+            //fin genera ruta archivo    
 
             var servicio = new Servicio()
             {
@@ -2712,6 +2712,36 @@ namespace ComiteAgua.Controllers.Tomas
                 servicio.UsuarioCambioId = Convert.ToInt32(Session["UsuarioId"].ToString());
                 serviciosDomain.Editar(servicio);
             }
+
+           
+            // archivo word
+            using (DocX document = DocX.Load(rutaFormato))
+            {
+                document.ReplaceText("{Numero}", servicio.ServicioId.ToString(), false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                document.ReplaceText("{Folio}", model.Folio.ToString(), false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                document.ReplaceText("{Fecha}", DateTime.Now.ToString("dd/MM/yyyy"), false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                document.ReplaceText("{Nombre}", model.NombreReporto, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                document.ReplaceText("{Direccion}", model.Direccion, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                document.ReplaceText("{Colonia}", model.Colonia, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                document.ReplaceText("{Telefono}", !string.IsNullOrEmpty(model.Telefono) ? model.Telefono : string.Empty, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                document.ReplaceText("{UbicacionServicio}", model.UbicacionServicio, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+                document.ReplaceText("{Asunto}", asunto, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                document.ReplaceText("{Descripcion}", asuntoDescripcion, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+                document.ReplaceText("{Otro}", !string.IsNullOrEmpty(model.Otro) ? AdsertiFunciones.FormatearTexto(model.Otro) : string.Empty, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                document.ReplaceText("{Observaciones}", !string.IsNullOrEmpty(model.Observaciones) ? AdsertiFunciones.FormatearTexto(model.Observaciones) : string.Empty, false, System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+                //Si no existe el directorio se crea
+                if (!Directory.Exists(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo)))
+                {
+                    Directory.CreateDirectory(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo));
+                } // if (!Directory.Exists(ruta))
+                document.SaveAs(System.Web.HttpContext.Current.Server.MapPath(rutaArchivo) + nombreArchivo);
+            }
+            
+            // fin archivo word
+
             return RedirectToAction("CargarServicio", new { servicioId = servicio.ServicioId });
 
         }
@@ -2848,6 +2878,211 @@ namespace ComiteAgua.Controllers.Tomas
                 CustomSwitches = "--page-offset 0 --footer-center [page] --footer-font-size 8"
             };           
         }
+        public ActionResult DescargarExcelCorte(DateTime? fechaInicio, DateTime? fechaFin, string downloadToken)
+        {         
+            string archivoTemplate = HttpContext.Server.MapPath("~/UploadFiles/Archivos/Templates/CorteTemplate.xlsx");
+            string archivoNew = HttpContext.Server.MapPath("~/UploadFiles/Archivos/Reportes/Corte/Corte.xlsx");
+
+            string ruta = HttpContext.Server.MapPath("~/UploadFiles/Archivos/Reportes/Corte/");
+
+            //Si no existe el directorio se crea
+            if (!Directory.Exists(ruta))
+            {
+                Directory.CreateDirectory(ruta);
+            } // if (!Directory.Exists(ruta))
+
+            System.IO.File.Copy(archivoTemplate, archivoNew, true);
+
+            var corte = this.ObtenerCorteExcel(fechaInicio, fechaFin);
+
+            //Actualiza celda
+            string fechaInicioVal = fechaInicio != null ? Convert.ToDateTime(fechaInicio).ToString("dd/MM/yyyy") : string.Empty;
+            string fechaFinVal = fechaFin != null ? Convert.ToDateTime(fechaFin).ToString("dd/MM/yyyy") : string.Empty;
+
+            string texto = !string.IsNullOrEmpty(fechaInicioVal) && !string.IsNullOrEmpty(fechaFinVal) ?
+                            fechaInicioVal + "-" + fechaFinVal : !string.IsNullOrEmpty(fechaInicioVal) ?
+                            fechaInicioVal : fechaFinVal;
+
+            UpdateCell(archivoNew, texto, 6, "H");
+            //Fin actualiza celda
+
+            using (SpreadsheetDocument myWorkbook = SpreadsheetDocument.Open(archivoNew, true))
+            {
+                Sheet sheet = myWorkbook.WorkbookPart.Workbook.Sheets.GetFirstChild<Sheet>();
+
+                WorksheetPart wsPart = (WorksheetPart)(myWorkbook.WorkbookPart.GetPartById(sheet.Id));
+               
+                var renglones = wsPart.Worksheet.Descendants<Row>().ToList();
+
+                Worksheet worksheet = (myWorkbook.WorkbookPart.GetPartById(sheet.Id.Value) as WorksheetPart).Worksheet;
+
+                SheetData sheetData = worksheet.GetFirstChild<SheetData>();            
+
+                uint rowIndex = 9;
+                int contador = 1;
+                foreach (var item in corte.CorteExcel)
+                {
+                    var reporteRow = (Row)renglones.FirstOrDefault();
+
+                    worksheet = reporteRow.Ancestors<Worksheet>().First();
+                    sheetData = worksheet.Descendants<SheetData>().First();
+
+                    var newRow = (Row)reporteRow.Clone();
+
+                    newRow.RowIndex = rowIndex;
+                    foreach (var cell in newRow.Elements<Cell>())
+                    {
+                        string cellReference = cell.CellReference.Value;
+                        cell.CellReference = new StringValue(cellReference.Replace(reporteRow.RowIndex.Value.ToString(), rowIndex.ToString()));
+
+                        var txtVacio = string.Empty;
+                        cell.CellValue = new CellValue(txtVacio.ToString());
+                        cell.DataType = new EnumValue<CellValues>(CellValues.String);
+
+                        var columna = cellReference.Replace(reporteRow.RowIndex.Value.ToString(), string.Empty);
+                        if (columna == "A")
+                        {
+                            string txt = item.NumeroIngreso.ToString();
+                            cell.CellValue = new CellValue(txt);
+                            cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                        }
+                        if (columna == "B")
+                        {
+                            if (item.FechaIngreso != null)
+                            {
+                                DateTime txt = Convert.ToDateTime(item.FechaIngreso);
+                                cell.CellValue = new CellValue(Convert.ToDateTime(txt.ToString("dd/MM/yyyy")));
+                                cell.DataType = new EnumValue<CellValues>(CellValues.Date);
+                            }
+                            else
+                            {
+                                string txt = string.Empty;
+                                cell.CellValue = new CellValue(txt);
+                                cell.DataType = new EnumValue<CellValues>(CellValues.Date);
+                            }                     
+                        }
+                        if (columna == "C")
+                        {
+                            string txt = item.ReciboIngreso.ToString();
+                            cell.CellValue = new CellValue(txt);
+                            cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                        }
+                        if (columna == "D")
+                        {
+                            if (contador == corte.CorteExcel.Max(c => c.NumeroIngreso) + 1)
+                            {
+                                string txt = "Total";
+                                cell.CellValue = new CellValue(txt);
+                                cell.DataType = new EnumValue<CellValues>(CellValues.String);
+                                
+                            }
+                            else
+                            {
+                                string txt = item.ConceptoIngreso;
+                                cell.CellValue = new CellValue(txt);
+                                cell.DataType = new EnumValue<CellValues>(CellValues.String);
+                            }
+                        }
+                        if (columna == "E")
+                        {
+                            if (contador == corte.CorteExcel.Max(c => c.NumeroIngreso) + 1)
+                            {
+                                string txt = AdsertiFunciones.FormatearNumero(corte.TotalIngresos);
+                                cell.CellValue = new CellValue(txt);
+                                cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                            }
+                            else
+                            {
+                                string txt = item.TotalIngreso.ToString();
+                                cell.CellValue = new CellValue(txt);
+                                cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                            }
+                        }
+                        if (columna == "F")
+                        {
+                            string txt = item.NumeroGasto.ToString();
+                            cell.CellValue = new CellValue(txt);
+                            cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                        }
+                        if (columna == "G")
+                        {
+                            if (item.FechaGasto != null)
+                            {
+                                DateTime txt = Convert.ToDateTime(item.FechaGasto);
+                                cell.CellValue = new CellValue(Convert.ToDateTime(txt.ToString("dd/MM/yyyy")));
+                                cell.DataType = new EnumValue<CellValues>(CellValues.Date);
+                            }
+                            else
+                            {
+                                string txt = string.Empty;
+                                cell.CellValue = new CellValue(txt);
+                                cell.DataType = new EnumValue<CellValues>(CellValues.Date);
+                            }
+                        }
+                        if (columna == "H")
+                        {
+                            if (contador == corte.CorteExcel.Max(c => c.NumeroGasto) + 1)
+                            {
+                                string txt = "Total";
+                                cell.CellValue = new CellValue(txt);
+                                cell.DataType = new EnumValue<CellValues>(CellValues.String);
+                            }
+                            else
+                            {
+                                string txt = item.ConceptoGasto;
+                                cell.CellValue = new CellValue(txt);
+                                cell.DataType = new EnumValue<CellValues>(CellValues.String);
+                            }      
+                            
+                        }
+                        if (columna == "I")
+                        {
+                            if (contador == corte.CorteExcel.Max(c => c.NumeroGasto) + 1)
+                            {
+                                string txt = AdsertiFunciones.FormatearNumero(corte.TotalGastos);
+                                cell.CellValue = new CellValue(txt);
+                                cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                            }
+                            else
+                            {
+                                string txt = item.TotalGasto.ToString();
+                                cell.CellValue = new CellValue(txt);
+                                cell.DataType = new EnumValue<CellValues>(CellValues.Number);
+                            }             
+                        }
+                    }
+                    rowIndex++;
+                    contador++;
+                    if (rowIndex == 1)
+                    {
+                        sheetData.InsertAt(newRow, 0);
+                    }
+                    else
+                    {
+                        var lastRow = sheetData.Elements<Row>().Last(r => r.RowIndex < rowIndex);
+
+                        sheetData.InsertAfter(newRow, lastRow);
+                    }
+                }
+
+                myWorkbook.WorkbookPart.Workbook.Save();
+                myWorkbook.Close();
+            }
+
+            var f = new FileInfo(archivoNew);
+            Response.Clear();
+            Response.ClearHeaders();
+            Response.ClearContent();
+            Response.AppendCookie(new HttpCookie("fileDownloadToken", downloadToken));
+            Response.AddHeader("Content-Disposition", "attachment; filename=" + f.Name);
+            Response.AddHeader("Content-Length", f.Length.ToString());
+            Response.ContentType = "application/vnd.xlsx";
+            Response.Flush();
+            Response.TransmitFile(archivoNew);
+            Response.End();
+
+            return View();
+        } 
         public ActionResult ImprimirEstadoCuenta(int tomaId, string downloadToken)
         {
             var periodosPagoDomain = new PeriodosPagoDomain(_context);
@@ -3092,8 +3327,10 @@ namespace ComiteAgua.Controllers.Tomas
             if (tomaId != null)
             {
                 var toma = tomasDomain.ObtenerToma(Convert.ToInt32(tomaId));
+                Session["Folio"] = "Folio " + toma.Folio;
                 serviciosViewModel = new ServiciosViewModel()
                 {
+                    Folio = toma.Folio,
                     Asuntos = asuntosDomain.ObtenerAsuntos(),
                     AsuntosDescripcion = new List<AsuntoDescripcion>(),
                     Propietario = true,
@@ -3382,6 +3619,8 @@ namespace ComiteAgua.Controllers.Tomas
         }
         public ActionResult ReconexionToma(int tomaId)
         {
+            var tomasDomain = new TomasDomain(_context);
+            Session["Folio"] = "Folio " + tomasDomain.ObtenerToma(tomaId).Folio;
             var reconexionTomaViewModel = new ReconexionTomaViewModel()
             {
                 TomaId = tomaId,
@@ -3449,7 +3688,7 @@ namespace ComiteAgua.Controllers.Tomas
             };
             return View("RecibosExtraAdministracion", recibosViewModel);
         }
-        
+
         #endregion
 
         #region * Métodos creados por Comité Agua *
@@ -3575,6 +3814,14 @@ namespace ComiteAgua.Controllers.Tomas
 
             var gastos = gastosDomain.ObtenerGastos(fechaInicio, fechaFin);
             var ingresos = pagosDomain.ObtenerPagos(fechaInicio, fechaFin);
+
+            //Coloca periodo de busqueda en el documento
+            string fechaInicioVal = fechaInicio != null ? Convert.ToDateTime(fechaInicio).ToString("dd/MM/yyyy") : string.Empty;
+            string fechaFinVal = fechaFin != null ? Convert.ToDateTime(fechaFin).ToString("dd/MM/yyyy") : string.Empty;
+
+            ViewBag.FechaConsulta = !string.IsNullOrEmpty(fechaInicioVal) && !string.IsNullOrEmpty(fechaFinVal) ?
+                            fechaInicioVal + "-" + fechaFinVal : !string.IsNullOrEmpty(fechaInicioVal) ?
+                            fechaInicioVal : fechaFinVal;
 
             foreach (var item in gastos)
             {
@@ -3765,7 +4012,153 @@ namespace ComiteAgua.Controllers.Tomas
 
             return reciboVM;
         }
+        public CorteViewModel ObtenerCorteExcel(DateTime? fechaInicio, DateTime? fechaFin)
+        {
+            GastosDomain gastosDomain = new GastosDomain(_context);
+            PagosDomain pagosDomain = new PagosDomain(_context);
+            List<CorteExcelViewModel> listCorteExcel = new List<CorteExcelViewModel>();
 
+            var gastos = gastosDomain.ObtenerGastos(fechaInicio, fechaFin);
+            var ingresos = pagosDomain.ObtenerPagos(fechaInicio, fechaFin).Where(i => i.Activo).ToList();
+
+            var contador = gastos.Count > ingresos.Count ? gastos.Count : ingresos.Count;
+            if (ingresos.Count >= gastos.Count) { 
+                for (int x = 0; x <= ingresos.Count - 1; x++)
+                {
+                    CorteExcelViewModel corteExcelVM = new CorteExcelViewModel()
+                    {
+                        NumeroIngreso = x + 1,                   
+                        FechaIngreso = ingresos[x].FechaAlta,
+                        ReciboIngreso = ingresos[x].ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && ingresos[x].Recibo.Count == 0 ? (!string.IsNullOrEmpty(ingresos[x].Convenio.NoTarjeta) ? Convert.ToInt32(ingresos[x].Convenio.NoTarjeta) : (int?)null) :
+                                    ingresos[x].ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && ingresos[x].Recibo.Count > 0 ? ingresos[x].Recibo.Select(r => r.NoRecibo).FirstOrDefault() : ingresos[x].Recibo.Select(r => r.NoRecibo).FirstOrDefault(),
+                        ConceptoIngreso = ingresos[x].ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Renta ?
+                                                                ingresos[x].Renta.TipoRenta.Nombre :
+                                                               ingresos[x].ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia ?
+                                                                ingresos[x].Constancia.TiposConstancia.Nombre :
+                                                               ingresos[x].ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Otro ?
+                                                               ingresos[x].Recibo.Select(r => r.Concepto).FirstOrDefault() :
+                                                                ingresos[x].ConceptoPago.Nombre,
+                        TotalIngreso = ingresos[x].Total
+                    };
+                    listCorteExcel.Add(corteExcelVM);
+                }//for (int x = 0; x <= ingresos.Count - 1; x++)
+                for (int x = 0; x <= gastos.Count - 1; x++)
+                {
+                    listCorteExcel.Where(y => y.NumeroIngreso == x + 1).FirstOrDefault().NumeroGasto = x + 1;
+                    listCorteExcel.Where(y => y.NumeroIngreso == x + 1).FirstOrDefault().FechaGasto = gastos[x].FechaAlta;
+                    listCorteExcel.Where(y => y.NumeroIngreso == x + 1).FirstOrDefault().ConceptoGasto = gastos[x].Concepto;
+                    listCorteExcel.Where(y => y.NumeroIngreso == x + 1).FirstOrDefault().TotalGasto = gastos[x].Total;
+                }//for (int x = 0; x <= gastos.Count - 1; x++)
+                listCorteExcel.Add(new CorteExcelViewModel());
+            }
+            else
+            { 
+                for (int x = 0; x <= gastos.Count - 1; x++)
+                {
+                    CorteExcelViewModel corteExcelVM = new CorteExcelViewModel()
+                    {
+                        NumeroGasto = x + 1,
+                        FechaGasto = gastos[x].FechaAlta,                                                            
+                        ConceptoGasto = gastos[x].Concepto,                    
+                        TotalGasto = gastos[x].Total
+                    };
+                    listCorteExcel.Add(corteExcelVM);
+                }//for (int x = 0; x <= gastos.Count - 1; x++)
+                for (int x = 0; x <= ingresos.Count - 1; x++)
+                {
+                    listCorteExcel.Where(y => y.NumeroGasto == x + 1).FirstOrDefault().NumeroIngreso = x + 1;
+                    listCorteExcel.Where(y => y.NumeroGasto == x + 1).FirstOrDefault().FechaIngreso = ingresos[x].FechaAlta;
+                    listCorteExcel.Where(y => y.NumeroGasto == x + 1).FirstOrDefault().ReciboIngreso = ingresos[x].ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && ingresos[x].Recibo.Count == 0 ? (!string.IsNullOrEmpty(ingresos[x].Convenio.NoTarjeta) ? Convert.ToInt32(ingresos[x].Convenio.NoTarjeta) : (int?)null) :
+                                    ingresos[x].ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Convenio && ingresos[x].Recibo.Count > 0 ? ingresos[x].Recibo.Select(r => r.NoRecibo).FirstOrDefault() : ingresos[x].Recibo.Select(r => r.NoRecibo).FirstOrDefault();
+                    listCorteExcel.Where(y => y.NumeroGasto == x + 1).FirstOrDefault().ConceptoIngreso = ingresos[x].ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Renta ?
+                                                                ingresos[x].Renta.TipoRenta.Nombre :
+                                                               ingresos[x].ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Constancia ?
+                                                                ingresos[x].Constancia.TiposConstancia.Nombre :
+                                                               ingresos[x].ConceptoPagoId == (int)ConceptosPagoDomain.ConceptosPagoDomainEnum.Otro ?
+                                                               ingresos[x].Recibo.Select(r => r.Concepto).FirstOrDefault() :
+                                                                ingresos[x].ConceptoPago.Nombre;
+                    listCorteExcel.Where(y => y.NumeroGasto == x + 1).FirstOrDefault().TotalIngreso = ingresos[x].Total;
+                }//for (int x = 0; x <= ingresos.Count - 1; x++)
+                listCorteExcel.Add(new CorteExcelViewModel());
+            }
+
+            //var totalIngresos = ingresos.Sum(x => x.Total);
+            var totalIngresos = ingresos.Where(x => x.Activo).Sum(x => x.Total);
+            var totalGastos = gastos.Sum(x => x.Total);
+            var total = totalIngresos - totalGastos;
+
+            CorteViewModel corteViewModel = new CorteViewModel()
+            {
+                TotalIngresos = totalIngresos.ToString("C"),
+                TotalGastos = totalGastos.ToString("C"),
+                Total = total.ToString("C"),
+                FechaConsulta = DateTime.Now,
+                CorteExcel = listCorteExcel
+            };
+
+            return corteViewModel;
+        }
+        public static void UpdateCell(string docName, string text, uint rowIndex, string columnName)
+        {
+            // Open the document for editing.
+            using (SpreadsheetDocument spreadSheet =
+                     SpreadsheetDocument.Open(docName, true))
+            {
+                WorksheetPart worksheetPart =
+                      GetWorksheetPartByName(spreadSheet, "Ingresos-Gastos");
+
+                if (worksheetPart != null)
+                {
+                    Cell cell = GetCell(worksheetPart.Worksheet,
+                                             columnName, rowIndex);
+
+                    cell.CellValue = new CellValue(text);
+                    cell.DataType = new EnumValue<CellValues>(CellValues.String);
+
+                    // Save the worksheet.
+                    worksheetPart.Worksheet.Save();
+                }
+            }
+
+        }
+        private static WorksheetPart GetWorksheetPartByName(SpreadsheetDocument document, string sheetName)
+        {
+            IEnumerable<Sheet> sheets =
+               document.WorkbookPart.Workbook.GetFirstChild<Sheets>().
+               Elements<Sheet>().Where(s => s.Name == sheetName);
+
+            if (sheets.Count() == 0)
+            {
+                // The specified worksheet does not exist.
+
+                return null;
+            }
+
+            string relationshipId = sheets.First().Id.Value;
+            WorksheetPart worksheetPart = (WorksheetPart)
+                 document.WorkbookPart.GetPartById(relationshipId);
+            return worksheetPart;
+
+        }
+        // Given a worksheet, a column name, and a row index, 
+        // gets the cell at the specified column and 
+        private static Cell GetCell(Worksheet worksheet, string columnName, uint rowIndex)
+        {
+            Row row = GetRow(worksheet, rowIndex);
+
+            if (row == null)
+                return null;
+
+            return row.Elements<Cell>().Where(c => string.Compare
+                   (c.CellReference.Value, columnName +
+                   rowIndex, true) == 0).First();
+        }
+        // Given a worksheet and a row index, return the row.
+        private static Row GetRow(Worksheet worksheet, uint rowIndex)
+        {
+            return worksheet.GetFirstChild<SheetData>().
+              Elements<Row>().Where(r => r.RowIndex == rowIndex).First();
+        }
         #endregion
 
     } // public class TomasController : Controller

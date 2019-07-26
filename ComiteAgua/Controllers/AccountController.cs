@@ -83,10 +83,10 @@ namespace ComiteAgua.Controllers
             if (cambiarEstatusConvenio == null)
             {
                 transaccionesAutomaticasDomain.CambiarEstatusConveniosVencido(usurios.UsuarioId);
-            }           
+            }
 
             //UserSession.AddUserToSession(usurios.UsuarioId.ToString());
-
+            Session["NombreUsuario"] = usurios.Persona.Nombre + " " + usurios.Persona.ApellidoPaterno + " " + usurios.Persona.ApellidoMaterno;
             Session["UsuarioId"] = usurios.UsuarioId;
             Session["RolIds"] = usurios.UsuarioRol.Select(r => r.RolId).ToList();
             Session["MultiComiteId"] = usurios.Persona.MultiComite.MultiComitesSucursales.Select(mc => mc.MultiComiteId).FirstOrDefault();

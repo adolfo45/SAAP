@@ -109,7 +109,7 @@ namespace ComiteAgua.Domain
                             DbFunctions.TruncateTime(i.FechaAlta) <= DbFunctions.TruncateTime(fechaFin) :
                             DbFunctions.TruncateTime(i.FechaAlta) == DbFunctions.TruncateTime(fechaInicio) ||
                             DbFunctions.TruncateTime(i.FechaAlta) == DbFunctions.TruncateTime(fechaFin))
-                            .OrderBy(p => p.FechaAlta)
+                            .OrderBy(p => p.PagoId)
                 .ToList();
 
             return result;

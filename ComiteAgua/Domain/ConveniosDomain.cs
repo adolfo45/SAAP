@@ -103,6 +103,7 @@ namespace ComiteAgua.Domain
                 .Include(c => c.Toma.Direccion.TiposCalle)
                 .Include(c => c.Toma.Direccion.Calles)
                 .Include(c => c.Persona)
+                .Include(c => c.Toma)
                 .Where(c => c.ConvenioId == convenioId).FirstOrDefault();
 
             return result;

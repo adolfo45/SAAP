@@ -44,89 +44,87 @@
     </style>
 
 </head>
-    <body>
-        <img src="\Images\EstadoCuenta\logo.png" width="150" height="100" style="position: absolute" />
-        <br />
-        <h2 style="text-align: center">
-            &nbsp;&nbsp;ORGANISMO INDEPENDIENTE DE AGUA POTABLE<br />
-            SAN BUENAVENTURA A.C<br />
-            PERIODO 2018-2021
-        </h2>
-        <h2 style="text-align:center">Corte @Model.FechaConsulta.ToString("dd-MM-yyyy")</h2>
-
+<body>
+    <img src="\ComiteAgua\Images\EstadoCuenta\logo.png" width="150" height="100" style="position: absolute" />
+    <br />
+    <h2 style="text-align: center">
+        &nbsp;&nbsp;ORGANISMO INDEPENDIENTE DE AGUA POTABLE<br />
+        SAN BUENAVENTURA A.C<br />
+        PERIODO 2018-2021
+    </h2>
+    @*<h2 style="text-align:center">Corte @Model.FechaConsulta.ToString("dd-MM-yyyy")</h2>*@
+    <h2 style="text-align:center">Corte @ViewBag.FechaConsulta</h2>
+    <div>
         <div>
-            <div>
-                <h4>Total Ingresos: @Model.TotalIngresos</h4>
-            </div>
-            <div>
-                <h4 class="text-left">Total Gastos: @Model.TotalGastos</h4>
-            </div>
-            <div>
-                <h4>Total Caja: @Model.Total</h4>
-            </div>
+            <h4>Total Ingresos: @Model.TotalIngresos</h4>
         </div>
-
         <div>
-
-            @if (Model.Pagos.Count > 0)
-            {
-
-                <h3 style="text-align:center">Ingresos</h3>
-
-                <table border=1 cellspacing=0 cellpadding=2 bordercolor="000000">
-                    <thead>
-                        <tr>
-                            <th style="width: 15%">Fecha</th>
-                            <th style="width: 25%">No</th>
-                            <th>Concepto Ingreso</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        @foreach (var item in Model.Pagos)
-                        {
-                            <tr class="@(!item.Activo ? "amarillo" : "")">
-                                <td style="width: 15%">@item.FechaAlta.ToString("dd-MM-yyyy")</td>
-                                <td style="width: 25%">@(item.TipoPago + "-" + item.NoRecibo.ToString()) @(!item.Activo ? "(Cancelado)" : "")</td>
-                                <td>@item.ConceptoPago</td>
-                                <td style="text-align: center">@item.Total</td>
-                            </tr>
-                        }
-
-                    </tbody>
-                </table>
-            }
-
-            @if (Model.Gastos.Count > 0)
-            {
-
-                <h3 style="text-align:center">Gastos</h3>
-
-                <table border=1 cellspacing=0 cellpadding=2 bordercolor="000000">
-                    <thead>
-                        <tr>
-                            <th style="width: 20%">Fecha</th>
-                            <th>Concepto Gasto</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        @foreach (var item in Model.Gastos)
-                        {
-                            <tr>
-                                <td style="width: 20%">@item.FechaAlta.ToString("dd-MM-yyyy")</td>
-                                <td>@item.Concepto</td>
-                                <td style="text-align:center">@item.Total</td>
-                            </tr>
-                        }
-
-                    </tbody>
-                </table>
-            }
-
+            <h4 class="text-left">Total Gastos: @Model.TotalGastos</h4>
         </div>
+        <div>
+            <h4>Total Caja: @Model.Total</h4>
+        </div>
+    </div>
 
-    </body>
+    <div>
+
+        @if (Model.Pagos.Count > 0)
+        {
+
+            <h3 style="text-align:center">Ingresos</h3>
+
+            <table border=1 cellspacing=0 cellpadding=2 bordercolor="000000">
+                <thead>
+                    <tr>
+                        <th style="width: 15%">Fecha</th>
+                        <th style="width: 25%">No</th>
+                        <th>Concepto Ingreso</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model.Pagos)
+                    {
+                        <tr class="@(!item.Activo ? "amarillo" : "")">
+                            <td style="width: 15%">@item.FechaAlta.ToString("dd-MM-yyyy")</td>
+                            <td style="width: 25%">@(item.TipoPago + "-" + item.NoRecibo.ToString()) @(!item.Activo ? "(Cancelado)" : "")</td>
+                            <td>@item.ConceptoPago</td>
+                            <td style="text-align: center">@item.Total</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        }
+
+        @if (Model.Gastos.Count > 0)
+        {
+
+            <h3 style="text-align:center">Gastos</h3>
+
+            <table border=1 cellspacing=0 cellpadding=2 bordercolor="000000">
+                <thead>
+                    <tr>
+                        <th style="width: 20%">Fecha</th>
+                        <th>Concepto Gasto</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Gastos)
+                    {
+                        <tr>
+                            <td style="width: 20%">@item.FechaAlta.ToString("dd-MM-yyyy")</td>
+                            <td>@item.Concepto</td>
+                            <td style="text-align:center">@item.Total</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+    </div>
+
+</body>
 </html>

@@ -1,17 +1,10 @@
 ﻿@model ComiteAgua.ViewModels.Tomas.ServiciosViewModel
 @{
     ViewBag.Title = "Registro Servicio";
+    ViewBag.UrlRetorno = @Url.Action("Index", "Home");
 }
 
 <br />
-
-@*Breadcrumb*@
-<nav aria-label="breadcrumb" role="navigation">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
-        <li class="breadcrumb-item active" aria-current="page"><a>Servicios</a></li>
-    </ol>
-</nav>
 
 @if (Model.Imprimir)
 {
@@ -34,12 +27,11 @@
     @Html.HiddenFor(m => m.Propietario)
     @Html.HiddenFor(m => m.RutaArchivo)
     @Html.HiddenFor(m => m.ServicioId)
+    @Html.HiddenFor(m => m.Folio)
 
     <div class="col-md-9 mr-auto ml-auto">
         <div class="card">
-            <div class="card-header text-center">
-                Servicios
-            </div>
+
             <div class="card-body">
 
                 @*Nombre*@

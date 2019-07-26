@@ -15,9 +15,8 @@
       
             @Html.HiddenFor(x => x.FechaConsulta)    
         <div class = "col-auto ml-auto">
-            <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                <button id="ImprimirButton" type="button" class="btn btn-secondary">Imprimir corte</button>
-            </div>
+            <a href="#" id="ExcelCorte" title="Descargar Excel" class="verde"><i class="fa fa-file-excel-o fa-2x" aria-hidden="true"></i></a>
+            <a href="#" id="PdfCorte" title="Descargar Pdf" class="rojo"><i class="fa fa-file-pdf-o fa-2x" aria-hidden="true"></i></a>                 
         </div>
        
 
@@ -116,7 +115,7 @@
 </div>
 
 <script>
-    $("#ImprimirButton")
+    $("#PdfCorte")
         .click(function () {
             var token = new Date().getTime(); //use the current timestamp as the token value
             var fechaInicio = $("#FechaInicio").val();
@@ -124,7 +123,14 @@
                     blockUIForDownload(token);
             window.location = "@Url.Action("ImprimirCorte", "Tomas")?fechaInicio=" + fechaInicio + "&fechaFin=" + fechaFin + "&downloadToken=" + token ;
         });
-
+    $("#ExcelCorte")
+        .click(function () {
+            var token = new Date().getTime(); //use the current timestamp as the token value
+            var fechaInicio = $("#FechaInicio").val();
+            var fechaFin = $("#FechaFin").val();
+                    blockUIForDownload(token);
+            window.location = "@Url.Action("DescargarExcelCorte", "Tomas")?fechaInicio=" + fechaInicio + "&fechaFin=" + fechaFin + "&downloadToken=" + token ;
+        });
     var fileDownloadCheckTimer;
     function blockUIForDownload(token) {
         BloquearProcesando();

@@ -2,23 +2,22 @@
 @using ComiteAgua.Domain
 @{
     ViewBag.Title = "Pagos Convenio";
+    ViewBag.UrlRetorno = Model.UrlRetorno;
 }
 
-<br />
+@*<br />*@
 
 @*Breadcrumb*@
-<nav aria-label="breadcrumb" role="navigation">
+@*<nav aria-label="breadcrumb" role="navigation">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="@Model.UrlRetorno">Regresar</a></li>
         <li class="breadcrumb-item active" aria-current="page"><a>Pago Convenio</a></li>
     </ol>
-</nav>
+</nav>*@
 
 <div class="row">
     <div class="col-auto ml-auto">
-        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-            <button id="ModalConvenioButton" type="button" class="btn btn-secondary">Ver Convenio</button>
-        </div>
+        <button id="ModalConvenioButton" type="button" class="btn btn-secondary btn-sm">Ver Convenio</button>      
     </div>
 </div>
 
@@ -37,9 +36,7 @@
 
     <div class="col-md-9 mr-auto ml-auto">
         <div class="card">
-            <div class="card-header text-center">
-                Pagos Convenio
-            </div>
+           
             <div class="card-body">
 
                 @*Resumen*@

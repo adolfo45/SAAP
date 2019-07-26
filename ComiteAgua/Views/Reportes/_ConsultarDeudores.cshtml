@@ -1,0 +1,81 @@
+﻿@model List<ComiteAgua.ViewModels.DeudoresViewModel>
+
+<div class="row">
+    <div class="col-auto ml-auto">
+        <a href="#" id="ExcelDeudores" title="Descargar Excel" class="verde"><i class="fa fa-file-excel-o fa-2x" aria-hidden="true"></i></a>
+        <a href="#" id="PdfDeudores" title="Descargar Pdf" class="rojo"><i class="fa fa-file-pdf-o fa-2x" aria-hidden="true"></i></a>
+    </div>
+</div>
+<br />
+<table id="deudoresTable" class="table table-hover table-bordered table-sm">
+    <thead class="thead-dark text-center">
+        <tr>
+            <th scope="col">Folio</th>
+            <th scope="col">Propietario</th>
+            <th scope="col">Dirección</th>
+            <th scope="col">Categoría</th>
+            <th scope="col">Periodo</th>
+            <th scope="col">Adeudo</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>@item.Folio</td>
+            <td>@item.NombrePropietario</td>
+            <td>@item.Direccion</td>
+            <td>@item.Categoria</td>
+            <td>@item.Periodo</td>
+            <td>@item.Adeudo</td>
+        </tr>
+        }
+
+    </tbody>
+</table>
+
+<script>
+
+    $(document).ready(function () {
+        $('#deudoresTable').DataTable();
+    });
+
+    $("#PdfDeudores")
+        .click(function () {
+            var token = new Date().getTime(); //use the current timestamp as the token value
+            var periodoInicio = $("#PeriodoInicio").val();
+            var periodoFin = $("#PeriodoFin").val();
+            var calleId = $("#CalleId").val();
+                    blockUIForDownload(token);
+            window.location = "@Url.Action("ImprimirReporteDeudores", "Reportes")?periodoInicio=" + periodoInicio + "&periodoFin=" + periodoFin + "&calleId=" + calleId + "&downloadToken=" + token ;
+        });
+
+    $("#ExcelDeudores")
+        .click(function () {
+            var token = new Date().getTime(); //use the current timestamp as the token value
+            var periodoInicio = $("#PeriodoInicio").val();
+            var periodoFin = $("#PeriodoFin").val();
+            var calleId = $("#CalleId").val();
+                    blockUIForDownload(token);
+            window.location = "@Url.Action("DescargarExcelDeudores", "Reportes")?periodoInicio=" + periodoInicio + "&periodoFin=" + periodoFin + "&calleId=" + calleId + "&downloadToken=" + token ;
+        });
+
+    var fileDownloadCheckTimer;
+
+    function blockUIForDownload(token) {
+        BloquearProcesando();
+        fileDownloadCheckTimer = window.setInterval(function () {
+            var cookieValue = $.cookie("fileDownloadToken");
+            if (cookieValue == token)
+                finishDownload();
+        }, 1000);
+    }
+
+    function finishDownload() {
+        window.clearInterval(fileDownloadCheckTimer);
+        $.removeCookie('fileDownloadToken'); //clears this cookie value
+        $.unblockUI();
+    }
+
+</script>

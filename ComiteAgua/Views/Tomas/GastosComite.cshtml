@@ -2,17 +2,10 @@
 
 @{
     ViewBag.Title = "Gastos Comité";
+    ViewBag.UrlRetorno = Url.Action("Index", "Home");
 }
 
 <br />
-
-@*Breadcrumb*@
-<nav aria-label="breadcrumb" role="navigation">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Inicio</a></li>
-        <li class="breadcrumb-item active" aria-current="page"><a>Gastos Comité</a></li>
-    </ol>
-</nav>
 
 <form id="GastosForm">
     @Html.AntiForgeryToken()
@@ -21,9 +14,7 @@
 
     <div class="col-md-9 mr-auto ml-auto">
         <div class="card">
-            <div class="card-header text-center">
-                Gasto
-            </div>
+            
             <div class="card-body">
                 @*Total*@
                 <div class="form-group row">

@@ -57,7 +57,6 @@ namespace ComiteAgua.Domain
 
             _context.SaveChanges();
         }
-
         public Servicio ObtenerServicio(int servicioId)
         {
             var result = _context.Servicio
@@ -67,7 +66,6 @@ namespace ComiteAgua.Domain
 
             return result;
         }
-
         public List<Servicio> ObtenerServicios()
         {
             var result = _context.Servicio
@@ -80,7 +78,6 @@ namespace ComiteAgua.Domain
 
             return result;
         }
-
         public void Guardar(Servicio model)
         {
 
@@ -88,7 +85,7 @@ namespace ComiteAgua.Domain
 
             _context.SaveChanges();
         }
-
+        
         #endregion
 
     } // public class ServiciosDomain

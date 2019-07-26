@@ -1,0 +1,88 @@
+﻿@model List<ComiteAgua.ViewModels.DeudoresViewModel>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" href="~/Images/gota2.png" />
+    <title>Imprimir Reporte Deudores</title>
+
+    <style>
+        table {
+            width: 100%;
+        }
+
+        th, td {
+            width: 80%;
+        }
+
+        .amarillo {
+            background-color: gold;
+        }
+
+        table {
+            border-collapse: collapse !important;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+            table thead {
+                display: table-header-group;
+                height: 1.1cm;
+            }
+
+            table tfoot {
+                display: table-row-group;
+            }
+
+            table tr {
+                page-break-inside: avoid !important;
+            }
+    </style>
+</head>
+<body>
+    <img src="\ComiteAgua\Images\EstadoCuenta\logo.png" width="150" height="100" style="position: absolute" />
+    <br />
+    <h2 style="text-align: center">
+        &nbsp;&nbsp;ORGANISMO INDEPENDIENTE DE AGUA POTABLE<br />
+        SAN BUENAVENTURA A.C<br />
+        PERIODO 2018-2021
+    </h2>
+    <h2 style="text-align:center">Reporte @ViewBag.Periodo</h2>
+    @if (Model.Count > 0)
+    {
+
+        <table border=1 cellspacing=0 cellpadding=2 bordercolor="000000">
+            <thead>
+                <tr>
+                    <th style="width: 10%">Folio</th>
+                    <th style="width: 50%">Propietario</th>
+                    <th>Direccion</th>
+                    <th>Categoría</th>
+                    <th>Periodo</th>
+                    <th>Adeudo</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td style="width: 10%">@item.Folio</td>
+                    <td style="width: 50%">@item.NombrePropietario</td>
+                    <td>@item.Direccion</td>
+                    <td>@item.Categoria</td>
+                    <td>@item.Periodo</td>
+                    <td>@item.Adeudo</td>
+                </tr>
+                }
+
+            </tbody>
+        </table>
+    }
+</body>
+</html>

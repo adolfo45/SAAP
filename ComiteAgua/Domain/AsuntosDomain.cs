@@ -37,14 +37,18 @@ namespace ComiteAgua.Domain
         #endregion
 
         #region * Métodos creados por Comité Agua *
-
         public List<Asunto> ObtenerAsuntos()
         {
             var result = _context.Asunto.ToList();
 
             return result;
-        } // public List<Asunto> ObtenerAsuntos()
-
+        }//public List<Asunto> ObtenerAsuntos()
+        public Asunto ObtenerAsunto(int asuntoId)
+        {
+            var asunto = _context.Asunto
+                .Where(a => a.AsuntoId == asuntoId).FirstOrDefault();
+            return asunto;
+        }//public Asunto ObtenerAsunto(int asuntoId)
         #endregion
 
     } // public class AsuntosDomain
